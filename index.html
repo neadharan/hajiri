@@ -7,8 +7,8 @@
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
 
   :root{
-    --navy:#0b3d5c;
-    --navy-dark:#082c42;
+    --navy:#281f9c;
+    --navy-dark:#100a6d;
     --gold:#c99b3d;
     --paper:#fbfaf7;
     --line:#d8d3c8;
@@ -541,7 +541,10 @@ const FALLBACK_NAMES = [
 ];
 
 function buildDefaultEmployees(){
-  return FALLBACK_NAMES.map(n => emptyEmployee(n));
+  return [
+    emptyEmployee(),
+    emptyEmployee()
+  ];
 }
 
 function init(){
@@ -617,7 +620,11 @@ function onDataLoaded(data){
 function emptyEmployee(name){
   const days = [];
   for(let d=0; d<TOTAL_DAY_COLS; d++) days.push({status:"", ot:0});
-  return {name: name || "", designation:"दै.जा.", days: days};
+ return {
+  name: name || "",
+  designation:"",
+  days: days
+};
 }
 
 function addEmployee(){
@@ -706,7 +713,7 @@ function renderRows(){
     const nameCombo = createComboInput({
       className: 'name-input',
       value: emp.name,
-      placeholder: 'श्री ...... (type/select)',
+      placeholder: 'श्री.(type/select)',
       getOptions: ()=>getNameOptions(),
       onChange: (val)=>{ emp.name = val; refreshOtEmployeeSelect(); }
     });
@@ -719,7 +726,7 @@ function renderRows(){
     const desigCombo = createComboInput({
       className: 'desig-input',
       value: emp.designation || '',
-      placeholder: 'जस्तै: सेवा करार',
+      placeholder: 'कर्मचारीको प्रकार',
       getOptions: ()=>DESIG_OPTIONS,
       onChange: (val)=>{ emp.designation = val; }
     });
