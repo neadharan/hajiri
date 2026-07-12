@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<title>हाजिरी रिपोर्ट</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+
+  :root{
+    --navy:#0b3d5c;
+    --navy-dark:#082c42;
+    --gold:#c99b3d;
+    --paper:#fbfaf7;
+    --line:#d8d3c8;
+    --present:#2e7d4f;
+    --present-bg:#e2f3e8;
+    --kaaj:#b5670a;
+    --kaaj-bg:#fbe9d3;
+    --bida:#1d5b9e;
+    --bida-bg:#dceafb;
+    --empty-bg:#f1efe9;
+    --danger:#a5322a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Noto Sans Devanagari','Segoe UI',sans-serif;background:var(--paper);color:#2a2a28;}
+
+  header{
+    background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+    color:#fff;padding:14px 18px;display:flex;align-items:center;gap:14px;
+  }
+  .logo-circle{
+    flex:0 0 auto;width:54px;height:54px;border-radius:50%;
+    background:#fff;border:3px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .logo-circle svg{width:30px;height:30px;}
+  .header-text h1{margin:0 0 2px;font-size:18px;font-weight:700;line-height:1.25;}
+  .header-text p{margin:0;font-size:12px;opacity:.85;}
+  .app-badge{
+    display:inline-block;margin-top:4px;background:var(--gold);color:#3a2a06;
+    font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:2px 9px;border-radius:10px;
+  }
+
+  #errorBanner{
+    position:sticky;top:0;z-index:60;background:#fde8e6;border-bottom:2px solid var(--danger);
+    color:var(--danger);padding:10px 16px;font-size:12.5px;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  .hidden{display:none;}
+
+  .combo-wrap{position:relative;width:100%;}
+  .combo-list{
+    position:absolute;top:100%;left:0;min-width:160px;background:#fff;border:1px solid var(--line);
+    border-radius:0 0 8px 8px;max-height:170px;overflow-y:auto;z-index:30;
+    box-shadow:0 6px 16px rgba(0,0,0,.18);
+  }
+  .combo-list.hidden{display:none;}
+  .combo-list div{padding:7px 10px;font-size:12.5px;cursor:pointer;white-space:normal;text-align:left;}
+  .combo-list div:hover, .combo-list div:active{background:#eef4f8;}
+
+  .meta-bar{display:flex;flex-wrap:wrap;gap:10px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--line);}
+  .meta-field{display:flex;flex-direction:column;gap:2px;min-width:150px;}
+  .meta-field label{font-size:10.5px;color:#666;font-weight:600;}
+  .meta-field input{border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12.5px;font-family:inherit;}
+
+  .search-bar{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;
+    padding:12px 16px;background:#eef4f8;border-bottom:1px solid var(--line);
+  }
+  .search-bar h3{width:100%;margin:0;font-size:13px;color:var(--navy);}
+  #searchResults{
+    margin:0 16px 10px;display:flex;flex-direction:column;gap:6px;
+  }
+  .search-result-row{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12px;flex-wrap:wrap;
+  }
+  #searchMsg{font-size:11.5px;color:#555;padding:0 16px;}
+  #searchMsg.error{color:var(--danger);}
+
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;flex-wrap:wrap;}
+  .legend{display:flex;gap:8px;flex-wrap:wrap;font-size:11.5px;}
+  .legend span{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-weight:600;}
+  .dot-present{background:var(--present-bg);color:var(--present);}
+  .dot-kaaj{background:var(--kaaj-bg);color:var(--kaaj);}
+  .dot-bida{background:var(--bida-bg);color:var(--bida);}
+  .dot-empty{background:var(--empty-bg);color:#888;}
+
+  .btn{border:none;border-radius:7px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:hover{background:var(--navy-dark);}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:#333;}
+  .btn-ghost:hover{background:#f2efe6;}
+  .btn-accent{background:#3d6b8a;color:#fff;}
+  .btn-accent:hover{background:#2f556f;}
+  .btn-danger-mini{background:none;border:none;color:var(--danger);font-size:15px;cursor:pointer;font-weight:700;}
+  .btn-group{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn-small{padding:5px 10px;font-size:12px;}
+
+  .ot-panel{
+    margin:0 16px 14px;padding:12px 14px;background:#fff;border:1px dashed #b9c9d4;border-radius:10px;
+    display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;
+  }
+  .ot-panel h3{width:100%;margin:0 0 2px;font-size:13px;color:var(--navy);}
+  .ot-field{display:flex;flex-direction:column;gap:2px;}
+  .ot-field label{font-size:10.5px;color:#666;font-weight:600;}
+  .ot-field input, .ot-field select{
+    border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12.5px;font-family:inherit;min-width:110px;
+  }
+  #otPanelMsg{font-size:11.5px;color:var(--present);font-weight:600;}
+  #otPanelMsg.error{color:var(--danger);}
+
+  .hint{font-size:11px;color:#777;padding:0 16px 4px;}
+
+  .table-wrap{overflow:auto;margin:0 16px 20px;border:1px solid var(--line);border-radius:8px;max-height:70vh;}
+  table{border-collapse:separate;border-spacing:0;font-size:12px;min-width:100%;table-layout:fixed;}
+  th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:0;text-align:center;white-space:nowrap;}
+  thead th{background:var(--navy);color:#fff;padding:8px 6px;position:sticky;top:0;z-index:5;font-weight:600;}
+
+  .col-sn{width:32px;}
+  .col-name{width:190px;text-align:left;}
+  .col-desig{width:130px;text-align:left;}
+  .col-type{width:66px;font-size:10.5px;font-weight:700;color:#5a5a56;background:#f7f5ef;}
+  .col-day{width:58px;}
+  .col-total{width:56px;} /* day column जस्तै — विशेष रंग हटाइयो */
+  .col-del{width:34px;}
+
+  td.sticky-1, th.sticky-1{position:sticky;left:0;z-index:3;background:#fff;}
+  td.sticky-2, th.sticky-2{position:sticky;left:32px;z-index:3;background:#fff;}
+  td.sticky-3, th.sticky-3{position:sticky;left:222px;z-index:3;background:#f7f5ef;}
+  thead th.sticky-1, thead th.sticky-2, thead th.sticky-3{z-index:6;background:var(--navy);}
+
+  .name-input, .desig-input{width:100%;border:none;padding:8px 6px;font-family:inherit;font-size:12.5px;background:transparent;}
+  .name-input:focus, .desig-input:focus{background:#fffbe8;outline:none;}
+
+  .row-hajiri td{background:#fff;border-bottom:2px solid #000;}
+  .row-ot td{background:#fffdf6;border-bottom:2px solid #000;}
+
+  .status-btn{
+    width:100%;border:none;padding:8px 2px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
+    background:var(--empty-bg);color:#999;
+  }
+  .status-btn.st-present{background:var(--present-bg);color:var(--present);}
+  .status-btn.st-kaaj{background:var(--kaaj-bg);color:var(--kaaj);}
+  .status-btn.st-bida{background:var(--bida-bg);color:var(--bida);}
+
+  .ot-input{
+    width:100%;border:none;text-align:center;padding:6px 2px;font-size:11.5px;font-family:inherit;
+    color:#8a5300;background:#fffdf5;
+  }
+  .ot-input:focus{outline:none;background:#fff2cf;}
+  .ot-input::placeholder{color:#c9c2b0;}
+
+  /* जम्मा दिन / जम्मा OT — day column जस्तै साधारण text (कुनै विशेष रंग छैन) */
+  .total-val{padding:8px 4px;font-weight:700;color:#2a2a28;background:#fff;}
+
+  .bottom-bar{display:flex;justify-content:space-between;align-items:center;padding:0 16px 10px;flex-wrap:wrap;gap:10px;}
+  #statusMsg{font-size:12.5px;color:var(--present);font-weight:600;}
+  #statusMsg.error{color:var(--danger);}
+
+  .signature-block{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;padding:20px 16px 30px;font-size:13px;color:#333;}
+  .signature-block div{min-width:200px;}
+  .signature-block .line{margin-top:26px;border-top:1px solid #333;padding-top:4px;font-size:11px;color:#666;}
+
+  .print-only{display:none;}
+
+  @media print{
+    .toolbar, .ot-panel, .hint, #errorBanner, .bottom-bar, .search-bar, #searchResults, #searchMsg{display:none !important;}
+    .col-del{display:none;}
+    .print-only{display:block !important;}
+    .table-wrap{max-height:none !important;overflow:visible !important;border:2px solid #000 !important;}
+    table{border-collapse:collapse !important;}
+    th,td{border:1px solid #000 !important;}
+    thead th, td.sticky-1, td.sticky-2, td.sticky-3{position:static !important;}
+    body{background:#fff;}
+    .col-name{width:210px !important;}
+    .col-desig{width:140px !important;}
+    .name-input, .desig-input{border:none;background:none;color:#000;overflow:visible !important;text-overflow:clip !important;}
+    .combo-list{display:none !important;}
+    .status-btn, .ot-input, thead th, .col-type{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    header{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    @page{size:landscape;margin:8mm;}
+  }
+  .logo-circle{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+
+.logo-img{
+    width:100%;
+    height:100%;
+    object-fit:contain;   /* पूरा लोगो देखिन्छ */
+    /* यदि गोलो भाग पूरा भरिनुपर्छ भने object-fit:cover; प्रयोग गर्नुहोस् */
+}
+</style>
+</head>
+<body>
+
+<div id="errorBanner" class="hidden">
+  <span id="errorBannerText"></span>
+  </div>
+
+<header>
+  
+  <div class="logo-circle">
+  <img src="hajiri.png" alt="Hajiri Logo" class="logo-img">
+</div>
+  
+  <div class="header-text">    
+    <h1>नेपाल विद्युत प्राधिकरण — धरान वितरण केन्द्र </h1>
+    <p>हाजिरी फाराम</p>
+    <span class="app-badge">HAJIRI</span>
+  </div>
+</header>
+
+<div class="meta-bar">
+  <div class="meta-field">
+    <label>कार्यलयको नाम</label>
+    <div id="metaPlaceWrap"></div>
+  </div>
+  <div class="meta-field">
+    <label>कामको विवरण</label>
+    <div id="metaWorkWrap"></div>
+  </div>
+  <div class="meta-field">
+    <label>कार्यरत फाँट</label>
+    <div id="metaFaNoWrap"></div>
+  </div>
+</div>
+
+
+
+<div class="search-bar">
+    <div class="ot-field">
+    <label>मिति देखि</label>
+    <input id="searchFrom" placeholder="YYYY.MM.DD">
+  </div>
+  <div class="ot-field">
+    <label>मिति सम्म</label>
+    <input id="searchTo" placeholder="YYYY.MM.DD">
+  </div>
+  
+ </div>
+<div id="searchMsg"></div>
+<div id="searchResults"></div>
+
+<div class="toolbar">
+  <div class="legend">
+    <span class="dot-present">हा = हाजिर</span>
+    <span class="dot-kaaj">काज</span>
+    <span class="dot-bida">बिदा</span>
+    <span class="dot-empty">- = खाली</span>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-ghost" onclick="addEmployee()">+ कर्मचारी थप्नुहोस्</button>
+    <button class="btn btn-accent" onclick="updatePrintHeader(); window.print();">🖨️ Report / Print</button>
+  </div>
+</div>
+
+<div class="ot-panel">
+  <h3>OT घण्टा एकैचोटि थप्नुहोस् (कुनै कर्मचारीलाई निश्चित दिनहरूमा एउटै OT घण्टा राख्न)</h3>
+  <div class="ot-field">
+    <label>कर्मचारी</label>
+    <select id="otEmpSelect"></select>
+  </div>
+  <div class="ot-field">
+    <label>दिन देखि (१-<span id="maxDayLabel1">32</span>)</label>
+    <input id="otDayFrom" type="number" min="1" max="32" value="1">
+  </div>
+  <div class="ot-field">
+    <label>दिन सम्म (१-<span id="maxDayLabel2">32</span>)</label>
+    <input id="otDayTo" type="number" min="1" max="32" value="1">
+  </div>
+  <div class="ot-field">
+    <label>OT घण्टा</label>
+    <input id="otHoursValue" type="number" min="0" step="0.5" placeholder="जस्तै: 2 वा 5">
+  </div>
+  <button class="btn btn-primary" onclick="assignBulkOT()">थप्नुहोस्</button>
+  <span id="otPanelMsg"></span>
+</div>
+
+<p class="hint">दिनको हाजिरी लाइनमा क्लिक गर्दा स्थिति फेरिन्छ (- → हा → काज → बिदा)। OT लाइनमा घण्टा manual type गर्नुहोस्, वा माथिको OT panel बाट धेरै दिनलाई एकैचोटि थप्नुहोस्। नाम box मा क्लिक/type गर्दा सुझाव आउँछ।</p>
+
+<div class="print-only" id="printHeaderInfo" style="padding:0 16px 10px;font-size:14px;font-weight:700;"></div>
+
+<div class="table-wrap">
+  <table id="attTable">
+    <thead>
+      <tr id="headRow">
+        <th class="col-sn sticky-1">क्र.सं.</th>
+        <th class="col-name sticky-2">नाम थर</th>
+        <th class="col-desig">कामको विवरण</th>
+        <th class="col-type sticky-3">लाइन</th>
+        <!-- day headers injected by JS -->
+        <th class="col-total">जम्मा दिन</th>
+        <th class="col-total">जम्मा OT</th>
+        <th class="col-del"></th>
+      </tr>
+    </thead>
+    <tbody id="bodyRows"></tbody>
+  </table>
+</div>
+
+<div class="bottom-bar">
+  <span id="statusMsg"></span>
+  <div class="btn-group">
+    </div>
+</div>
+
+<div class="signature-block">
+  <div><div class="line">पेश गर्ने</div></div>
+  <div><div class="line">चेक गर्ने</div></div>
+  <div><div class="line">स्वीकृत गर्ने </div></div>
+  
+</div>
+
+<script>
+const STATUS_CYCLE = ["", "हा", "काज", "बिदा"];
+const STATUS_CLASS = {"":"", "हा":"st-present", "काज":"st-kaaj", "बिदा":"st-bida"};
+const PLACE_OPTIONS = ["धरान वितरण केन्द", ".........", ".........."];
+const WORK_OPTIONS = ["दैनिक ज्यालादारी", "करार", "बिशेष करार", "सेवा करार"];
+const DESIG_OPTIONS = ["सेवा करार", "करार", "विशेष करार", "दै.जा."];
+let TOTAL_DAY_COLS = 32;
+let employees = [];
+let masterNames = [];
+
+/** जुनसुकै फोन/ब्राउजरमा पनि पक्का देखिने custom dropdown + type गर्न मिल्ने combo box */
+function createComboInput(opts){
+  const wrap = document.createElement('div');
+  wrap.className = 'combo-wrap';
+  const input = document.createElement('input');
+  input.className = opts.className || '';
+  if (opts.id) input.id = opts.id;
+  input.placeholder = opts.placeholder || '';
+  input.value = opts.value || '';
+  input.autocomplete = 'off';
+  const list = document.createElement('div');
+  list.className = 'combo-list hidden';
+  wrap.appendChild(input);
+  wrap.appendChild(list);
+
+  function renderList(filterText){
+    const all = opts.getOptions() || [];
+    const ft = (filterText || '').toLowerCase();
+    const filtered = ft ? all.filter(o => o.toLowerCase().includes(ft)) : all;
+    list.innerHTML = '';
+    if (filtered.length === 0){ list.classList.add('hidden'); return; }
+    filtered.forEach(o=>{
+      const item = document.createElement('div');
+      item.textContent = o;
+      item.onmousedown = (e)=>{
+        e.preventDefault();
+        input.value = o;
+        if (opts.onChange) opts.onChange(o);
+        list.classList.add('hidden');
+      };
+      list.appendChild(item);
+    });
+    list.classList.remove('hidden');
+  }
+
+  input.oninput = (e)=>{
+    if (opts.onChange) opts.onChange(e.target.value);
+    renderList(e.target.value);
+  };
+  input.onfocus = ()=>renderList(input.value);
+  input.onblur = ()=>{ setTimeout(()=>list.classList.add('hidden'), 150); };
+
+  return wrap;
+}
+
+function getNameOptions(){
+  const seen = new Set();
+  const out = [];
+  masterNames.forEach(m=>{ if(m.name && !seen.has(m.name)){ seen.add(m.name); out.push(m.name); } });
+  employees.forEach(e=>{ if(e.name && !seen.has(e.name)){ seen.add(e.name); out.push(e.name); } });
+  return out;
+}
+
+const FANO_OPTIONS = ["मिटर रिडिङ्ग फाँट", "मर्मत  फाँट", "प्रशासन  फाँट", "लेखा  फाँट", "नो-लाईट फाँट", "सब-स्टेशन ", "ग्राहक सेवा फाँट"];
+
+function setupMetaCombos(){
+  document.getElementById('metaPlaceWrap').appendChild(createComboInput({
+    id:'metaPlace', placeholder:'वितरण केन्द्रकाे नाम चयन गर्नुहोस्', getOptions:()=>PLACE_OPTIONS
+  }));
+  document.getElementById('metaWorkWrap').appendChild(createComboInput({
+    id:'metaWork', placeholder:'कर्मचारीकाे किसिम चयन गर्नुहोस्', getOptions:()=>WORK_OPTIONS
+  }));
+  document.getElementById('metaFaNoWrap').appendChild(createComboInput({
+    id:'metaFaNo', placeholder:'फाँट चयन गर्नुहोस्', getOptions:()=>FANO_OPTIONS
+  }));
+}
+setupMetaCombos();
+
+function setConnStatus(msg, ok){
+  const el = document.getElementById('connStatus');
+  el.textContent = '🔌 जडान स्थिति: ' + msg;
+  el.style.color = ok === true ? '#2e7d4f' : (ok === false ? '#a5322a' : '#333');
+}
+
+function runTestConnection(){
+  setConnStatus('जाँच्दैछ...', null);
+  google.script.run
+    .withSuccessHandler(res=>{
+      if (res && res.success){
+        setConnStatus('✔ जोडियो — "' + res.spreadsheetName + '" (Tabs: ' + res.sheets.join(', ') + ') — Write: ' + (res.writeOk?'OK':'FAIL'), true);
+      } else {
+        setConnStatus('✘ असफल — ' + (res ? res.error : 'unknown'), false);
+        alert('जडान असफल भयो:\n' + (res ? res.error : 'unknown error') + '\n\nसमाधान: Apps Script editor मा testConnection function छानेर Run गर्नुहोस्, Authorize गर्नुहोस्, अनि यहाँ फेरि थिच्नुहोस्।');
+      }
+    })
+    .withFailureHandler(err=>{
+      setConnStatus('✘ Server त्रुटि — ' + (err.message||err), false);
+      alert('जडान जाँच्दा त्रुटि आयो:\n' + (err.message||err));
+    })
+    .testConnection();
+}
+
+const FALLBACK_NAMES = [
+"श्री यमन राई ", "श्री प्रमोद ओझा", "श्री उत्तम राई", "श्री केशव मल्ल",
+  "श्री हेमन्त राई", "श्री अम्बिका थापा", "श्री राजन श्रेष्ठ", "श्री विशाल राई","श्री सरोज नेपाल"
+  ,"श्री सुनिल मिरक डुम","श्री रित मरिक","श्री उर्मिला राई","श्री सरोज नेपाल","श्री शम्भु बि‍‍.क."
+  ,"श्री बिमन भुजेल","श्री मन्दिरा पाैडेल","श्री समिर कार्कि",
+  "श्री पदम राई","श्री प्रशुराम खवाश","श्री  सुर्य बहादुर पाैडेल","श्री सिवन राई",
+  "श्री निर कुमार राई","श्री निलहरि अधिकारी","श्री कमलेश कुमार मन्डल",
+  "श्री दावा तामाङ्ग","श्री बिर्ख बहादुर राई","श्री राजेश यादव"
+];
+
+function buildDefaultEmployees(){
+  return FALLBACK_NAMES.map(n => emptyEmployee(n));
+}
+
+function init(){
+  buildDayHeaders();
+  masterNames = FALLBACK_NAMES.map(n => ({name:n, designation:"दै.जा."}));
+  // पेज तुरुन्तै देखाउने — डिफल्ट नामहरुसहित, कुनै loading msg नदेखाई
+  employees = buildDefaultEmployees();
+  renderRows();
+  // त्यसपछि पृष्ठभूमिमा गुपचुप वास्तविक डाटा तान्ने (पहिले साभ भएको भए त्यसले replace हुन्छ)
+  google.script.run.withSuccessHandler(onDataLoaded).withFailureHandler(onLoadError).getData();
+}
+
+function buildDayHeaders(){
+  const headRow = document.getElementById('headRow');
+  document.querySelectorAll('.day-head').forEach(el=>el.remove());
+  const totalCells = headRow.querySelectorAll('.col-total');
+  for(let d=1; d<=TOTAL_DAY_COLS; d++){
+    const th = document.createElement('th');
+    th.className = 'col-day day-head';
+    th.textContent = d;
+    headRow.insertBefore(th, totalCells[0]);
+  }
+  document.getElementById('maxDayLabel1').textContent = TOTAL_DAY_COLS;
+  document.getElementById('maxDayLabel2').textContent = TOTAL_DAY_COLS;
+  document.getElementById('otDayFrom').max = TOTAL_DAY_COLS;
+  document.getElementById('otDayTo').max = TOTAL_DAY_COLS;
+}
+
+function onLoadError(err){
+  const banner = document.getElementById('errorBanner');
+  banner.classList.remove('hidden');
+  document.getElementById('errorBannerText').textContent = '⚠️ ' + (err.message || err) + ' — तल देखिएको डाटा Sample हो, Sheet बाट लोड भएको होइन।';
+  setConnStatus('✘ Sheet बाट लोड हुन सकेन — तल Sample डाटा देखाइँदैछ', false);
+}
+
+function applyRecord(data){
+  TOTAL_DAY_COLS = data.totalDayCols || 32;
+  const meta = data.meta || {};
+  document.getElementById('metaPlace').value = meta.place || '';
+  document.getElementById('metaWork').value = meta.work || '';
+  document.getElementById('metaFaNo').value = meta.faNo || '';
+  document.getElementById('searchFrom').value = meta.dateFrom || '';
+  document.getElementById('searchTo').value = meta.dateTo || '';
+
+  const serverNames = data.masterNames || [];
+  const merged = [...serverNames];
+  const seen = new Set(merged.map(m=>m.name));
+  FALLBACK_NAMES.forEach(n=>{ if(!seen.has(n)){ merged.push({name:n, designation:"दै.जा."}); seen.add(n); } });
+  masterNames = merged;
+
+  employees = data.employees && data.employees.length ? data.employees : buildDefaultEmployees();
+  employees.forEach(e=>{
+    while(e.days.length < TOTAL_DAY_COLS) e.days.push({status:"", ot:0});
+  });
+  renderRows();
+  updatePrintHeader();
+}
+
+function onDataLoaded(data){
+  document.getElementById('errorBanner').classList.add('hidden');
+  if (data && data.success === false) {
+    onLoadError({message: data.error});
+    return;
+  }
+  applyRecord(data);
+  if (data.employees && data.employees.length > 0){
+    setConnStatus('✔ Sheet बाट वास्तविक डाटा लोड भयो', true);
+  } else {
+    setConnStatus('✔ Sheet जोडियो (अझै कुनै Save भएको डाटा छैन — तल Sample नाम देखाइँदैछ)', true);
+  }
+}
+
+function emptyEmployee(name){
+  const days = [];
+  for(let d=0; d<TOTAL_DAY_COLS; d++) days.push({status:"", ot:0});
+  return {name: name || "", designation:"दै.जा.", days: days};
+}
+
+function addEmployee(){
+  employees.push(emptyEmployee());
+  renderRows();
+}
+
+function deleteEmployee(idx){
+  if(!confirm('यो कर्मचारीको लाइन हटाउने हो?')) return;
+  employees.splice(idx,1);
+  renderRows();
+}
+
+function computeTotals(emp){
+  let totalDays = 0, totalOT = 0;
+  emp.days.forEach(d=>{
+    if(d.status === 'हा') totalDays += 1;
+    totalOT += Number(d.ot) || 0;
+  });
+  emp.totalDays = totalDays;
+  emp.totalOT = totalOT;
+  return emp;
+}
+
+function refreshOtEmployeeSelect(){
+  const sel = document.getElementById('otEmpSelect');
+  const prevVal = sel.value;
+  sel.innerHTML = '';
+  employees.forEach((e, idx)=>{
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = e.name && e.name.trim() ? e.name : ('(खाली लाइन ' + (idx+1) + ')');
+    sel.appendChild(opt);
+  });
+  if(prevVal !== '' && sel.querySelector('option[value="'+prevVal+'"]')){
+    sel.value = prevVal;
+  }
+}
+
+function assignBulkOT(){
+  const idx = Number(document.getElementById('otEmpSelect').value);
+  const from = Number(document.getElementById('otDayFrom').value);
+  const to = Number(document.getElementById('otDayTo').value);
+  const otVal = Number(document.getElementById('otHoursValue').value);
+  const msgEl = document.getElementById('otPanelMsg');
+
+  if (isNaN(idx) || !employees[idx]) { msgEl.className='error'; msgEl.textContent='कर्मचारी छान्नुहोस्।'; return; }
+  if (!from || !to || from < 1 || to > TOTAL_DAY_COLS || from > to) { msgEl.className='error'; msgEl.textContent='दिन देखि/सम्म मिलेन।'; return; }
+  if (isNaN(otVal) || otVal < 0) { msgEl.className='error'; msgEl.textContent='OT घण्टा राख्नुहोस्।'; return; }
+
+  const emp = employees[idx];
+  for(let d = from-1; d <= to-1; d++){
+    emp.days[d].ot = otVal;
+  }
+  renderRows();
+  msgEl.className='';
+  msgEl.textContent = '✔ ' + (emp.name||'यो कर्मचारी') + ' लाई दिन ' + from + ' देखि ' + to + ' सम्म ' + otVal + ' घण्टा OT थपियो।';
+}
+
+function renderRows(){
+  refreshOtEmployeeSelect();
+  const body = document.getElementById('bodyRows');
+  body.innerHTML = '';
+
+  employees.forEach((emp, idx)=>{
+    computeTotals(emp);
+
+    const trA = document.createElement('tr');
+    trA.className = 'row-hajiri';
+
+    const snTd = document.createElement('td');
+    snTd.className = 'col-sn sticky-1';
+    snTd.rowSpan = 2;
+    snTd.textContent = idx+1;
+    trA.appendChild(snTd);
+
+    const nameTd = document.createElement('td');
+    nameTd.className = 'col-name sticky-2';
+    nameTd.rowSpan = 2;
+    const nameCombo = createComboInput({
+      className: 'name-input',
+      value: emp.name,
+      placeholder: 'श्री ...... (type/select)',
+      getOptions: ()=>getNameOptions(),
+      onChange: (val)=>{ emp.name = val; refreshOtEmployeeSelect(); }
+    });
+    nameTd.appendChild(nameCombo);
+    trA.appendChild(nameTd);
+
+    const desigTd = document.createElement('td');
+    desigTd.className = 'col-desig';
+    desigTd.rowSpan = 2;
+    const desigCombo = createComboInput({
+      className: 'desig-input',
+      value: emp.designation || '',
+      placeholder: 'जस्तै: सेवा करार',
+      getOptions: ()=>DESIG_OPTIONS,
+      onChange: (val)=>{ emp.designation = val; }
+    });
+    desigTd.appendChild(desigCombo);
+    trA.appendChild(desigTd);
+
+    const typeTdA = document.createElement('td');
+    typeTdA.className = 'col-type sticky-3';
+    typeTdA.textContent = 'हाजिरी';
+    trA.appendChild(typeTdA);
+
+    for(let d=0; d<TOTAL_DAY_COLS; d++){
+      const dayTd = document.createElement('td');
+      dayTd.className = 'col-day';
+      const statusBtn = document.createElement('button');
+      statusBtn.className = 'status-btn ' + STATUS_CLASS[emp.days[d].status || ""];
+      statusBtn.textContent = emp.days[d].status || '-';
+      statusBtn.onclick = ()=>{
+        const cur = STATUS_CYCLE.indexOf(emp.days[d].status || "");
+        const next = STATUS_CYCLE[(cur+1) % STATUS_CYCLE.length];
+        emp.days[d].status = next;
+        statusBtn.textContent = next || '-';
+        statusBtn.className = 'status-btn ' + STATUS_CLASS[next];
+        updateTotalsCells(idx);
+      };
+      dayTd.appendChild(statusBtn);
+      trA.appendChild(dayTd);
+    }
+
+    trA.appendChild(makeRowspanTotalTd('td-days-'+idx, emp.totalDays));
+    trA.appendChild(makeRowspanTotalTd('td-ot-'+idx, emp.totalOT));
+
+    const delTd = document.createElement('td');
+    delTd.className = 'col-del';
+    delTd.rowSpan = 2;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-danger-mini';
+    delBtn.textContent = '✕';
+    delBtn.title = 'यो कर्मचारी हटाउनुहोस्';
+    delBtn.onclick = ()=>deleteEmployee(idx);
+    delTd.appendChild(delBtn);
+    trA.appendChild(delTd);
+
+    body.appendChild(trA);
+
+    const trB = document.createElement('tr');
+    trB.className = 'row-ot';
+
+    const typeTdB = document.createElement('td');
+    typeTdB.className = 'col-type sticky-3';
+    typeTdB.textContent = 'OT';
+    trB.appendChild(typeTdB);
+
+    for(let d=0; d<TOTAL_DAY_COLS; d++){
+      const otTd = document.createElement('td');
+      otTd.className = 'col-day';
+      const otInput = document.createElement('input');
+      otInput.className = 'ot-input';
+      otInput.type = 'number';
+      otInput.min = '0';
+      otInput.step = '0.5';
+      otInput.placeholder = '0';
+      otInput.value = emp.days[d].ot ? emp.days[d].ot : '';
+      otInput.id = 'ot-'+idx+'-'+d;
+      otInput.oninput = (e)=>{
+        emp.days[d].ot = Number(e.target.value) || 0;
+        updateTotalsCells(idx);
+      };
+      otTd.appendChild(otInput);
+      trB.appendChild(otTd);
+    }
+
+    body.appendChild(trB);
+  });
+}
+
+function makeRowspanTotalTd(id, val){
+  const td = document.createElement('td');
+  td.className = 'col-total total-val';
+  td.rowSpan = 2;
+  td.id = id;
+  td.textContent = val;
+  return td;
+}
+
+function updateTotalsCells(idx){
+  const emp = employees[idx];
+  computeTotals(emp);
+  document.getElementById('td-days-'+idx).textContent = emp.totalDays;
+  document.getElementById('td-ot-'+idx).textContent = emp.totalOT;
+  for(let d=0; d<TOTAL_DAY_COLS; d++){
+    const el = document.getElementById('ot-'+idx+'-'+d);
+    if(el) el.value = emp.days[d].ot ? emp.days[d].ot : '';
+  }
+}
+
+function updatePrintHeader(){
+  const from = document.getElementById('searchFrom').value || '?';
+  const to = document.getElementById('searchTo').value || '?';
+  const place = document.getElementById('metaPlace').value || '';
+  const work = document.getElementById('metaWork').value || '';
+  document.getElementById('printHeaderInfo').textContent =
+    'मिति ' + from + ' देखि ' + to + ' सम्मको हाजिरी र OT ' + (place ? '  —  ' + place : '') + (work ? '  —  ' + work : '');
+}
+window.addEventListener('beforeprint', updatePrintHeader);
+document.getElementById('searchFrom').addEventListener('input', updatePrintHeader);
+document.getElementById('searchTo').addEventListener('input', updatePrintHeader);
+
+function loadData(){
+  init();
+}
+
+function saveData(){
+  setStatus('सुरक्षित गर्दै...', false);
+  const payload = {
+    meta: {
+      place: document.getElementById('metaPlace').value,
+      work: document.getElementById('metaWork').value,
+      faNo: document.getElementById('metaFaNo').value,
+      dateFrom: document.getElementById('searchFrom').value,
+      dateTo: document.getElementById('searchTo').value
+    },
+    employees: employees.filter(e=>e.name && e.name.trim() !== '')
+  };
+
+  let responded = false;
+  const saveTimeoutId = setTimeout(function(){
+    if (!responded){
+      setStatus('⚠️ Sheet बाट १५ सेकेन्डसम्म जवाफ आएन।', true);
+      alert('Save ले जवाफ पाएन। सम्भावित कारण:\n1) Apps Script Editor मा testConnection function पहिलो पटक Run गरेर Authorize गर्नु भएको छैन।\n2) Code.gs बदलेपछि Deploy > Manage deployments > New version गरिएको छैन।\n\nयी दुई गरेपछि फेरि Save थिच्नुहोस्।');
+    }
+  }, 15000);
+
+  google.script.run
+    .withSuccessHandler(res=>{
+      responded = true;
+      clearTimeout(saveTimeoutId);
+      if (res && res.success === false) {
+        setStatus('त्रुटि: ' + res.error, true);
+        alert('Save असफल भयो:\n' + res.error);
+        return;
+      }
+      setStatus('✔ सुरक्षित भयो (' + res.savedCount + ' कर्मचारी) — Google Sheet को "History" ट्याबमा हेर्नुहोस् (ट्याब पहिले नै खुलेको भए त्यो पेज Refresh गर्नुहोस्)।', false);
+      setConnStatus('✔ भर्खरै सुरक्षित भयो', true);
+    })
+    .withFailureHandler(err=>{
+      responded = true;
+      clearTimeout(saveTimeoutId);
+      setStatus('त्रुटि: ' + (err.message||err), true);
+      alert('Save असफल भयो (server त्रुटि):\n' + (err.message||err));
+    })
+    .saveData(payload);
+}
+
+function setStatus(msg, isError){
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = isError ? 'error' : '';
+}
+
+// -------------------- Search saved periods --------------------
+
+function doSearch(){
+  const from = document.getElementById('searchFrom').value;
+  const to = document.getElementById('searchTo').value;
+  setSearchMsg('खोज्दैछ...', false);
+  google.script.run
+    .withSuccessHandler(res=>renderSearchResults(res))
+    .withFailureHandler(err=>setSearchMsg('त्रुटि: '+(err.message||err), true))
+    .searchHistory(from, to);
+}
+
+function showAllHistory(){
+  document.getElementById('searchFrom').value = '';
+  document.getElementById('searchTo').value = '';
+  doSearch();
+}
+
+function renderSearchResults(res){
+  const box = document.getElementById('searchResults');
+  box.innerHTML = '';
+  if (!res || res.success === false){
+    setSearchMsg('त्रुटि: ' + (res ? res.error : 'unknown'), true);
+    return;
+  }
+  if (res.results.length === 0){
+    setSearchMsg('कुनै मिलेको अवधि भेटिएन।', false);
+    return;
+  }
+  setSearchMsg(res.results.length + ' अवधि भेटियो:', false);
+  res.results.forEach(r=>{
+    const row = document.createElement('div');
+    row.className = 'search-result-row';
+    row.innerHTML = '<span><b>' + (r.dateFrom||'?') + '</b> देखि <b>' + (r.dateTo||'?') + '</b> सम्म'
+      + (r.place ? ' — ' + r.place : '') + '</span>';
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-primary btn-small';
+    btn.textContent = 'लोड गर्नुहोस्';
+    btn.onclick = ()=>loadPeriod(r.periodKey);
+    row.appendChild(btn);
+    box.appendChild(row);
+  });
+}
+
+function loadPeriod(periodKey){
+  setSearchMsg('लोड गर्दैछ...', false);
+  google.script.run
+    .withSuccessHandler(data=>{
+      if (data && data.success === false){ setSearchMsg('त्रुटि: '+data.error, true); return; }
+      applyRecord(data);
+      setSearchMsg('✔ यो अवधि लोड भयो। अब "Save" थिच्दा यसैमा अपडेट हुन्छ।', false);
+    })
+    .withFailureHandler(err=>setSearchMsg('त्रुटि: '+(err.message||err), true))
+    .loadHistoryRecord(periodKey);
+}
+
+function setSearchMsg(msg, isError){
+  const el = document.getElementById('searchMsg');
+  el.textContent = msg;
+  el.className = isError ? 'error' : '';
+}
+
+init();
+</script>
+</body>
+</html>
