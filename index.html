@@ -158,14 +158,13 @@
   .ot-input:focus{outline:none;background:#fff2cf;}
   .ot-input::placeholder{color:#c9c2b0;}
 
-  /* जम्मा दिन / जम्मा OT — day column जस्तै साधारण text (कुनै विशेष रंग छैन) */
   .total-val{padding:8px 4px;font-weight:700;color:#2a2a28;background:#fff;}
 
   .bottom-bar{display:flex;justify-content:space-between;align-items:center;padding:0 16px 10px;flex-wrap:wrap;gap:10px;}
   #statusMsg{font-size:12.5px;color:var(--present);font-weight:600;}
   #statusMsg.error{color:var(--danger);}
 
-  .signature-block{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;padding:20px 16px 30px;font-size:13px;color:#333;}
+  .signature-block{display:none;justify-content:space-between;flex-wrap:wrap;gap:20px;padding:20px 16px 30px;font-size:13px;color:#333;}
   .signature-block div{min-width:200px;}
   .signature-block .line{
     margin-top:26px;
@@ -179,9 +178,10 @@
   .print-only{display:none;}
 
   @media print{
-    .toolbar, .ot-panel, .hint, #errorBanner, .bottom-bar, .search-bar, #searchResults, #searchMsg{display:none !important;}
+    .toolbar, .ot-panel, .hint, #errorBanner, .bottom-bar, .search-bar, #searchResults, #searchMsg, .meta-bar{display:none !important;}
     .col-del{display:none;}
     .print-only{display:block !important;}
+    .signature-block{display:flex !important;}
     .table-wrap{max-height:none !important;overflow:visible !important;border:2px solid #000 !important;}
     table{border-collapse:collapse !important;}
     th,td{border:1px solid #000 !important;}
@@ -192,10 +192,26 @@
     .name-input, .desig-input{border:none;background:none;color:#000;overflow:visible !important;text-overflow:clip !important;}
     .combo-list{display:none !important;}
     .status-btn, .ot-input, thead th, .col-type{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    header{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    @page{size:landscape;margin:8mm;}
 
-    /* ===== Print गर्दा मात्र गाढा कालो ===== */
+    header{
+      background:none !important;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;
+      color:#000 !important;
+      border-bottom:2px solid #000;
+      position:relative;
+      display:block !important;
+      padding:6px 10px 10px !important;
+      min-height:70px;
+    }
+    header .logo-circle{
+      position:absolute;left:0;top:0;
+      border-color:#000;
+    }
+    header .header-text{
+      text-align:center;width:100%;
+    }
+    header .header-text h1, header .header-text p{color:#000 !important;}
+    header .app-badge{background:none !important;color:#000 !important;border:1px solid #000;}
 
 .name-input,
 .desig-input,
@@ -209,7 +225,6 @@ tbody td{
     opacity:1 !important;
 }
 
-/* Input box हरू प्रिन्टमा मात्र सफा देखाउने */
 .name-input,
 .desig-input,
 .ot-input{
@@ -217,12 +232,12 @@ tbody td{
     border:none !important;
 }
 
-/* Table border गाढा */
 table,
 th,
 td{
     border:1.5px solid #000 !important;
 }
+    @page{size:landscape;margin:8mm;}
   }
   .logo-circle{
     width:70px;
@@ -239,8 +254,7 @@ td{
 .logo-img{
     width:100%;
     height:100%;
-    object-fit:contain;   /* पूरा लोगो देखिन्छ */
-    /* यदि गोलो भाग पूरा भरिनुपर्छ भने object-fit:cover; प्रयोग गर्नुहोस् */
+    object-fit:contain;
 }
 </style>
 </head>
@@ -331,7 +345,8 @@ td{
 
 <p class="hint">दिनको हाजिरी लाइनमा क्लिक गर्दा स्थिति फेरिन्छ (- → हा → काज → बिदा)। OT लाइनमा घण्टा manual type गर्नुहोस्, वा माथिको OT panel बाट धेरै दिनलाई एकैचोटि थप्नुहोस्। नाम box मा क्लिक/type गर्दा सुझाव आउँछ।</p>
 
-<div class="print-only" id="printHeaderInfo" style="padding:0 16px 10px;font-size:14px;font-weight:700;"></div>
+<div class="print-only" id="printHeaderInfo" style="padding:0 16px 4px;font-size:14px;font-weight:700;text-align:center;"></div>
+<div class="print-only" id="printMetaInfo" style="padding:0 16px 10px;font-size:12.5px;font-weight:600;text-align:center;"></div>
 
 <div class="table-wrap">
   <table id="attTable">
@@ -374,7 +389,6 @@ let TOTAL_DAY_COLS = 32;
 let employees = [];
 let masterNames = [];
 
-/** जुनसुकै फोन/ब्राउजरमा पनि पक्का देखिने custom dropdown + type गर्न मिल्ने combo box */
 function createComboInput(opts){
 
   const wrap = document.createElement('div');
@@ -508,6 +522,7 @@ setupMetaCombos();
 
 function setConnStatus(msg, ok){
   const el = document.getElementById('connStatus');
+  if(!el) return;
   el.textContent = '🔌 जडान स्थिति: ' + msg;
   el.style.color = ok === true ? '#2e7d4f' : (ok === false ? '#a5322a' : '#333');
 }
@@ -550,10 +565,8 @@ function buildDefaultEmployees(){
 function init(){
   buildDayHeaders();
   masterNames = FALLBACK_NAMES.map(n => ({name:n, designation:"दै.जा."}));
-  // पेज तुरुन्तै देखाउने — डिफल्ट नामहरुसहित, कुनै loading msg नदेखाई
   employees = buildDefaultEmployees();
   renderRows();
-  // त्यसपछि पृष्ठभूमिमा गुपचुप वास्तविक डाटा तान्ने (पहिले साभ भएको भए त्यसले replace हुन्छ)
   google.script.run.withSuccessHandler(onDataLoaded).withFailureHandler(onLoadError).getData();
 }
 
@@ -828,8 +841,16 @@ function updatePrintHeader(){
   const to = document.getElementById('searchTo').value || '?';
   const place = document.getElementById('metaPlace').value || '';
   const work = document.getElementById('metaWork').value || '';
+  const fano = document.getElementById('metaFaNo').value || '';
+
   document.getElementById('printHeaderInfo').textContent =
-    'मिति ' + from + ' देखि ' + to + ' सम्मको हाजिरी र OT ' + (place ? '  —  ' + place : '') + (work ? '  —  ' + work : '');
+    'मिति ' + from + ' देखि ' + to + ' सम्मको हाजिरी र OT';
+
+  const parts = [];
+  if (place) parts.push('कार्यलयको नाम:- ' + place);
+  if (work) parts.push('कामको विवरण:- ' + work);
+  if (fano) parts.push('कार्यरत फाँट:- ' + fano);
+  document.getElementById('printMetaInfo').textContent = parts.join('     ');
 }
 window.addEventListener('beforeprint', updatePrintHeader);
 document.getElementById('searchFrom').addEventListener('input', updatePrintHeader);
@@ -886,8 +907,6 @@ function setStatus(msg, isError){
   el.textContent = msg;
   el.className = isError ? 'error' : '';
 }
-
-// -------------------- Search saved periods --------------------
 
 function doSearch(){
   const from = document.getElementById('searchFrom').value;
