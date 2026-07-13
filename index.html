@@ -8,7 +8,7 @@
 
   :root{
     --navy:#281f9c;
-    --navy-dark:#100a6d;
+    --navy-dark:#120a81;
     --gold:#c99b3d;
     --paper:#fbfaf7;
     --line:#d8d3c8;
@@ -16,7 +16,7 @@
     --present-bg:#e2f3e8;
     --kaaj:#b5670a;
     --kaaj-bg:#fbe9d3;
-    --bida:#1d5b9e;
+    --bida:#0b9c2a;
     --bida-bg:#dceafb;
     --empty-bg:#f1efe9;
     --danger:#a5322a;
@@ -95,9 +95,9 @@
   .btn-primary{background:var(--navy);color:#fff;}
   .btn-primary:hover{background:var(--navy-dark);}
   .btn-ghost{background:#fff;border:1px solid var(--line);color:#333;}
-  .btn-ghost:hover{background:#f2efe6;}
+  .btn-ghost:hover{background:#0fd63a;}
   .btn-accent{background:#3d6b8a;color:#fff;}
-  .btn-accent:hover{background:#2f556f;}
+  .btn-accent:hover{background:#038a03;}
   .btn-danger-mini{background:none;border:none;color:var(--danger);font-size:15px;cursor:pointer;font-weight:700;}
   .btn-group{display:flex;gap:8px;flex-wrap:wrap;}
   .btn-small{padding:5px 10px;font-size:12px;}
@@ -340,7 +340,22 @@ td{
     <label>OT घण्टा</label>
     <input id="otHoursValue" type="number" min="0" step="0.5" placeholder="जस्तै: 2 वा 5">
   </div>
-  <button class="btn btn-primary" onclick="assignBulkOT()">थप्नुहोस्</button>
+  <div class="ot-field">
+<label>हाजिरी</label>
+<select id="bulkStatus">
+<option value="">स्थिति चयन गर्नुहोस्</option>
+<option value="हा">हा</option>
+<option value="काज">काज</option>
+<option value="बिदा">बिदा</option>
+<option value="">खाली</option>
+</select>
+</div>
+
+<button class="btn btn-primary"
+onclick="assignBulkStatus()">
+हाजिरी थप्नुहोस्
+</button>
+  <button class="btn btn-primary" onclick="assignBulkOT()">OT थप्नुहोस्</button>
   <span id="otPanelMsg"></span>
 </div>
 
@@ -655,7 +670,9 @@ function deleteEmployee(idx){
 function computeTotals(emp){
   let totalDays = 0, totalOT = 0;
   emp.days.forEach(d=>{
-    if(d.status === 'हा') totalDays += 1;
+    if (d.status === 'हा' || d.status === 'काज') {
+    totalDays += 1;
+}
     totalOT += Number(d.ot) || 0;
   });
   emp.totalDays = totalDays;
@@ -851,7 +868,22 @@ function updatePrintHeader(){
   if (place) parts.push('कार्यलयको नाम:- ' + place);
   if (work) parts.push('कामको विवरण:- ' + work);
   if (fano) parts.push('कार्यरत फाँट:- ' + fano);
-  document.getElementById('printMetaInfo').textContent = parts.join('     ');
+  document.getElementById('printMetaInfo').innerHTML =
+`
+<div style="
+display:flex;
+justify-content:center;
+align-items:center;
+gap:180px;
+font-size:15px;
+font-weight:700;
+width:100%;
+">
+<span>कार्यलयको नाम :- ${place}</span>
+<span>कामको विवरण :- ${work}</span>
+<span>कार्यरत फाँट :- ${fano}</span>
+</div>
+`;
 }
 window.addEventListener('beforeprint', updatePrintHeader);
 document.getElementById('searchFrom').addEventListener('input', updatePrintHeader);
@@ -961,6 +993,27 @@ function loadPeriod(periodKey){
     })
     .withFailureHandler(err=>setSearchMsg('त्रुटि: '+(err.message||err), true))
     .loadHistoryRecord(periodKey);
+}
+function assignBulkStatus(){
+
+const idx=Number(document.getElementById("otEmpSelect").value);
+
+const from=Number(document.getElementById("otDayFrom").value);
+
+const to=Number(document.getElementById("otDayTo").value);
+
+const status=document.getElementById("bulkStatus").value;
+
+if(isNaN(idx)||!employees[idx]) return;
+
+for(let d=from-1;d<=to-1;d++){
+
+employees[idx].days[d].status=status;
+
+}
+
+renderRows();
+
 }
 
 function setSearchMsg(msg, isError){
