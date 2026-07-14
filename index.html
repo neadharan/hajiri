@@ -68,6 +68,27 @@
 }
   .meta-field input{border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12.5px;font-family:inherit;}
 
+  .date-input-wrap{display:flex;gap:4px;align-items:stretch;}
+  .date-input-wrap input{flex:1;min-width:0;}
+  .cal-btn{
+    border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer;
+    font-size:14px;padding:0 8px;
+  }
+  .cal-btn:hover{background:#eef4f8;}
+
+  #nepaliCalPopup{
+    position:absolute;z-index:999999;background:#fff;border:1px solid var(--line);
+    border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);padding:12px;
+    display:none;min-width:220px;
+  }
+  #nepaliCalPopup.show{display:block;}
+  #nepaliCalPopup h4{margin:0 0 8px;font-size:12.5px;color:var(--navy);}
+  #nepaliCalPopup .cal-row{display:flex;gap:6px;margin-bottom:8px;}
+  #nepaliCalPopup select{
+    flex:1;border:1px solid var(--line);border-radius:6px;padding:6px 4px;font-size:12.5px;font-family:inherit;
+  }
+  #nepaliCalPopup .cal-actions{display:flex;gap:8px;justify-content:flex-end;}
+
   .search-bar{
     display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;
     padding:12px 16px;background:#eef4f8;border-bottom:1px solid var(--line);
@@ -130,7 +151,7 @@
   .col-name{width:190px;text-align:left;}
   .col-desig{width:130px;text-align:left;}
   .col-day{width:58px;}
-  .col-total{width:56px;} /* day column जस्तै — विशेष रंग हटाइयो */
+  .col-total{width:56px;}
   .col-del{width:34px;}
 
   td.sticky-1, th.sticky-1{position:sticky;left:0;z-index:3;background:#fff;}
@@ -298,11 +319,17 @@ td{
 <div class="search-bar">
     <div class="ot-field">
     <label>मिति देखि</label>
-    <input id="searchFrom" placeholder="YYYY.MM.DD">
+    <div class="date-input-wrap">
+      <input id="searchFrom" placeholder="२०८३.०३.०१">
+      <button type="button" class="cal-btn" onclick="openNepaliCalendar('searchFrom')">📅</button>
+    </div>
   </div>
   <div class="ot-field">
     <label>मिति सम्म</label>
-    <input id="searchTo" placeholder="YYYY.MM.DD">
+    <div class="date-input-wrap">
+      <input id="searchTo" placeholder="२०८३.०३.२५">
+      <button type="button" class="cal-btn" onclick="openNepaliCalendar('searchTo')">📅</button>
+    </div>
   </div>
   
  </div>
@@ -318,7 +345,7 @@ td{
   </div>
   <div class="btn-group">
     <button class="btn btn-ghost" onclick="addEmployee()">+ कर्मचारी थप्नुहोस्</button>
-    <button class="btn btn-accent" onclick="updatePrintHeader(); window.print();">🖨️Print</button>
+    <button class="btn btn-accent" onclick="handlePrintClick()">🖨️Print</button>
   </div>
 </div>
 
@@ -395,6 +422,19 @@ onclick="assignBulkStatus()">
   
 </div>
 
+<div id="nepaliCalPopup">
+  <h4>बि.स. मिति छान्नुहोस्</h4>
+  <div class="cal-row">
+    <select id="calYear"></select>
+    <select id="calMonth"></select>
+    <select id="calDay"></select>
+  </div>
+  <div class="cal-actions">
+    <button type="button" class="btn btn-ghost btn-small" onclick="closeNepaliCalendar()">रद्द</button>
+    <button type="button" class="btn btn-primary btn-small" onclick="confirmNepaliCalendar()">ठीक छ</button>
+  </div>
+</div>
+
 <script>
 const STATUS_CYCLE = ["", "हा", "काज", "बिदा"];
 const STATUS_CLASS = {"":"", "हा":"st-present", "काज":"st-kaaj", "बिदा":"st-bida"};
@@ -404,6 +444,82 @@ const DESIG_OPTIONS = ["दै.जा.", "करार", "विशेष कर
 let TOTAL_DAY_COLS = 32;
 let employees = [];
 let masterNames = [];
+
+// -------------------- नेपाली (बि.स.) क्यालेन्डर पिकर --------------------
+const NEPALI_MONTHS = ["बैशाख","जेठ","असार","श्रावण","भदौ","असोज","कार्तिक","मंसिर","पुष","माघ","फागुन","चैत्र"];
+let calTargetInputId = null;
+
+function toDevanagariDigits(str){
+  const map = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+  return String(str).split('').map(ch => map[ch] !== undefined ? map[ch] : ch).join('');
+}
+
+function populateNepaliCalSelects(){
+  const yearSel = document.getElementById('calYear');
+  const monthSel = document.getElementById('calMonth');
+  const daySel = document.getElementById('calDay');
+
+  if (yearSel.options.length === 0){
+    for(let y = 2075; y <= 2095; y++){
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = toDevanagariDigits(y);
+      yearSel.appendChild(opt);
+    }
+    yearSel.value = 2083;
+  }
+  if (monthSel.options.length === 0){
+    NEPALI_MONTHS.forEach((m, i)=>{
+      const opt = document.createElement('option');
+      opt.value = i+1;
+      opt.textContent = m;
+      monthSel.appendChild(opt);
+    });
+  }
+  if (daySel.options.length === 0){
+    for(let d = 1; d <= 32; d++){
+      const opt = document.createElement('option');
+      opt.value = d;
+      opt.textContent = toDevanagariDigits(d);
+      daySel.appendChild(opt);
+    }
+  }
+}
+
+function openNepaliCalendar(inputId){
+  populateNepaliCalSelects();
+  calTargetInputId = inputId;
+  const btn = event.target;
+  const popup = document.getElementById('nepaliCalPopup');
+  const r = btn.getBoundingClientRect();
+  popup.style.left = (r.left + window.scrollX) + 'px';
+  popup.style.top = (r.bottom + window.scrollY + 4) + 'px';
+  popup.classList.add('show');
+}
+
+function closeNepaliCalendar(){
+  document.getElementById('nepaliCalPopup').classList.remove('show');
+  calTargetInputId = null;
+}
+
+function confirmNepaliCalendar(){
+  if (!calTargetInputId) return;
+  const y = document.getElementById('calYear').value;
+  const m = document.getElementById('calMonth').value.toString().padStart(2,'0');
+  const d = document.getElementById('calDay').value.toString().padStart(2,'0');
+  const dateStr = toDevanagariDigits(y) + '.' + toDevanagariDigits(m) + '.' + toDevanagariDigits(d);
+  const target = document.getElementById(calTargetInputId);
+  target.value = dateStr;
+  target.dispatchEvent(new Event('input'));
+  closeNepaliCalendar();
+}
+
+document.addEventListener('click', (e)=>{
+  const popup = document.getElementById('nepaliCalPopup');
+  if (popup.classList.contains('show') && !popup.contains(e.target) && !e.target.classList.contains('cal-btn')){
+    closeNepaliCalendar();
+  }
+});
 
 function createComboInput(opts){
 
@@ -864,10 +980,6 @@ function updatePrintHeader(){
   document.getElementById('printHeaderInfo').textContent =
     'मिति ' + from + ' देखि ' + to + ' सम्मको हाजिरी र OT';
 
-  const parts = [];
-  if (place) parts.push('कार्यलयको नाम:- ' + place);
-  if (work) parts.push('कामको विवरण:- ' + work);
-  if (fano) parts.push('कार्यरत फाँट:- ' + fano);
   document.getElementById('printMetaInfo').innerHTML =
 `
 <div style="
@@ -885,6 +997,31 @@ width:100%;
 </div>
 `;
 }
+
+/** Print थिच्नुअघि आवश्यक फिल्डहरू भरिएको छ कि छैन जाँच्ने; नभए alert देखाएर print रोक्ने */
+function handlePrintClick(){
+  const place = document.getElementById('metaPlace').value.trim();
+  const work = document.getElementById('metaWork').value.trim();
+  const fano = document.getElementById('metaFaNo').value.trim();
+  const from = document.getElementById('searchFrom').value.trim();
+  const to = document.getElementById('searchTo').value.trim();
+
+  const missing = [];
+  if(!place) missing.push('कार्यालयको नाम');
+  if(!work) missing.push('कामको विवरण');
+  if(!fano) missing.push('कार्यरत फाँट');
+  if(!from) missing.push('मिति देखि');
+  if(!to) missing.push('मिति सम्म');
+
+  if(missing.length > 0){
+    alert('कृपया Print गर्नुअघि यी फिल्डहरू भर्नुहोस्:\n\n' + missing.join('\n'));
+    return;
+  }
+
+  updatePrintHeader();
+  window.print();
+}
+
 window.addEventListener('beforeprint', updatePrintHeader);
 document.getElementById('searchFrom').addEventListener('input', updatePrintHeader);
 document.getElementById('searchTo').addEventListener('input', updatePrintHeader);
