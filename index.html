@@ -259,6 +259,16 @@ th,
 td{
     border:1.5px solid #000 !important;
 }
+    /* OT box मा देखिने number spinner/arrow हटाउने — plain OT घण्टा मात्र देखिने */
+    .ot-input::-webkit-outer-spin-button,
+    .ot-input::-webkit-inner-spin-button{
+      -webkit-appearance:none;
+      margin:0;
+    }
+    .ot-input{
+      -moz-appearance:textfield;
+      appearance:textfield;
+    }
     @page{size:landscape;margin:8mm;}
   }
   .logo-circle{
@@ -320,14 +330,14 @@ td{
     <div class="ot-field">
     <label>मिति देखि</label>
     <div class="date-input-wrap">
-      <input id="searchFrom" placeholder="२०८३.०३.०१">
+      <input id="searchFrom" placeholder="YYYY.MM.DD">
       <button type="button" class="cal-btn" onclick="openNepaliCalendar('searchFrom')">📅</button>
     </div>
   </div>
   <div class="ot-field">
     <label>मिति सम्म</label>
     <div class="date-input-wrap">
-      <input id="searchTo" placeholder="२०८३.०३.२५">
+      <input id="searchTo" placeholder="YYYY.MM.DD">
       <button type="button" class="cal-btn" onclick="openNepaliCalendar('searchTo')">📅</button>
     </div>
   </div>
