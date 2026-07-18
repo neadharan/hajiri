@@ -391,7 +391,7 @@ td{
     </div>
   </div>
   <div class="ot-field">
-    <label>पूर्व स्वीकृती मेमो मिति</label>
+    <label>पूर्व स्वीकृती मेमाे मिति</label>
     <div class="date-input-wrap">
       <input id="approvalMemoDate" placeholder="YYYY.MM.DD">
       <button type="button" class="cal-btn" onclick="openNepaliCalendar('approvalMemoDate')">📅</button>
@@ -531,7 +531,8 @@ let TOTAL_DAY_COLS = 32;
 let employees = [];
 let masterNames = [];
 
-
+// -------------------- स्थानीय Auto-save (Browser मा) --------------------
+// Computer/Browser अचानक बन्द भए पनि भरिएको हाजिरी/OT नहराउने बनाउनको लागि
 const DRAFT_KEY = 'hajiri_draft_v1';
 let draftRestored = false;
 let autoSaveTimer = null;
@@ -558,7 +559,7 @@ function saveDraftToLocalStorage(){
   scheduleBackgroundCloudSave();
 }
 
-
+// -------------------- गुपचुप पृष्ठभूमि Auto-save ( मा, बटन नथिचिकनै) --------------------
 let cloudSaveTimer = null;
 let cloudSaveInFlight = false;
 
@@ -657,7 +658,7 @@ function init(){
   google.script.run.withSuccessHandler(onDataLoaded).withFailureHandler(onLoadError).getData();
 }
 
-
+// -------------------- नेपाली (बि.स.) क्यालेन्डर पिकर --------------------
 const NEPALI_MONTHS = ["बैशाख","जेठ","असार","श्रावण","भदौ","असोज","कार्तिक","मंसिर","पुष","माघ","फागुन","चैत्र"];
 let calTargetInputId = null;
 
@@ -899,7 +900,7 @@ const FALLBACK_NAMES = [
   ,"श्री बिमन भुजेल","श्री मन्दिरा पाैडेल","श्री समिर कार्कि",
   "श्री पदम राई","श्री प्रशुराम खवाश","श्री सुर्य बा.पाैडेल","श्री सिवन राई",
   "श्री निर कु.राई","श्री निलहरि अधिकारी","श्री कमलेश कु.मन्डल",
-  "श्री दावा तामाङ्ग","श्री राजेश यादव","श्री मिना अधिकारी","श्री प्रमोद मरिक "
+  "श्री दावा तामाङ्ग","श्री राजेश यादव","श्री प्रमोद मरिक "
 ];
 
 function buildDefaultEmployees(){
@@ -1254,6 +1255,7 @@ function resetTableZoomAfterPrint(){
 }
 window.addEventListener('afterprint', resetTableZoomAfterPrint);
 
+/** Print थिच्नुअघि आवश्यक फिल्डहरू भरिएको छ कि छैन जाँच्ने; नभए alert देखाएर print रोक्ने */
 function handlePrintClick(){
   const place = document.getElementById('metaPlace').value.trim();
   const work = document.getElementById('metaWork').value.trim();
@@ -1266,7 +1268,7 @@ function handlePrintClick(){
   if(!work) missing.push('कामको विवरण');
   if(!fano) missing.push('कार्यरत फाँट');
   if(!from) missing.push('हाजिरि देखि मिति');
-  if(!to) missing.push('हाजिरि सम्म मिति');
+  if(!to) missing.push('हाजिरि  मिति सम्म');
 
   if(missing.length > 0){
     alert('कृपया Print गर्नुअघि यी फिल्डहरू भर्नुहोस्:\n\n' + missing.join('\n'));
@@ -1420,7 +1422,7 @@ function setSearchMsg(msg, isError){
   el.className = isError ? 'error' : '';
 }
 
-
+// -------------------- मेमो (पूर्व स्वीकृती + भुक्तानी — प्रशासन र प्राबिधिक) --------------------
 let currentMemoType = 'approval-admin';
 
 function escapeHtml(s){
@@ -1462,7 +1464,7 @@ function buildMemoHTML(type){
   // -------- पूर्व स्वीकृती (प्रशासन/प्राबिधिक साझा ढाँचा, फरक विवरण) --------
   if (type === 'approval-admin' || type === 'approval-technical'){
     const workArea = (type === 'approval-admin')
-      ? 'सवारी चालक, हेल्पडेस्क, सरसफाई, , विद्युत महशुल संकलन  काउन्टर'
+      ? 'सवारी चालक, हेल्पडेस्क, सरसफाइ, काउन्टर'
       : 'मर्मत, शिफ्ट डिउटी, फ्युज सेवा';
 
     return header + `
@@ -1470,7 +1472,7 @@ function buildMemoHTML(type){
       <p style="text-align:justify;text-indent:28px;">
         यस वितरण केन्द्र अन्तर्गतको ${workArea} साथै कार्यालयको काममा
         परिआउने कार्य गर्नका लागि हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले
-        मिति ${dateFrom} देखि मिति ${dateTo} सम्म तपशिलमा उल्लेखित ${work} कर्मचारीहरुलाई अतिरिक्त
+        मिति ${dateFrom} देखि मिति ${dateTo} सम्मका लागि तपशिलमा उल्लेखित ${work} कर्मचारीहरुलाई अतिरिक्त
         बढी समय काममा खटाउनु पर्ने भएकोले पूर्व स्वीकृतिको लागि अनुरोध छ।
       </p>
       <div style="font-weight:700;text-decoration:underline;margin-top:8px;">तपशिल:</div>
@@ -1483,7 +1485,7 @@ function buildMemoHTML(type){
     `;
   }
 
-  
+  // -------- भुक्तानी स्वीकृती (प्रशासन/प्राबिधिक साझा ढाँचा, फरक विवरण) --------
   const workArea = (type === 'payment-admin')
     ? 'सवारी चालक, हेल्पडेक्स, सरसफाई, विद्युत महसुल संकलन काउन्टर'
     : 'मर्मत, शिफ्ट डिउटी, फ्युज सेवा';
@@ -1526,7 +1528,7 @@ function printMemo(){
   const isApprovalType = (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical');
   const approvalDateVal = document.getElementById('approvalMemoDate').value.trim();
   if (isApprovalType && !approvalDateVal){
-    alert('कृपया home page मा रहेको "पूर्व स्वीकृती मेमो मिति" भर्नुहोस् — यो नभरी पूर्व स्वीकृती मेमो Print हुँदैन।');
+    alert('कृपया home page मा रहेको "पूर्व स्वीकृती मेमाे मिति" भर्नुहोस् — यो नभरी पूर्व स्वीकृती मेमो Print हुँदैन।');
     return;
   }
   document.body.classList.add('printing-memo');
