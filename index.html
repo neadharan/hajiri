@@ -1531,7 +1531,7 @@ function printMemo(){
   const isApprovalType = (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical');
   const approvalDateVal = document.getElementById('approvalMemoDate').value.trim();
   if (isApprovalType && !approvalDateVal){
-    alert('कृपया home page मा रहेको "पूर्व स्वीकृती मिति" भर्नुहोस् (मिति देखि/मिति सम्म को छेउमा) — यो नभरी पूर्व स्वीकृती मेमो Print हुँदैन।');
+    alert('कृपया home page मा रहेको "पूर्व स्वीकृती मेमो मिति" भर्नुहोस् — यो नभरी पूर्व स्वीकृती मेमो Print हुँदैन।');
     return;
   }
   document.getElementById('dynamicPageStyle').textContent = '@page{size:portrait;margin:15mm;}';
