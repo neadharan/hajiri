@@ -277,7 +277,6 @@ td{
       -moz-appearance:textfield;
       appearance:textfield;
     }
-    @page{size:landscape;margin:8mm;}
   }
   .logo-circle{
     width:70px;
@@ -338,6 +337,9 @@ td{
   body.printing-memo .memo-paper{overflow:visible !important;padding:6mm 10mm !important;}
 }
 </style>
+<style id="dynamicPageStyle">
+  @page{size:landscape;margin:8mm;}
+</style>
 </head>
 <body>
 
@@ -377,7 +379,7 @@ td{
 
 <div class="search-bar">
     <div class="ot-field">
-    <label>हाजिरि देखि मिति</label>
+    <label>महाजिरि देखि मिति</label>
     <div class="date-input-wrap">
       <input id="searchFrom" placeholder="YYYY.MM.DD">
       <button type="button" class="cal-btn" onclick="openNepaliCalendar('searchFrom')">📅</button>
@@ -391,7 +393,7 @@ td{
     </div>
   </div>
   <div class="ot-field">
-    <label>पूर्व स्वीकृती मेमाे मिति</label>
+    <label>पूर्व स्वीकृती मेमो मिति</label>
     <div class="date-input-wrap">
       <input id="approvalMemoDate" placeholder="YYYY.MM.DD">
       <button type="button" class="cal-btn" onclick="openNepaliCalendar('approvalMemoDate')">📅</button>
@@ -433,7 +435,7 @@ td{
   </div>
   <div class="ot-field">
     <label>OT घण्टा</label>
-    <input id="otHoursValue" type="number" min="0" step="0.5" placeholder="जस्तै: 2 वा 5">
+    <input id="otHoursValue" type="number" min="0" step="1" placeholder="जस्तै: 2 वा 5">
   </div>
   <div class="ot-field">
 <label>हाजिरी</label>
@@ -531,8 +533,7 @@ let TOTAL_DAY_COLS = 32;
 let employees = [];
 let masterNames = [];
 
-// -------------------- स्थानीय Auto-save (Browser मा) --------------------
-// Computer/Browser अचानक बन्द भए पनि भरिएको हाजिरी/OT नहराउने बनाउनको लागि
+
 const DRAFT_KEY = 'hajiri_draft_v1';
 let draftRestored = false;
 let autoSaveTimer = null;
@@ -559,7 +560,7 @@ function saveDraftToLocalStorage(){
   scheduleBackgroundCloudSave();
 }
 
-// -------------------- गुपचुप पृष्ठभूमि Auto-save ( मा, बटन नथिचिकनै) --------------------
+
 let cloudSaveTimer = null;
 let cloudSaveInFlight = false;
 
@@ -614,7 +615,7 @@ function clearDraftFromLocalStorage(){
   try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
 }
 
-/** तत्काल टेबल पूरै खाली गर्ने बटन */
+
 function clearTable(){
   if(!confirm('के तपाईं यो टेबल पूरै खाली (Clear) गर्न चाहनुहुन्छ?\nभरिएको हाजिरी/OT यहाँबाट हराउनेछ ।')) return;
   clearTimeout(cloudSaveTimer);
@@ -1227,15 +1228,16 @@ gap:180px;
 font-size:15px;
 font-weight:700;
 width:100%;
+white-space:nowrap;
 ">
-<span>कार्यलयको नाम :- ${place}</span>
-<span>कामको विवरण :- ${work}</span>
-<span>कार्यरत फाँट :- ${fano}</span>
+<span style="white-space:nowrap;">कार्यलयको नाम :- ${place}</span>
+<span style="white-space:nowrap;">कामको विवरण :- ${work}</span>
+<span style="white-space:nowrap;">कार्यरत फाँट :- ${fano}</span>
 </div>
 `;
 }
 
-/** टेबल जति फराकिलो भए पनि, printable page width भित्रै अटाउने गरी आफै scale मिलाउने (कुनै computer/printer setting मिलाउनु नपरोस्) */
+
 function autoFitTableForPrint(){
   const wrap = document.querySelector('.table-wrap');
   if(!wrap) return;
@@ -1255,7 +1257,7 @@ function resetTableZoomAfterPrint(){
 }
 window.addEventListener('afterprint', resetTableZoomAfterPrint);
 
-/** Print थिच्नुअघि आवश्यक फिल्डहरू भरिएको छ कि छैन जाँच्ने; नभए alert देखाएर print रोक्ने */
+
 function handlePrintClick(){
   const place = document.getElementById('metaPlace').value.trim();
   const work = document.getElementById('metaWork').value.trim();
@@ -1268,7 +1270,7 @@ function handlePrintClick(){
   if(!work) missing.push('कामको विवरण');
   if(!fano) missing.push('कार्यरत फाँट');
   if(!from) missing.push('हाजिरि देखि मिति');
-  if(!to) missing.push('हाजिरि  मिति सम्म');
+  if(!to) missing.push('महाजिरि सम्म मिति');
 
   if(missing.length > 0){
     alert('कृपया Print गर्नुअघि यी फिल्डहरू भर्नुहोस्:\n\n' + missing.join('\n'));
@@ -1277,6 +1279,7 @@ function handlePrintClick(){
 
   updatePrintHeader();
   autoFitTableForPrint();
+  document.getElementById('dynamicPageStyle').textContent = '@page{size:landscape;margin:8mm;}';
   window.print();
 }
 
@@ -1422,7 +1425,7 @@ function setSearchMsg(msg, isError){
   el.className = isError ? 'error' : '';
 }
 
-// -------------------- मेमो (पूर्व स्वीकृती + भुक्तानी — प्रशासन र प्राबिधिक) --------------------
+
 let currentMemoType = 'approval-admin';
 
 function escapeHtml(s){
@@ -1461,7 +1464,7 @@ function buildMemoHTML(type){
 
   const nameListHTML = namedEmployees.map((e,i)=>`<div>${i+1}. ${escapeHtml(e.name)}</div>`).join('');
 
-  // -------- पूर्व स्वीकृती (प्रशासन/प्राबिधिक साझा ढाँचा, फरक विवरण) --------
+  
   if (type === 'approval-admin' || type === 'approval-technical'){
     const workArea = (type === 'approval-admin')
       ? 'सवारी चालक, हेल्पडेस्क, सरसफाइ, काउन्टर'
@@ -1485,7 +1488,7 @@ function buildMemoHTML(type){
     `;
   }
 
-  // -------- भुक्तानी स्वीकृती (प्रशासन/प्राबिधिक साझा ढाँचा, फरक विवरण) --------
+  
   const workArea = (type === 'payment-admin')
     ? 'सवारी चालक, हेल्पडेक्स, सरसफाई, विद्युत महसुल संकलन काउन्टर'
     : 'मर्मत, शिफ्ट डिउटी, फ्युज सेवा';
@@ -1528,9 +1531,10 @@ function printMemo(){
   const isApprovalType = (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical');
   const approvalDateVal = document.getElementById('approvalMemoDate').value.trim();
   if (isApprovalType && !approvalDateVal){
-    alert('कृपया home page मा रहेको "पूर्व स्वीकृती मेमाे मिति" भर्नुहोस् — यो नभरी पूर्व स्वीकृती मेमो Print हुँदैन।');
+    alert('कृपया home page मा रहेको "पूर्व स्वीकृती मिति" भर्नुहोस् (मिति देखि/मिति सम्म को छेउमा) — यो नभरी पूर्व स्वीकृती मेमो Print हुँदैन।');
     return;
   }
+  document.getElementById('dynamicPageStyle').textContent = '@page{size:portrait;margin:15mm;}';
   document.body.classList.add('printing-memo');
   window.print();
 }
