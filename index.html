@@ -405,8 +405,7 @@ td{
   </div>
   <div class="ot-field" style="align-self:flex-end;">
     <div class="btn-group">
-      <button type="button" class="btn btn-primary btn-small" onclick="githubSearchHistory()">🔍 खोज्नुहोस्</button>
-      <button type="button" class="btn btn-ghost btn-small" onclick="githubShowAllHistory()">📋 सबै देखाउनुहोस्</button>
+      
     </div>
   </div>
   
@@ -426,12 +425,7 @@ td{
     <button class="btn btn-danger" onclick="clearTable()">🗑️ Clear</button>
     <button class="btn btn-accent" onclick="openMemoModal()">📄 मेमो</button>
     <button class="btn btn-accent" onclick="handlePrintClick()">🖨️ हाजिर Print गर्नुहोस्</button>
-    <button class="btn btn-ghost" onclick="exportCSV()">⬇️ hajiri.csv मा Save</button>
-    <button class="btn btn-ghost" onclick="triggerCSVImport()">⬆️ hajiri.csv बाट Load</button>
-    <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display:none;" onchange="handleCSVImport(event)">
-    <button class="btn btn-ghost" onclick="openGithubSettings()">⚙️सेटिङ</button>
-    <button class="btn btn-accent" onclick="saveToGithub()">☁️Save</button>
-  </div>
+    </div>
 </div>
 
 <div class="ot-panel">
@@ -1695,16 +1689,28 @@ function updatePrintHeader(){
 <div style="
 display:flex;
 justify-content:center;
-align-items:center;
+align-items:flex-start;
 gap:180px;
 font-size:15px;
 font-weight:700;
 width:100%;
-white-space:nowrap;
+line-height:1.4;
 ">
+
 <span style="white-space:nowrap;">कार्यलयको नाम :- ${place}</span>
+
 <span style="white-space:nowrap;">कामको विवरण :- ${work}</span>
-<span style="white-space:nowrap;">कार्यरत फाँट :- ${fano}</span>
+
+<span style="
+white-space:normal;
+overflow-wrap:anywhere;
+word-break:break-word;
+max-width:350px;
+text-align:center;
+">
+कार्यरत फाँट :- ${fano}
+</span>
+
 </div>
 `;
 }
@@ -1967,7 +1973,7 @@ function buildMemoHTML(type){
 
   const districtRateVal = document.getElementById('districtRateSelect') ? document.getElementById('districtRateSelect').value : '';
   const districtRateSentence = (type === 'payment-technical' && districtRateVal)
-    ? ' हाल सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट रु.' + toDevanagariDigits(districtRateVal) + ' का दरले पारिश्रमिक उपलब्ध गराईदिनुहुन अनुरोध छ।'
+    ? 'सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट रु.' + toDevanagariDigits(districtRateVal) + ' काे दरले पारिश्रमिक उपलब्ध गराईदिनुहुन अनुरोध छ।'
     : '';
 
   return header + `
