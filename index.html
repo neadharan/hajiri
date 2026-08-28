@@ -399,6 +399,16 @@ td{
       <button type="button" class="cal-btn" onclick="openNepaliCalendar('approvalMemoDate')">📅</button>
     </div>
   </div>
+  <div class="ot-field" id="districtRateFieldWrap">
+    <label>जिल्ला दररेट रकम (रु.)</label>
+    <select id="districtRateSelect"></select>
+  </div>
+  <div class="ot-field" style="align-self:flex-end;">
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary btn-small" onclick="githubSearchHistory()">🔍 खोज्नुहोस्</button>
+      <button type="button" class="btn btn-ghost btn-small" onclick="githubShowAllHistory()">📋 सबै देखाउनुहोस्</button>
+    </div>
+  </div>
   
  </div>
 <div id="searchMsg"></div>
@@ -416,6 +426,11 @@ td{
     <button class="btn btn-danger" onclick="clearTable()">🗑️ Clear</button>
     <button class="btn btn-accent" onclick="openMemoModal()">📄 मेमो</button>
     <button class="btn btn-accent" onclick="handlePrintClick()">🖨️ हाजिर Print गर्नुहोस्</button>
+    <button class="btn btn-ghost" onclick="exportCSV()">⬇️ hajiri.csv मा Save</button>
+    <button class="btn btn-ghost" onclick="triggerCSVImport()">⬆️ hajiri.csv बाट Load</button>
+    <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display:none;" onchange="handleCSVImport(event)">
+    <button class="btn btn-ghost" onclick="openGithubSettings()">⚙️सेटिङ</button>
+    <button class="btn btn-accent" onclick="saveToGithub()">☁️Save</button>
   </div>
 </div>
 
@@ -527,8 +542,8 @@ onclick="assignBulkStatus()">
 const STATUS_CYCLE = ["", "हा", "काज", "बिदा"];
 const STATUS_CLASS = {"":"", "हा":"st-present", "काज":"st-kaaj", "बिदा":"st-bida"};
 const PLACE_OPTIONS = ["धरान वितरण केन्द्र", ".........", ".........."];
-const WORK_OPTIONS = ["ज्यालादारी", "करार", "बिशेष करार", "सेवा करार", "दैनिक ज्यालादारी"];
-const DESIG_OPTIONS = ["दै.ज्या.", "करार", "विशेष करार", " सेवा करार"];
+const WORK_OPTIONS = ["ज्यालादारी", "करार", "बिशेष करार", "सेवा करार", "दैनिक ज्यालादारी","दैनिक ज्यालादारी+सेवा करार","स्थायी"];
+const DESIG_OPTIONS = ["दै.ज्या.", "करार", "विशेष करार", " सेवा करार","स्थायी"];
 let TOTAL_DAY_COLS = 32;
 let employees = [];
 let masterNames = [];
@@ -623,6 +638,447 @@ function clearTable(){
   clearDraftFromLocalStorage();
   renderRows();
   setStatus('टेबल खाली गरियो।', false);
+}
+
+function csvEscape(val){
+  val = (val===undefined||val===null) ? '' : String(val);
+  if (/[",\r\n]/.test(val)){
+    val = '"' + val.replace(/"/g,'""') + '"';
+  }
+  return val;
+}
+
+function downloadTextFile(content, filename){
+  const blob = new Blob(["\uFEFF" + content], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
+function exportCSV(){
+  const place = document.getElementById('metaPlace').value || '';
+  const work = document.getElementById('metaWork').value || '';
+  const fano = document.getElementById('metaFaNo').value || '';
+  const from = document.getElementById('searchFrom').value || '';
+  const to = document.getElementById('searchTo').value || '';
+
+  const rows = [];
+  rows.push(['कार्यलयको नाम', place]);
+  rows.push(['कामको विवरण', work]);
+  rows.push(['कार्यरत फाँट', fano]);
+  rows.push(['हाजिरि देखि मिति', from]);
+  rows.push(['हाजिरि सम्म मिति', to]);
+  rows.push([]);
+
+  const header = ['क्र.सं.','नाम','प्रकार'];
+  for(let d=1; d<=TOTAL_DAY_COLS; d++){
+    header.push('दिन'+d+'_हाजिरी');
+    header.push('दिन'+d+'_OT');
+  }
+  header.push('जम्मा दिन');
+  header.push('जम्मा OT');
+  rows.push(header);
+
+  const namedEmployees = employees.filter(e=>e.name && e.name.trim() !== '');
+  namedEmployees.forEach((emp, idx)=>{
+    computeTotals(emp);
+    const row = [idx+1, emp.name, emp.designation || ''];
+    emp.days.forEach(d=>{
+      row.push(d.status || '');
+      row.push(d.ot || 0);
+    });
+    row.push(emp.totalDays);
+    row.push(emp.totalOT);
+    rows.push(row);
+  });
+
+  const csvContent = rows.map(r=>r.map(csvEscape).join(',')).join('\r\n');
+  downloadTextFile(csvContent, 'hajiri.csv');
+  setStatus('✔ hajiri.csv डाउनलोड भयो। ', false);
+}
+
+function triggerCSVImport(){
+  document.getElementById('csvFileInput').click();
+}
+
+function parseCSVLine(line){
+  const result = [];
+  let cur = '';
+  let inQuotes = false;
+  for(let i=0; i<line.length; i++){
+    const c = line[i];
+    if (inQuotes){
+      if (c === '"'){
+        if (line[i+1] === '"'){ cur += '"'; i++; }
+        else inQuotes = false;
+      } else cur += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ',') { result.push(cur); cur = ''; }
+      else cur += c;
+    }
+  }
+  result.push(cur);
+  return result;
+}
+
+function parseCSVAndLoad(text){
+  const lines = text.replace(/^\uFEFF/, '').split(/\r\n|\n/).filter(l=>l.length > 0);
+  let idx = 0;
+  const meta = {};
+  const metaKeys = ['place','work','faNo','dateFrom','dateTo'];
+  for(let i=0; i<5; i++){
+    if (idx < lines.length){
+      const cols = parseCSVLine(lines[idx]);
+      meta[metaKeys[i]] = cols[1] || '';
+      idx++;
+    }
+  }
+  if (idx < lines.length && parseCSVLine(lines[idx]).join('') === ''){ idx++; }
+  if (idx >= lines.length) throw new Error('CSV खाली छ वा ढाँचा मिलेन');
+  const header = parseCSVLine(lines[idx]); idx++;
+  const dayCount = Math.floor((header.length - 5) / 2);
+  if (dayCount <= 0) throw new Error('CSV ढाँचा मिलेन');
+
+  const newEmployees = [];
+  for(; idx < lines.length; idx++){
+    const cols = parseCSVLine(lines[idx]);
+    if (cols.length < 3) continue;
+    const name = cols[1] || '';
+    if (!name.trim()) continue;
+    const designation = cols[2] || '';
+    const days = [];
+    for(let d=0; d<dayCount; d++){
+      const status = cols[3 + d*2] || '';
+      const ot = Number(cols[3 + d*2 + 1]) || 0;
+      days.push({status, ot});
+    }
+    newEmployees.push({name, designation, days});
+  }
+  if (newEmployees.length === 0) throw new Error('CSV मा कुनै कर्मचारी डाटा भेटिएन');
+
+  TOTAL_DAY_COLS = dayCount;
+  buildDayHeaders();
+  employees = newEmployees;
+  document.getElementById('metaPlace').value = meta.place || '';
+  document.getElementById('metaWork').value = meta.work || '';
+  document.getElementById('metaFaNo').value = meta.faNo || '';
+  document.getElementById('searchFrom').value = meta.dateFrom || '';
+  document.getElementById('searchTo').value = meta.dateTo || '';
+  renderRows();
+  updatePrintHeader();
+  saveDraftToLocalStorage();
+}
+
+function handleCSVImport(e){
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    try{
+      parseCSVAndLoad(evt.target.result);
+      setStatus('✔ hajiri.csv बाट हाजिरी लोड भयो।', false);
+    }catch(err){
+      setStatus('CSV पढ्न सकिएन: ' + err.message, true);
+    }
+  };
+  reader.onerror = function(){
+    setStatus('CSV फाइल पढ्न सकिएन।', true);
+  };
+  reader.readAsText(file, 'UTF-8');
+  e.target.value = '';
+}
+
+// -------------------- GitHub (hajiri.csv) मार्फत सधैंको Save/Search --------------------
+const GITHUB_SETTINGS_KEY = 'hajiri_github_settings_v1';
+const GITHUB_CSV_DAY_COLS = 32;
+
+function getGithubSettings(){
+  try{
+    const raw = localStorage.getItem(GITHUB_SETTINGS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+
+function saveGithubSettingsToStorage(settings){
+  try{ localStorage.setItem(GITHUB_SETTINGS_KEY, JSON.stringify(settings)); }catch(e){}
+}
+
+function openGithubSettings(){
+  const cur = getGithubSettings() || {};
+  const repo = prompt('(owner/repo):', cur.repo || '');
+  if (repo === null) return;
+  const branch = prompt('Branch (जस्तै: main):', cur.branch || 'main');
+  if (branch === null) return;
+  const path = prompt('CSV फाइलको बाटो (Path) रिपोमा (जस्तै: hajiri.csv):', cur.path || 'hajiri.csv');
+  if (path === null) return;
+  const token = prompt('GitHub Personal Access Token (repo लेख्ने अनुमति भएको — यो यही browser को localStorage मा मात्र बस्छ, अरु कतै पठाइँदैन):', cur.token || '');
+  if (token === null) return;
+  if (!repo.trim() || !token.trim()){
+    alert('Repository र Token दुवै आवश्यक छ।');
+    return;
+  }
+  saveGithubSettingsToStorage({
+    repo: repo.trim(),
+    branch: (branch || 'main').trim() || 'main',
+    path: (path || 'hajiri.csv').trim() || 'hajiri.csv',
+    token: token.trim()
+  });
+  setStatus('✔ सेटिङ सुरक्षित भयो।', false);
+}
+
+function githubApiBaseUrl(settings){
+  return 'https://api.github.com/repos/' + settings.repo + '/contents/' + settings.path.split('/').map(encodeURIComponent).join('/');
+}
+
+function b64EncodeUnicode(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function b64DecodeUnicode(str){
+  return decodeURIComponent(escape(atob(str)));
+}
+
+async function githubGetFile(settings){
+  const url = githubApiBaseUrl(settings) + '?ref=' + encodeURIComponent(settings.branch);
+  const res = await fetch(url, {
+    headers: {
+      'Authorization': 'token ' + settings.token,
+      'Accept': 'application/vnd.github+json'
+    }
+  });
+  if (res.status === 404){
+    return {content: '', sha: null, exists: false};
+  }
+  if (!res.ok){
+    const errText = await res.text();
+    throw new Error('फाइल पढ्न सकिएन (' + res.status + '): ' + errText);
+  }
+  const data = await res.json();
+  const content = b64DecodeUnicode((data.content || '').replace(/\n/g, ''));
+  return {content, sha: data.sha, exists: true};
+}
+
+async function githubPutFile(settings, newContent, sha, message){
+  const body = {
+    message: message || 'Update ' + settings.path,
+    content: b64EncodeUnicode(newContent),
+    branch: settings.branch
+  };
+  if (sha) body.sha = sha;
+  const res = await fetch(githubApiBaseUrl(settings), {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + settings.token,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok){
+    const errText = await res.text();
+    throw new Error('Save असफल (' + res.status + '): ' + errText);
+  }
+  return await res.json();
+}
+
+function buildGithubCSVHeader(){
+  const header = ['periodKey','dateFrom','dateTo','place','work','faNo','sn','name','designation'];
+  for(let d=1; d<=GITHUB_CSV_DAY_COLS; d++){
+    header.push('day'+d+'_status');
+    header.push('day'+d+'_ot');
+  }
+  header.push('totalDays');
+  header.push('totalOT');
+  return header;
+}
+
+function currentPeriodKey(){
+  const from = document.getElementById('searchFrom').value.trim();
+  const to = document.getElementById('searchTo').value.trim();
+  return from + '__' + to;
+}
+
+function buildGithubRowsForCurrentPeriod(){
+  const place = document.getElementById('metaPlace').value || '';
+  const work = document.getElementById('metaWork').value || '';
+  const fano = document.getElementById('metaFaNo').value || '';
+  const from = document.getElementById('searchFrom').value || '';
+  const to = document.getElementById('searchTo').value || '';
+  const periodKey = currentPeriodKey();
+  const namedEmployees = employees.filter(e=>e.name && e.name.trim() !== '');
+  const rows = [];
+  namedEmployees.forEach((emp, idx)=>{
+    computeTotals(emp);
+    const row = [periodKey, from, to, place, work, fano, idx+1, emp.name, emp.designation || ''];
+    for(let d=0; d<GITHUB_CSV_DAY_COLS; d++){
+      const day = emp.days[d] || {status:'', ot:0};
+      row.push(day.status || '');
+      row.push(day.ot || 0);
+    }
+    row.push(emp.totalDays);
+    row.push(emp.totalOT);
+    rows.push(row);
+  });
+  return rows;
+}
+
+function parseGithubCSV(text){
+  const lines = text.replace(/^\uFEFF/, '').split(/\r\n|\n/).filter(l=>l.length > 0);
+  if (lines.length === 0) return {header: null, rows: []};
+  const header = parseCSVLine(lines[0]);
+  const rows = [];
+  for(let i=1; i<lines.length; i++){
+    rows.push(parseCSVLine(lines[i]));
+  }
+  return {header, rows};
+}
+
+function rowsToCSVText(header, rows){
+  const all = [header, ...rows];
+  return all.map(r=>r.map(csvEscape).join(',')).join('\r\n');
+}
+
+async function saveToGithub(){
+  const settings = getGithubSettings();
+  if (!settings || !settings.repo || !settings.token){
+    alert('पहिले "⚙️ GitHub सेटिङ" बाट Repository र Token राख्नुहोस्।');
+    return;
+  }
+  const from = document.getElementById('searchFrom').value.trim();
+  const to = document.getElementById('searchTo').value.trim();
+  if (!from || !to){
+    alert('कृपया "हाजिरि देखि मिति" र "हाजिरि सम्म मिति" भर्नुहोस्।');
+    return;
+  }
+  const namedEmployees = employees.filter(e=>e.name && e.name.trim() !== '');
+  if (namedEmployees.length === 0){
+    alert('कम्तिमा एक कर्मचारीको नाम भर्नुहोस्।');
+    return;
+  }
+
+  setStatus('☁️ GitHub मा Save गर्दैछ...', false);
+  try{
+    const file = await githubGetFile(settings);
+    let header = buildGithubCSVHeader();
+    let existingRows = [];
+    if (file.exists && file.content.trim()){
+      const parsed = parseGithubCSV(file.content);
+      if (parsed.header && parsed.header.length) header = parsed.header;
+      existingRows = parsed.rows;
+    }
+    const periodKey = currentPeriodKey();
+    const filteredRows = existingRows.filter(r => r[0] !== periodKey);
+    const newRows = buildGithubRowsForCurrentPeriod();
+    const finalRows = filteredRows.concat(newRows);
+    const csvText = rowsToCSVText(header, finalRows);
+    await githubPutFile(settings, csvText, file.sha, 'हाजिरी अपडेट: ' + from + ' - ' + to);
+    setStatus('✔ GitHub को "' + settings.path + '" मा सुरक्षित भयो (' + namedEmployees.length + ' कर्मचारी)। मिति ' + from + ' देखि ' + to + ' राखेर पछि खोज्न सकिन्छ।', false);
+  }catch(err){
+    setStatus('GitHub Save असफल: ' + err.message, true);
+    alert('GitHub मा Save गर्दा त्रुटि आयो:\n' + err.message);
+  }
+}
+
+async function githubSearchHistory(){
+  const settings = getGithubSettings();
+  if (!settings || !settings.repo || !settings.token){
+    setSearchMsg('पहिले "⚙️ GitHub सेटिङ" बाट Repository र Token राख्नुहोस्।', true);
+    return;
+  }
+  const from = document.getElementById('searchFrom').value.trim();
+  const to = document.getElementById('searchTo').value.trim();
+  setSearchMsg('GitHub बाट खोज्दैछ...', false);
+  try{
+    const file = await githubGetFile(settings);
+    if (!file.exists || !file.content.trim()){
+      setSearchMsg('अझै GitHub मा कुनै हाजिरी Save भएको छैन।', false);
+      document.getElementById('searchResults').innerHTML = '';
+      return;
+    }
+    const parsed = parseGithubCSV(file.content);
+    const periodsMap = new Map();
+    parsed.rows.forEach(r=>{
+      const periodKey = r[0], dateFrom = r[1], dateTo = r[2], place = r[3];
+      if (!periodKey) return;
+      if (from && dateFrom !== from) return;
+      if (to && dateTo !== to) return;
+      if (!periodsMap.has(periodKey)) periodsMap.set(periodKey, {periodKey, dateFrom, dateTo, place});
+    });
+    renderGithubSearchResults(Array.from(periodsMap.values()));
+  }catch(err){
+    setSearchMsg('त्रुटि: ' + err.message, true);
+  }
+}
+
+function githubShowAllHistory(){
+  document.getElementById('searchFrom').value = '';
+  document.getElementById('searchTo').value = '';
+  githubSearchHistory();
+}
+
+function renderGithubSearchResults(results){
+  const box = document.getElementById('searchResults');
+  box.innerHTML = '';
+  if (results.length === 0){
+    setSearchMsg('कुनै मिलेको अवधि भेटिएन।', false);
+    return;
+  }
+  setSearchMsg(results.length + ' अवधि भेटियो:', false);
+  results.forEach(r=>{
+    const row = document.createElement('div');
+    row.className = 'search-result-row';
+    row.innerHTML = '<span><b>' + (r.dateFrom||'?') + '</b> देखि <b>' + (r.dateTo||'?') + '</b> सम्म'
+      + (r.place ? ' — ' + r.place : '') + '</span>';
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-primary btn-small';
+    btn.textContent = 'लोड गर्नुहोस्';
+    btn.onclick = ()=>loadGithubPeriod(r.periodKey);
+    row.appendChild(btn);
+    box.appendChild(row);
+  });
+}
+
+async function loadGithubPeriod(periodKey){
+  const settings = getGithubSettings();
+  if (!settings){ setSearchMsg('GitHub सेटिङ भेटिएन।', true); return; }
+  setSearchMsg('लोड गर्दैछ...', false);
+  try{
+    const file = await githubGetFile(settings);
+    const parsed = parseGithubCSV(file.content);
+    const rows = parsed.rows.filter(r=>r[0] === periodKey);
+    if (rows.length === 0){ setSearchMsg('यो अवधिको डाटा भेटिएन।', true); return; }
+    const first = rows[0];
+    const dateFrom = first[1], dateTo = first[2], place = first[3], work = first[4], fano = first[5];
+    const newEmployees = rows.map(r=>{
+      const name = r[7], designation = r[8];
+      const days = [];
+      for(let d=0; d<GITHUB_CSV_DAY_COLS; d++){
+        const status = r[9 + d*2] || '';
+        const ot = Number(r[9 + d*2 + 1]) || 0;
+        days.push({status, ot});
+      }
+      return {name, designation, days};
+    });
+    TOTAL_DAY_COLS = GITHUB_CSV_DAY_COLS;
+    buildDayHeaders();
+    employees = newEmployees;
+    document.getElementById('metaPlace').value = place || '';
+    document.getElementById('metaWork').value = work || '';
+    document.getElementById('metaFaNo').value = fano || '';
+    document.getElementById('searchFrom').value = dateFrom || '';
+    document.getElementById('searchTo').value = dateTo || '';
+    renderRows();
+    updatePrintHeader();
+    saveDraftToLocalStorage();
+    setSearchMsg('✔ मिति ' + dateFrom + ' देखि ' + dateTo + ' सम्मको हाजिरी  लोड भयो। अब "Save" थिच्दा यसैमा अपडेट हुन्छ।', false);
+  }catch(err){
+    setSearchMsg('त्रुटि: ' + err.message, true);
+  }
 }
 
 function init(){
@@ -850,8 +1306,8 @@ function getNameOptions(){
   return out;
 }
 
-const FANO_OPTIONS = ["मिटर रिडिङ्ग फाँट", "मर्मत,प्राबिधिक फाँट", "प्रशासन  फाँट", "आय,प्रशासन,मिटर रिडिङ्ग,प्राबिधिक,मर्मत,सवारी चालक"
-, "लेखा  फाँट", "नो-लाईट फाँट", "सब-स्टेशन ", "ग्राहक सेवा फाँट", "ग्राहक सेवा ,मर्मत,मिटर रिडिङ्ग,प्रशासन फाँट", "नो-लाईट,मर्मत फाँट", "आय,प्रशासन,मिटर रिडिङ्ग,प्राबिधिक,मर्मत,सवारी चालक फाँट","फ्युज सेवा"];
+const FANO_OPTIONS = ["मिटर रिडिङ्ग फाँट", "मर्मत,प्राबिधिक फाँट", "प्रशासन  फाँट", "आय,प्रशासन,मिटर रिडिङ्ग,सवारी चालक"
+, "लेखा  फाँट", "नो-लाईट फाँट", "सब-स्टेशन ", "नो-लाईट,फ्युज सेवा,मर्मत,प्राबिधिक,सब-स्टेशन,ग्राहक सेवा फाँट","ग्राहक सेवा फाँट","ग्राहक सेवा ,मर्मत,मिटर रिडिङ्ग,प्रशासन फाँट", "नो-लाईट,मर्मत,फ्युज सेवा फाँट", "आय,प्रशासन,मिटर रिडिङ्ग,प्राबिधिक,मर्मत,सवारी चालक फाँट","फ्युज सेवा"];
 
 function setupMetaCombos(){
   document.getElementById('metaPlaceWrap').appendChild(createComboInput({
@@ -868,6 +1324,22 @@ function setupMetaCombos(){
   }));
 }
 setupMetaCombos();
+
+function populateDistrictRateOptions(){
+  const sel = document.getElementById('districtRateSelect');
+  if(!sel || sel.options.length) return;
+  const first = document.createElement('option');
+  first.value = '';
+  first.textContent = 'रकम छान्नुहोस्';
+  sel.appendChild(first);
+  for(let amt = 800; amt <= 1600; amt += 1){
+    const opt = document.createElement('option');
+    opt.value = amt;
+    opt.textContent = toDevanagariDigits(amt);
+    sel.appendChild(opt);
+  }
+}
+populateDistrictRateOptions();
 
 function setConnStatus(msg, ok){
   const el = document.getElementById('connStatus');
@@ -901,7 +1373,7 @@ const FALLBACK_NAMES = [
   ,"श्री बिमन भुजेल","श्री मन्दिरा पाैडेल","श्री समिर कार्कि",
   "श्री पदम राई","श्री प्रशुराम खवाश","श्री सुर्य बा.पाैडेल","श्री सिवन राई",
   "श्री निर कु.राई","श्री निलहरि अधिकारी","श्री कमलेश कु.मन्डल",
-  "श्री दावा तामाङ्ग","श्री राजेश यादव","श्री प्रमोद मरिक "
+  "श्री दावा तामाङ्ग","श्री राजेश यादव","श्री अमित वि‍‍.क.","श्री प्रमोद मरिक "
 ];
 
 function buildDefaultEmployees(){
@@ -1493,16 +1965,22 @@ function buildMemoHTML(type){
     ? 'सवारी चालक, हेल्पडेक्स, सरसफाई, विद्युत महसुल संकलन काउन्टर'
     : 'मर्मत, शिफ्ट डिउटी, फ्युज सेवा';
 
+  const districtRateVal = document.getElementById('districtRateSelect') ? document.getElementById('districtRateSelect').value : '';
+  const districtRateSentence = (type === 'payment-technical' && districtRateVal)
+    ? ' हाल सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट रु.' + toDevanagariDigits(districtRateVal) + ' का दरले पारिश्रमिक उपलब्ध गराईदिनुहुन अनुरोध छ।'
+    : '';
+
   return header + `
     <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">भुक्तानी स्वीकृत मेमो</div>
     <p style="text-align:justify;">
       यस वितरण केन्द्र अन्तर्गतको ${workArea} साथै कार्यालयको काममा परिआउने कार्य गर्नका लागि
       हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्म
       अतिरिक्त बढी समय काममा लगाए बापतको संलग्न विवरण अनुसारको पूर्व स्वीकृति मेमो बमोजिम ${work} कर्मचारीहरुलाई
-      बढी समय भत्ता उपलब्ध गराइदिनुहुन सिफारिस साथ अनुरोध गर्दछु।
+      बढी समय भत्ता उपलब्ध गराईदिनुहुन  साथै सुनसरी जिल्लाको स्वीकृत जिल्ला दररेटमा हाजिरी दिन अनुसारको पारिश्रमिक समेत उपलब्ध गराईदिनुहुन सिफारिसका साथ अनुरोध छ।${districtRateSentence}
     </p>
     <div style="display:flex;justify-content:space-between;margin-top:44px;">
       <div>काममा लगाउने:</div>
+      <div>सिफारिस गर्ने:</div>
       <div>स्वीकृत गर्ने :</div>
     </div>
     <div style="margin-top:18px;">मिति: ${dateTo}</div>
@@ -1544,6 +2022,12 @@ window.addEventListener('afterprint', ()=>{
 
 document.getElementById('approvalMemoDate').addEventListener('input', ()=>{
   if (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical'){
+    showMemoTab(currentMemoType);
+  }
+});
+
+document.getElementById('districtRateSelect').addEventListener('change', ()=>{
+  if (currentMemoType === 'payment-technical'){
     showMemoTab(currentMemoType);
   }
 });
