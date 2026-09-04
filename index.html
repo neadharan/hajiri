@@ -52,9 +52,9 @@
 
   .combo-wrap{position:relative;width:100%;}
   .combo-list{
-    position:absolute;top:100%;left:0;min-width:160px;background:#fff;border:1px solid var(--line);
-    border-radius:0 0 8px 8px;max-height:170px;overflow-y:auto;z-index:30;
-    box-shadow:0 6px 16px rgba(0,0,0,.18);
+    position:absolute;left:0;min-width:160px;background:#fff;border:1px solid var(--line);
+    border-radius:8px 8px 0 0;max-height:170px;overflow-y:auto;z-index:999999;
+    box-shadow:0 -6px 16px rgba(0,0,0,.18);
   }
   .combo-list.hidden{display:none;}
   .combo-list div{padding:7px 10px;font-size:12.5px;cursor:pointer;white-space:normal;text-align:left;}
@@ -66,7 +66,7 @@
     font-size:11.5px;
     color:#000;
     font-weight:700;
-}
+  }
   .meta-field input{border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12.5px;font-family:inherit;}
 
   .date-input-wrap{display:flex;gap:4px;align-items:stretch;}
@@ -95,13 +95,6 @@
     padding:12px 16px;background:#eef4f8;border-bottom:1px solid var(--line);
   }
   .search-bar h3{width:100%;margin:0;font-size:13px;color:var(--navy);}
-  #searchResults{
-    margin:0 16px 10px;display:flex;flex-direction:column;gap:6px;
-  }
-  .search-result-row{
-    display:flex;justify-content:space-between;align-items:center;gap:10px;
-    background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12px;flex-wrap:wrap;
-  }
   #searchMsg{font-size:11.5px;color:#555;padding:0 16px;}
   #searchMsg.error{color:var(--danger);}
 
@@ -136,7 +129,7 @@
     font-size:11.5px;
     color:#000;
     font-weight:700;
-}
+  }
   .ot-field input, .ot-field select{
     border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12.5px;font-family:inherit;min-width:110px;
   }
@@ -153,7 +146,7 @@
   .col-sn{width:32px;}
   .col-name{width:190px;text-align:left;}
   .col-desig{width:130px;text-align:left;}
-  .col-day{width:58px;}
+  .col-day{width:66px;}
   .col-total{width:56px;}
   .col-del{width:34px;}
 
@@ -169,7 +162,7 @@
   .row-ot td{background:#fffdf6;border-bottom:2px solid #000;}
 
   .status-btn{
-    width:100%;border:none;padding:8px 2px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
+    width:100%;border:none;padding:8px 2px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;
     background:var(--empty-bg);color:#999;
   }
   .status-btn.st-present{background:var(--present-bg);color:var(--present);}
@@ -177,13 +170,67 @@
   .status-btn.st-bida{background:var(--bida-bg);color:var(--bida);}
 
   .ot-input{
-    width:100%;border:none;text-align:center;padding:6px 2px;font-size:11.5px;font-family:inherit;
-    color:#8a5300;background:#fffdf5;
+    width:100%;
+    border:none;
+    text-align:center;
+    padding:7px 2px;
+    font-size:13.5px;
+    font-weight:700;
+    font-family:inherit;
+    color:#703f00;
+    background:#fffdf5;
+    min-height:28px;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .ot-input::-webkit-outer-spin-button,
+  .ot-input::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .ot-input:hover::-webkit-outer-spin-button,
+  .ot-input:hover::-webkit-inner-spin-button,
+  .ot-input:focus::-webkit-outer-spin-button,
+  .ot-input:focus::-webkit-inner-spin-button{
+    -webkit-appearance: inner-spin-button !important;
+    opacity: 1;
+    cursor: pointer;
+  }
+  .ot-input:hover,
+  .ot-input:focus{
+    -moz-appearance: number-input;
+    appearance: auto;
   }
   .ot-input:focus{outline:none;background:#fff2cf;}
-  .ot-input::placeholder{color:#c9c2b0;}
+  .ot-input::placeholder{color:#888;font-weight:bold;}
 
   .total-val{padding:8px 4px;font-weight:700;color:#2a2a28;background:#fff;}
+
+  /* 🔒 Auto-Lock Styles */
+  .row-locked .status-btn{
+    pointer-events: none;
+    opacity: 0.85;
+    cursor: not-allowed;
+  }
+  .row-locked .ot-input{
+    pointer-events: none;
+    background: #faf8f3 !important;
+    color: #666;
+    cursor: not-allowed;
+  }
+  .row-locked .desig-input{
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+  .row-locked td{
+    background-color: #fbfaf7 !important;
+  }
+  .row-active td{
+    background-color: #fffef2 !important;
+  }
+  .row-active td.col-name, .row-active td.col-desig{
+    box-shadow: inset 0 0 0 1.5px #c99b3d;
+  }
 
   .bottom-bar{display:flex;justify-content:space-between;align-items:center;padding:0 16px 10px;flex-wrap:wrap;gap:10px;}
   #statusMsg{font-size:12.5px;color:var(--present);font-weight:600;}
@@ -198,14 +245,13 @@
     font-size:13px;
     color:#000;
     font-weight:700;
-}
+  }
 
   .print-only{display:none;}
-
   .print-text-only{display:none;}
 
   @media print{
-    .toolbar, .ot-panel, .hint, #errorBanner, .bottom-bar, .search-bar, #searchResults, #searchMsg, .meta-bar{display:none !important;}
+    .toolbar, .ot-panel, .hint, #errorBanner, .bottom-bar, .search-bar, .meta-bar{display:none !important;}
     .col-del{display:none;}
     .print-only{display:block !important;}
     .signature-block{display:flex !important;}
@@ -216,10 +262,10 @@
     body{background:#fff;}
     .col-name{width:210px !important;}
     .col-desig{width:140px !important;}
-    .name-input, .desig-input{display:none !important;}
+    .combo-wrap, .name-input, .desig-input{display:none !important;}
     .print-text-only{
       display:block !important;white-space:normal !important;word-break:break-word;
-      overflow-wrap:break-word;padding:6px 4px;font-weight:700;color:#000;line-height:1.25;
+      overflow-wrap:break-word;padding:6px 4px;font-weight:700;color:#000 !important;line-height:1.25;
     }
     .combo-list{display:none !important;}
     .status-btn, .ot-input, thead th, .col-type{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
@@ -244,30 +290,30 @@
     header .header-text h1, header .header-text p{color:#000 !important;}
     header .app-badge{background:none !important;color:#000 !important;border:1px solid #000;}
 
-.name-input,
-.desig-input,
-.ot-input,
-.status-btn,
-.total-val,
-tbody td{
-    color:#000 !important;
-    font-weight:700 !important;
-    -webkit-text-fill-color:#000 !important;
-    opacity:1 !important;
-}
+    .name-input,
+    .desig-input,
+    .ot-input,
+    .status-btn,
+    .total-val,
+    tbody td{
+      color:#000 !important;
+      font-weight:700 !important;
+      -webkit-text-fill-color:#000 !important;
+      opacity:1 !important;
+    }
 
-.name-input,
-.desig-input,
-.ot-input{
-    background:transparent !important;
-    border:none !important;
-}
+    .name-input,
+    .desig-input,
+    .ot-input{
+      background:transparent !important;
+      border:none !important;
+    }
 
-table,
-th,
-td{
-    border:1.5px solid #000 !important;
-}
+    table,
+    th,
+    td{
+      border:1.5px solid #000 !important;
+    }
     .ot-input::-webkit-outer-spin-button,
     .ot-input::-webkit-inner-spin-button{
       -webkit-appearance:none;
@@ -278,6 +324,7 @@ td{
       appearance:textfield;
     }
   }
+
   .logo-circle{
     width:70px;
     height:70px;
@@ -288,54 +335,54 @@ td{
     justify-content:center;
     overflow:hidden;
     box-shadow:0 2px 8px rgba(0,0,0,.15);
-}
+  }
 
-.logo-img{
+  .logo-img{
     width:100%;
     height:100%;
     object-fit:contain;
-}
-
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;
-  display:flex;align-items:center;justify-content:center;padding:16px;
-}
-.modal-overlay.hidden{display:none;}
-.modal-box{
-  background:#fff;border-radius:10px;max-width:720px;width:100%;max-height:90vh;
-  display:flex;flex-direction:column;overflow:hidden;
-}
-.modal-header{
-  display:flex;justify-content:space-between;align-items:flex-start;gap:8px;
-  padding:10px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap;
-}
-.memo-tab.active{background:var(--navy);color:#fff;}
-.modal-footer{padding:10px 14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
-.memo-paper{
-  padding:28px 32px;overflow-y:auto;font-family:'Noto Sans Devanagari',sans-serif;color:#000;font-size:13px;line-height:1.7;
-}
-.memo-paper table{table-layout:auto;}
-.memo-paper td, .memo-paper th{white-space:normal;}
-.approval-date-field{
-  display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:8px 14px 0;
-}
-.approval-date-field input{
-  border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:12.5px;font-family:inherit;width:130px;
-}
-
-@media print{
-  body.printing-memo > *:not(#memoModal){display:none !important;}
-  body.printing-memo #memoModal{
-    position:static !important;background:none !important;display:block !important;
-    padding:0 !important;inset:auto !important;
   }
-  body.printing-memo .modal-box{
-    box-shadow:none !important;max-width:none !important;max-height:none !important;
-    width:100% !important;border-radius:0 !important;
+
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;
+    display:flex;align-items:center;justify-content:center;padding:16px;
   }
-  body.printing-memo .modal-header, body.printing-memo .modal-footer, body.printing-memo .approval-date-field{display:none !important;}
-  body.printing-memo .memo-paper{overflow:visible !important;padding:6mm 10mm !important;}
-}
+  .modal-overlay.hidden{display:none;}
+  .modal-box{
+    background:#fff;border-radius:10px;max-width:720px;width:100%;max-height:90vh;
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .modal-header{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:8px;
+    padding:10px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap;
+  }
+  .memo-tab.active{background:var(--navy);color:#fff;}
+  .modal-footer{padding:10px 14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+  .memo-paper{
+    padding:28px 32px;overflow-y:auto;font-family:'Noto Sans Devanagari',sans-serif;color:#000;font-size:13px;line-height:1.7;
+  }
+  .memo-paper table{table-layout:auto;}
+  .memo-paper td, .memo-paper th{white-space:normal;}
+  .approval-date-field{
+    display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:8px 14px 0;
+  }
+  .approval-date-field input{
+    border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:12.5px;font-family:inherit;width:130px;
+  }
+
+  @media print{
+    body.printing-memo > *:not(#memoModal){display:none !important;}
+    body.printing-memo #memoModal{
+      position:static !important;background:none !important;display:block !important;
+      padding:0 !important;inset:auto !important;
+    }
+    body.printing-memo .modal-box{
+      box-shadow:none !important;max-width:none !important;max-height:none !important;
+      width:100% !important;border-radius:0 !important;
+    }
+    body.printing-memo .modal-header, body.printing-memo .modal-footer, body.printing-memo .approval-date-field{display:none !important;}
+    body.printing-memo .memo-paper{overflow:visible !important;padding:6mm 10mm !important;}
+  }
 </style>
 <style id="dynamicPageStyle">
   @page{size:landscape;margin:8mm;}
@@ -345,13 +392,12 @@ td{
 
 <div id="errorBanner" class="hidden">
   <span id="errorBannerText"></span>
-  </div>
+</div>
 
 <header>
-  
   <div class="logo-circle">
-  <img src="hajiri.png" alt="Hajiri Logo" class="logo-img">
-</div>
+    <img src="hajiri.png" alt="Hajiri Logo" class="logo-img" onerror="this.style.display='none'">
+  </div>
   
   <div class="header-text">    
     <h1>नेपाल विद्युत प्राधिकरण<br><span class="sub-office">धरान वितरण केन्द्र</span></h1>
@@ -375,10 +421,8 @@ td{
   </div>
 </div>
 
-
-
 <div class="search-bar">
-    <div class="ot-field">
+  <div class="ot-field">
     <label>हाजिरि देखि मिति</label>
     <div class="date-input-wrap">
       <input id="searchFrom" placeholder="YYYY.MM.DD">
@@ -403,15 +447,13 @@ td{
     <label>जिल्ला दररेट रकम (रु.)</label>
     <select id="districtRateSelect"></select>
   </div>
-  <div class="ot-field" style="align-self:flex-end;">
-    <div class="btn-group">
-      
-    </div>
+  <!-- सवारी चालकको लागि छुट्टै दररेट -->
+  <div class="ot-field" id="driverRateFieldWrap">
+    <label>सवारी चालक दररेट रकम (रु.)</label>
+    <select id="driverRateSelect"></select>
   </div>
-  
- </div>
+</div>
 <div id="searchMsg"></div>
-<div id="searchResults"></div>
 
 <div class="toolbar">
   <div class="legend">
@@ -425,7 +467,7 @@ td{
     <button class="btn btn-danger" onclick="clearTable()">🗑️ Clear</button>
     <button class="btn btn-accent" onclick="openMemoModal()">📄 मेमो</button>
     <button class="btn btn-accent" onclick="handlePrintClick()">🖨️ हाजिर Print गर्नुहोस्</button>
-    </div>
+  </div>
 </div>
 
 <div class="ot-panel">
@@ -447,25 +489,20 @@ td{
     <input id="otHoursValue" type="number" min="0" step="1" placeholder="जस्तै: 2 वा 5">
   </div>
   <div class="ot-field">
-<label>हाजिरी</label>
-<select id="bulkStatus">
-<option value="">स्थिति चयन गर्नुहोस्</option>
-<option value="हा">हा</option>
-<option value="काज">काज</option>
-<option value="बिदा">बिदा</option>
-<option value="">खाली</option>
-</select>
-</div>
+    <label>हाजिरी</label>
+    <select id="bulkStatus">
+      <option value="">स्थिति चयन गर्नुहोस्</option>
+      <option value="हा">हा</option>
+      <option value="काज">काज</option>
+      <option value="बिदा">बिदा</option>
+      <option value="">खाली</option>
+    </select>
+  </div>
 
-<button class="btn btn-primary"
-onclick="assignBulkStatus()">
-हाजिरी थप्नुहोस्
-</button>
+  <button class="btn btn-primary" onclick="assignBulkStatus()">हाजिरी थप्नुहोस्</button>
   <button class="btn btn-primary" onclick="assignBulkOT()">OT थप्नुहोस्</button>
   <span id="otPanelMsg"></span>
 </div>
-
-<p class="hint">दिनको हाजिरी लाइनमा क्लिक गर्दा स्थिति फेरिन्छ (- → हा → काज → बिदा)। OT लाइनमा घण्टा manual type गर्नुहोस्, वा माथिको OT panel बाट धेरै दिनलाई एकैचोटि थप्नुहोस्। नाम box मा क्लिक/type गर्दा सुझाव आउँछ।</p>
 
 <div class="print-only" id="printHeaderInfo" style="padding:0 16px 4px;font-size:14px;font-weight:700;text-align:center;"></div>
 <div class="print-only" id="printMetaInfo" style="padding:0 16px 10px;font-size:12.5px;font-weight:600;text-align:center;"></div>
@@ -490,15 +527,13 @@ onclick="assignBulkStatus()">
 
 <div class="bottom-bar">
   <span id="statusMsg"></span>
-  <div class="btn-group">
-    </div>
+  <div class="btn-group"></div>
 </div>
 
 <div class="signature-block">
   <div><div class="line">पेश गर्ने</div></div>
   <div><div class="line">चेक गर्ने</div></div>
   <div><div class="line">स्वीकृत गर्ने </div></div>
-  
 </div>
 
 <div id="nepaliCalPopup">
@@ -537,11 +572,11 @@ const STATUS_CYCLE = ["", "हा", "काज", "बिदा"];
 const STATUS_CLASS = {"":"", "हा":"st-present", "काज":"st-kaaj", "बिदा":"st-bida"};
 const PLACE_OPTIONS = ["धरान वितरण केन्द्र", ".........", ".........."];
 const WORK_OPTIONS = ["ज्यालादारी", "करार", "बिशेष करार", "सेवा करार", "दैनिक ज्यालादारी","दैनिक ज्यालादारी+सेवा करार","स्थायी"];
-const DESIG_OPTIONS = ["दै.ज्या.", "करार", "विशेष करार", " सेवा करार","स्थायी"];
+const DESIG_OPTIONS = ["दै.ज्या.","दै.ज्या.स.चा.","दै.ज्या.का.स.", "करार", "विशेष करार", " सेवा करार","स्थायी"];
 let TOTAL_DAY_COLS = 32;
 let employees = [];
 let masterNames = [];
-
+let activeEditIndex = 0;
 
 const DRAFT_KEY = 'hajiri_draft_v1';
 let draftRestored = false;
@@ -563,53 +598,8 @@ function saveDraftToLocalStorage(){
         savedAt: new Date().toISOString()
       };
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-    }catch(e){ /* स्टोरेज भरिएको वा उपलब्ध नभए बेवास्ता गर्ने */ }
+    }catch(e){ /* ignore */ }
   }, 300);
-
-  scheduleBackgroundCloudSave();
-}
-
-
-let cloudSaveTimer = null;
-let cloudSaveInFlight = false;
-
-function scheduleBackgroundCloudSave(){
-  clearTimeout(cloudSaveTimer);
-  cloudSaveTimer = setTimeout(runBackgroundCloudSave, 4000);
-}
-
-function runBackgroundCloudSave(){
-  const namedEmployees = employees.filter(e=>e.name && e.name.trim() !== '');
-  if (namedEmployees.length === 0) return;
-  if (cloudSaveInFlight){ scheduleBackgroundCloudSave(); return; }
-
-  cloudSaveInFlight = true;
-  const payload = {
-    meta: {
-      place: document.getElementById('metaPlace').value,
-      work: document.getElementById('metaWork').value,
-      faNo: document.getElementById('metaFaNo').value,
-      dateFrom: document.getElementById('searchFrom').value,
-      dateTo: document.getElementById('searchTo').value
-    },
-    employees: namedEmployees
-  };
-
-  google.script.run
-    .withSuccessHandler(res=>{
-      cloudSaveInFlight = false;
-      if (res && res.success === false){
-        setConnStatus('⚠️ पृष्ठभूमि auto-save असफल — ' + res.error, false);
-        return;
-      }
-      draftRestored = false;
-      setConnStatus('✔ आफै Sheet मा auto-save भयो (' + new Date().toLocaleTimeString('ne-NP') + ')', true);
-    })
-    .withFailureHandler(err=>{
-      cloudSaveInFlight = false;
-      setConnStatus('⚠️ पृष्ठभूमि auto-save असफल — ' + (err.message||err), false);
-    })
-    .saveData(payload);
 }
 
 function loadDraftFromLocalStorage(){
@@ -624,492 +614,678 @@ function clearDraftFromLocalStorage(){
   try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
 }
 
-
 function clearTable(){
   if(!confirm('के तपाईं यो टेबल पूरै खाली (Clear) गर्न चाहनुहुन्छ?\nभरिएको हाजिरी/OT यहाँबाट हराउनेछ ।')) return;
-  clearTimeout(cloudSaveTimer);
   employees = buildDefaultEmployees();
+  activeEditIndex = 0;
   clearDraftFromLocalStorage();
   renderRows();
   setStatus('टेबल खाली गरियो।', false);
 }
 
-function csvEscape(val){
-  val = (val===undefined||val===null) ? '' : String(val);
-  if (/[",\r\n]/.test(val)){
-    val = '"' + val.replace(/"/g,'""') + '"';
+function emptyEmployee(name, defStatus = "हा", defOt = 2){
+  const days = [];
+  for(let d=0; d<TOTAL_DAY_COLS; d++) {
+    days.push({status: defStatus, ot: defOt});
   }
-  return val;
+  return {
+    name: name || "",
+    designation: "दै.ज्या.",
+    days: days
+  };
 }
 
-function downloadTextFile(content, filename){
-  const blob = new Blob(["\uFEFF" + content], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+function buildDefaultEmployees(){
+  return [
+    emptyEmployee("", "हा", 2),
+    emptyEmployee("", "हा", 2)
+  ];
 }
 
-function exportCSV(){
-  const place = document.getElementById('metaPlace').value || '';
-  const work = document.getElementById('metaWork').value || '';
-  const fano = document.getElementById('metaFaNo').value || '';
-  const from = document.getElementById('searchFrom').value || '';
-  const to = document.getElementById('searchTo').value || '';
-
-  const rows = [];
-  rows.push(['कार्यलयको नाम', place]);
-  rows.push(['कामको विवरण', work]);
-  rows.push(['कार्यरत फाँट', fano]);
-  rows.push(['हाजिरि देखि मिति', from]);
-  rows.push(['हाजिरि सम्म मिति', to]);
-  rows.push([]);
-
-  const header = ['क्र.सं.','नाम','प्रकार'];
-  for(let d=1; d<=TOTAL_DAY_COLS; d++){
-    header.push('दिन'+d+'_हाजिरी');
-    header.push('दिन'+d+'_OT');
-  }
-  header.push('जम्मा दिन');
-  header.push('जम्मा OT');
-  rows.push(header);
-
-  const namedEmployees = employees.filter(e=>e.name && e.name.trim() !== '');
-  namedEmployees.forEach((emp, idx)=>{
-    computeTotals(emp);
-    const row = [idx+1, emp.name, emp.designation || ''];
-    emp.days.forEach(d=>{
-      row.push(d.status || '');
-      row.push(d.ot || 0);
-    });
-    row.push(emp.totalDays);
-    row.push(emp.totalOT);
-    rows.push(row);
-  });
-
-  const csvContent = rows.map(r=>r.map(csvEscape).join(',')).join('\r\n');
-  downloadTextFile(csvContent, 'hajiri.csv');
-  setStatus('✔ hajiri.csv डाउनलोड भयो। ', false);
-}
-
-function triggerCSVImport(){
-  document.getElementById('csvFileInput').click();
-}
-
-function parseCSVLine(line){
-  const result = [];
-  let cur = '';
-  let inQuotes = false;
-  for(let i=0; i<line.length; i++){
-    const c = line[i];
-    if (inQuotes){
-      if (c === '"'){
-        if (line[i+1] === '"'){ cur += '"'; i++; }
-        else inQuotes = false;
-      } else cur += c;
-    } else {
-      if (c === '"') inQuotes = true;
-      else if (c === ',') { result.push(cur); cur = ''; }
-      else cur += c;
-    }
-  }
-  result.push(cur);
-  return result;
-}
-
-function parseCSVAndLoad(text){
-  const lines = text.replace(/^\uFEFF/, '').split(/\r\n|\n/).filter(l=>l.length > 0);
-  let idx = 0;
-  const meta = {};
-  const metaKeys = ['place','work','faNo','dateFrom','dateTo'];
-  for(let i=0; i<5; i++){
-    if (idx < lines.length){
-      const cols = parseCSVLine(lines[idx]);
-      meta[metaKeys[i]] = cols[1] || '';
-      idx++;
-    }
-  }
-  if (idx < lines.length && parseCSVLine(lines[idx]).join('') === ''){ idx++; }
-  if (idx >= lines.length) throw new Error('CSV खाली छ वा ढाँचा मिलेन');
-  const header = parseCSVLine(lines[idx]); idx++;
-  const dayCount = Math.floor((header.length - 5) / 2);
-  if (dayCount <= 0) throw new Error('CSV ढाँचा मिलेन');
-
-  const newEmployees = [];
-  for(; idx < lines.length; idx++){
-    const cols = parseCSVLine(lines[idx]);
-    if (cols.length < 3) continue;
-    const name = cols[1] || '';
-    if (!name.trim()) continue;
-    const designation = cols[2] || '';
-    const days = [];
-    for(let d=0; d<dayCount; d++){
-      const status = cols[3 + d*2] || '';
-      const ot = Number(cols[3 + d*2 + 1]) || 0;
-      days.push({status, ot});
-    }
-    newEmployees.push({name, designation, days});
-  }
-  if (newEmployees.length === 0) throw new Error('CSV मा कुनै कर्मचारी डाटा भेटिएन');
-
-  TOTAL_DAY_COLS = dayCount;
-  buildDayHeaders();
-  employees = newEmployees;
-  document.getElementById('metaPlace').value = meta.place || '';
-  document.getElementById('metaWork').value = meta.work || '';
-  document.getElementById('metaFaNo').value = meta.faNo || '';
-  document.getElementById('searchFrom').value = meta.dateFrom || '';
-  document.getElementById('searchTo').value = meta.dateTo || '';
+function addEmployee(){
+  employees.push(emptyEmployee("", "हा", 2));
+  activeEditIndex = employees.length - 1;
   renderRows();
-  updatePrintHeader();
   saveDraftToLocalStorage();
 }
 
-function handleCSVImport(e){
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(evt){
-    try{
-      parseCSVAndLoad(evt.target.result);
-      setStatus('✔ hajiri.csv बाट हाजिरी लोड भयो।', false);
-    }catch(err){
-      setStatus('CSV पढ्न सकिएन: ' + err.message, true);
+function deleteEmployee(idx){
+  if(!confirm('यो कर्मचारीको लाइन हटाउने हो?')) return;
+  employees.splice(idx,1);
+  if(activeEditIndex >= employees.length) activeEditIndex = employees.length - 1;
+  renderRows();
+  saveDraftToLocalStorage();
+}
+
+
+function activateRow(idx){
+  if(activeEditIndex !== idx){
+    activeEditIndex = idx;
+    const body = document.getElementById('bodyRows');
+    const hajiriRows = body.querySelectorAll('.row-hajiri');
+    const otRows = body.querySelectorAll('.row-ot');
+    
+    employees.forEach((_, i)=>{
+      const isCur = (i === idx);
+      if(hajiriRows[i]){
+        hajiriRows[i].classList.toggle('row-active', isCur);
+        hajiriRows[i].classList.toggle('row-locked', !isCur);
+      }
+      if(otRows[i]){
+        otRows[i].classList.toggle('row-active', isCur);
+        otRows[i].classList.toggle('row-locked', !isCur);
+      }
+    });
+  }
+}
+
+function computeTotals(emp){
+  let totalDays = 0, totalOT = 0;
+  emp.days.forEach(d=>{
+    if (d.status === 'हा' || d.status === 'काज') {
+      totalDays += 1;
     }
-  };
-  reader.onerror = function(){
-    setStatus('CSV फाइल पढ्न सकिएन।', true);
-  };
-  reader.readAsText(file, 'UTF-8');
-  e.target.value = '';
-}
-
-// -------------------- GitHub (hajiri.csv) मार्फत सधैंको Save/Search --------------------
-const GITHUB_SETTINGS_KEY = 'hajiri_github_settings_v1';
-const GITHUB_CSV_DAY_COLS = 32;
-
-function getGithubSettings(){
-  try{
-    const raw = localStorage.getItem(GITHUB_SETTINGS_KEY);
-    return raw ? JSON.parse(raw) : null;
-  }catch(e){ return null; }
-}
-
-function saveGithubSettingsToStorage(settings){
-  try{ localStorage.setItem(GITHUB_SETTINGS_KEY, JSON.stringify(settings)); }catch(e){}
-}
-
-function openGithubSettings(){
-  const cur = getGithubSettings() || {};
-  const repo = prompt('(owner/repo):', cur.repo || '');
-  if (repo === null) return;
-  const branch = prompt('Branch (जस्तै: main):', cur.branch || 'main');
-  if (branch === null) return;
-  const path = prompt('CSV फाइलको बाटो (Path) रिपोमा (जस्तै: hajiri.csv):', cur.path || 'hajiri.csv');
-  if (path === null) return;
-  const token = prompt('GitHub Personal Access Token (repo लेख्ने अनुमति भएको — यो यही browser को localStorage मा मात्र बस्छ, अरु कतै पठाइँदैन):', cur.token || '');
-  if (token === null) return;
-  if (!repo.trim() || !token.trim()){
-    alert('Repository र Token दुवै आवश्यक छ।');
-    return;
-  }
-  saveGithubSettingsToStorage({
-    repo: repo.trim(),
-    branch: (branch || 'main').trim() || 'main',
-    path: (path || 'hajiri.csv').trim() || 'hajiri.csv',
-    token: token.trim()
+    totalOT += Number(d.ot) || 0;
   });
-  setStatus('✔ सेटिङ सुरक्षित भयो।', false);
+  emp.totalDays = totalDays;
+  emp.totalOT = totalOT;
+  return emp;
 }
 
-function githubApiBaseUrl(settings){
-  return 'https://api.github.com/repos/' + settings.repo + '/contents/' + settings.path.split('/').map(encodeURIComponent).join('/');
+function refreshOtEmployeeSelect(){
+  const sel = document.getElementById('otEmpSelect');
+  const prevVal = sel.value;
+  sel.innerHTML = '';
+  const first = document.createElement('option');
+  first.value = "";
+  first.textContent = "कर्मचारीकाे नाम चयन गर्नुहोस्";
+  first.disabled = true;
+  first.selected = true;
+  sel.appendChild(first);
+  employees.forEach((e, idx)=>{
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = e.name && e.name.trim() ? e.name : ('(खाली लाइन ' + (idx+1) + ')');
+    sel.appendChild(opt);
+  });
+  if(prevVal !== '' && sel.querySelector('option[value="'+prevVal+'"]')){
+    sel.value = prevVal;
+  }
 }
 
-function b64EncodeUnicode(str){
-  return btoa(unescape(encodeURIComponent(str)));
-}
-function b64DecodeUnicode(str){
-  return decodeURIComponent(escape(atob(str)));
+function assignBulkOT(){
+  const idx = Number(document.getElementById('otEmpSelect').value);
+  const from = Number(document.getElementById('otDayFrom').value);
+  const to = Number(document.getElementById('otDayTo').value);
+  const otVal = Number(document.getElementById('otHoursValue').value);
+  const msgEl = document.getElementById('otPanelMsg');
+
+  if (isNaN(idx) || !employees[idx]) { msgEl.className='error'; msgEl.textContent='कर्मचारी छान्नुहोस्।'; return; }
+  if (!from || !to || from < 1 || to > TOTAL_DAY_COLS || from > to) { msgEl.className='error'; msgEl.textContent='दिन देखि/सम्म मिलेन।'; return; }
+  if (isNaN(otVal) || otVal < 0) { msgEl.className='error'; msgEl.textContent='OT घण्टा राख्नुहोस्।'; return; }
+
+  const emp = employees[idx];
+  for(let d = from-1; d <= to-1; d++){
+    emp.days[d].ot = otVal;
+  }
+  activeEditIndex = idx;
+  renderRows();
+  saveDraftToLocalStorage();
+  msgEl.className='';
+  msgEl.textContent = '✔ ' + (emp.name||'यो कर्मचारी') + ' लाई गते ' + from + ' देखि ' + to + ' सम्म ' + (otVal > 0 ? otVal : '-') + ' OT थपियो।';
 }
 
-async function githubGetFile(settings){
-  const url = githubApiBaseUrl(settings) + '?ref=' + encodeURIComponent(settings.branch);
-  const res = await fetch(url, {
-    headers: {
-      'Authorization': 'token ' + settings.token,
-      'Accept': 'application/vnd.github+json'
+function assignBulkStatus(){
+  const idx = Number(document.getElementById("otEmpSelect").value);
+  const from = Number(document.getElementById("otDayFrom").value);
+  const to = Number(document.getElementById("otDayTo").value);
+  const status = document.getElementById("bulkStatus").value;
+  const msgEl = document.getElementById('otPanelMsg');
+
+  if (isNaN(idx) || !employees[idx]) { msgEl.className='error'; msgEl.textContent='कर्मचारी छान्नुहोस्।'; return; }
+  if (!from || !to || from < 1 || to > TOTAL_DAY_COLS || from > to) { msgEl.className='error'; msgEl.textContent='दिन देखि/सम्म मिलेन।'; return; }
+
+  for(let d=from-1; d<=to-1; d++){
+    employees[idx].days[d].status = status;
+  }
+
+  activeEditIndex = idx;
+  renderRows();
+  saveDraftToLocalStorage();
+  msgEl.className='';
+  msgEl.textContent = '✔ ' + (employees[idx].name||'यो कर्मचारी') + ' लाई गते ' + from + ' देखि ' + to + ' सम्म ' + (status || 'खाली') + ' हाजिरी थपियो।';
+}
+
+
+function handleOtKeyNavigation(e, empIdx, dayIdx){
+  if (activeEditIndex !== empIdx) return;
+
+  if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    const nextDay = dayIdx + 1;
+    if (nextDay < TOTAL_DAY_COLS) {
+      const nextInput = document.getElementById(`ot-${empIdx}-${nextDay}`);
+      if (nextInput) {
+        nextInput.focus();
+        nextInput.select();
+      }
+    }
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const prevDay = dayIdx - 1;
+    if (prevDay >= 0) {
+      const prevInput = document.getElementById(`ot-${empIdx}-${prevDay}`);
+      if (prevInput) {
+        prevInput.focus();
+        prevInput.select();
+      }
+    }
+  } else if (e.key === 'ArrowUp') {
+    
+    e.preventDefault();
+    let cur = Number(employees[empIdx].days[dayIdx].ot) || 0;
+    cur += 1;
+    employees[empIdx].days[dayIdx].ot = cur;
+    e.target.value = cur;
+    e.target.select();
+    updateTotalsCells(empIdx);
+    saveDraftToLocalStorage();
+  } else if (e.key === 'ArrowDown') {
+    
+    e.preventDefault();
+    let cur = Number(employees[empIdx].days[dayIdx].ot) || 0;
+    cur = Math.max(0, cur - 1);
+    employees[empIdx].days[dayIdx].ot = cur;
+    e.target.value = cur > 0 ? cur : '-';
+    e.target.select();
+    updateTotalsCells(empIdx);
+    saveDraftToLocalStorage();
+  }
+}
+
+function syncPrintTextForPrint(){
+  const trs = document.querySelectorAll('#bodyRows tr.row-hajiri');
+  trs.forEach((tr, idx)=>{
+    const nameInput = tr.querySelector('.col-name input');
+    const namePrint = tr.querySelector('.col-name .print-text-only');
+    if (nameInput && namePrint){
+      const val = nameInput.value || (employees[idx] ? employees[idx].name : '');
+      namePrint.textContent = val;
+      if (employees[idx]) employees[idx].name = val;
+    }
+    const desigInput = tr.querySelector('.col-desig input');
+    const desigPrint = tr.querySelector('.col-desig .print-text-only');
+    if (desigInput && desigPrint){
+      const val = desigInput.value || (employees[idx] ? employees[idx].designation : '');
+      desigPrint.textContent = val;
+      if (employees[idx]) employees[idx].designation = val;
     }
   });
-  if (res.status === 404){
-    return {content: '', sha: null, exists: false};
-  }
-  if (!res.ok){
-    const errText = await res.text();
-    throw new Error('फाइल पढ्न सकिएन (' + res.status + '): ' + errText);
-  }
-  const data = await res.json();
-  const content = b64DecodeUnicode((data.content || '').replace(/\n/g, ''));
-  return {content, sha: data.sha, exists: true};
 }
 
-async function githubPutFile(settings, newContent, sha, message){
-  const body = {
-    message: message || 'Update ' + settings.path,
-    content: b64EncodeUnicode(newContent),
-    branch: settings.branch
-  };
-  if (sha) body.sha = sha;
-  const res = await fetch(githubApiBaseUrl(settings), {
-    method: 'PUT',
-    headers: {
-      'Authorization': 'token ' + settings.token,
-      'Accept': 'application/vnd.github+json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
+function renderRows(){
+  refreshOtEmployeeSelect();
+  const body = document.getElementById('bodyRows');
+  body.innerHTML = '';
+
+  employees.forEach((emp, idx)=>{
+    computeTotals(emp);
+
+    const isRowEditable = (activeEditIndex === idx);
+    const rowLockClass = isRowEditable ? 'row-active' : (activeEditIndex !== -1 ? 'row-locked' : '');
+
+    const trA = document.createElement('tr');
+    trA.className = 'row-hajiri ' + rowLockClass;
+
+    const snTd = document.createElement('td');
+    snTd.className = 'col-sn sticky-1';
+    snTd.rowSpan = 2;
+    snTd.textContent = idx+1;
+    trA.appendChild(snTd);
+
+    const nameTd = document.createElement('td');
+    nameTd.className = 'col-name sticky-2';
+    nameTd.rowSpan = 2;
+    
+    const namePrintText = document.createElement('div');
+    namePrintText.className = 'print-text-only';
+    namePrintText.textContent = emp.name || '';
+
+    
+    const nameCombo = createComboInput({
+      className: 'name-input',
+      value: emp.name,
+      placeholder: 'श्री.(type/select)',
+      getOptions: ()=>getNameOptions(),
+      onFocus: ()=>activateRow(idx),
+      onChange: (val)=>{
+        emp.name = val;
+        namePrintText.textContent = val;
+        refreshOtEmployeeSelect();
+        saveDraftToLocalStorage();
+      }
+    });
+    nameTd.appendChild(nameCombo);
+    nameTd.appendChild(namePrintText);
+    trA.appendChild(nameTd);
+
+    const desigTd = document.createElement('td');
+    desigTd.className = 'col-desig';
+    desigTd.rowSpan = 2;
+    
+    const desigPrintText = document.createElement('div');
+    desigPrintText.className = 'print-text-only';
+    desigPrintText.textContent = emp.designation || '';
+
+    const desigCombo = createComboInput({
+      className: 'desig-input',
+      value: emp.designation || '',
+      placeholder: 'कर्मचारीको प्रकार',
+      getOptions: ()=>DESIG_OPTIONS,
+      onFocus: ()=>{
+        if (activeEditIndex === idx) activateRow(idx);
+      },
+      onChange: (val)=>{
+        emp.designation = val;
+        desigPrintText.textContent = val;
+        saveDraftToLocalStorage();
+      }
+    });
+    desigTd.appendChild(desigCombo);
+    desigTd.appendChild(desigPrintText);
+    trA.appendChild(desigTd);
+
+    const typeTdA = document.createElement('td');
+    typeTdA.className = 'col-type sticky-3';
+    typeTdA.textContent = 'हाजिरी';
+    trA.appendChild(typeTdA);
+
+    for(let d=0; d<TOTAL_DAY_COLS; d++){
+      const dayTd = document.createElement('td');
+      dayTd.className = 'col-day';
+      const statusBtn = document.createElement('button');
+      statusBtn.className = 'status-btn ' + STATUS_CLASS[emp.days[d].status || ""];
+      statusBtn.textContent = emp.days[d].status || '-';
+      statusBtn.onclick = (e)=>{
+        e.stopPropagation();
+        if (activeEditIndex !== idx) return;
+        const cur = STATUS_CYCLE.indexOf(emp.days[d].status || "");
+        const next = STATUS_CYCLE[(cur+1) % STATUS_CYCLE.length];
+        emp.days[d].status = next;
+        statusBtn.textContent = next || '-';
+        statusBtn.className = 'status-btn ' + STATUS_CLASS[next];
+        updateTotalsCells(idx);
+        saveDraftToLocalStorage();
+      };
+      dayTd.appendChild(statusBtn);
+      trA.appendChild(dayTd);
+    }
+
+    trA.appendChild(makeRowspanTotalTd('td-days-'+idx, emp.totalDays));
+    trA.appendChild(makeRowspanTotalTd('td-ot-'+idx, emp.totalOT > 0 ? emp.totalOT : '-'));
+
+    const delTd = document.createElement('td');
+    delTd.className = 'col-del';
+    delTd.rowSpan = 2;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-danger-mini';
+    delBtn.textContent = '✕';
+    delBtn.title = 'यो कर्मचारी हटाउनुहोस्';
+    delBtn.onclick = (e)=>{
+      e.stopPropagation();
+      deleteEmployee(idx);
+    };
+    delTd.appendChild(delBtn);
+    trA.appendChild(delTd);
+
+    body.appendChild(trA);
+
+    const trB = document.createElement('tr');
+    trB.className = 'row-ot ' + rowLockClass;
+
+    const typeTdB = document.createElement('td');
+    typeTdB.className = 'col-type sticky-3';
+    typeTdB.textContent = 'OT';
+    trB.appendChild(typeTdB);
+
+    for(let d=0; d<TOTAL_DAY_COLS; d++){
+      const otTd = document.createElement('td');
+      otTd.className = 'col-day';
+      const otInput = document.createElement('input');
+      otInput.className = 'ot-input';
+      otInput.type = 'text';
+      otInput.placeholder = '-';
+      const curOt = Number(emp.days[d].ot) || 0;
+      otInput.value = curOt > 0 ? curOt : '-';
+      otInput.id = 'ot-'+idx+'-'+d;
+
+      
+      otInput.onkeydown = (e)=>handleOtKeyNavigation(e, idx, d);
+
+      otInput.onfocus = (e)=>{
+        if(activeEditIndex !== idx) {
+          e.target.blur();
+          return;
+        }
+        if(e.target.value === '-') e.target.value = '';
+        else e.target.select();
+      };
+
+      otInput.oninput = (e)=>{
+        if(activeEditIndex !== idx) return;
+        let raw = e.target.value.trim();
+        let val = Number(raw);
+        if (isNaN(val) || val <= 0 || raw === '' || raw === '-') {
+          emp.days[d].ot = 0;
+        } else {
+          emp.days[d].ot = val;
+        }
+        updateTotalsCells(idx);
+        saveDraftToLocalStorage();
+      };
+
+      otInput.onblur = (e)=>{
+        const v = Number(emp.days[d].ot) || 0;
+        e.target.value = v > 0 ? v : '-';
+      };
+
+      otTd.appendChild(otInput);
+      trB.appendChild(otTd);
+    }
+
+    body.appendChild(trB);
   });
-  if (!res.ok){
-    const errText = await res.text();
-    throw new Error('Save असफल (' + res.status + '): ' + errText);
+}
+
+function makeRowspanTotalTd(id, val){
+  const td = document.createElement('td');
+  td.className = 'col-total total-val';
+  td.rowSpan = 2;
+  td.id = id;
+  td.textContent = val;
+  return td;
+}
+
+function updateTotalsCells(idx){
+  const emp = employees[idx];
+  computeTotals(emp);
+  document.getElementById('td-days-'+idx).textContent = emp.totalDays;
+  document.getElementById('td-ot-'+idx).textContent = emp.totalOT > 0 ? emp.totalOT : '-';
+  for(let d=0; d<TOTAL_DAY_COLS; d++){
+    const el = document.getElementById('ot-'+idx+'-'+d);
+    if(el && document.activeElement !== el){
+      const v = Number(emp.days[d].ot) || 0;
+      el.value = v > 0 ? v : '-';
+    }
   }
-  return await res.json();
 }
 
-function buildGithubCSVHeader(){
-  const header = ['periodKey','dateFrom','dateTo','place','work','faNo','sn','name','designation'];
-  for(let d=1; d<=GITHUB_CSV_DAY_COLS; d++){
-    header.push('day'+d+'_status');
-    header.push('day'+d+'_ot');
-  }
-  header.push('totalDays');
-  header.push('totalOT');
-  return header;
-}
-
-function currentPeriodKey(){
-  const from = document.getElementById('searchFrom').value.trim();
-  const to = document.getElementById('searchTo').value.trim();
-  return from + '__' + to;
-}
-
-function buildGithubRowsForCurrentPeriod(){
+function updatePrintHeader(){
+  const from = document.getElementById('searchFrom').value || '?';
+  const to = document.getElementById('searchTo').value || '?';
   const place = document.getElementById('metaPlace').value || '';
   const work = document.getElementById('metaWork').value || '';
   const fano = document.getElementById('metaFaNo').value || '';
-  const from = document.getElementById('searchFrom').value || '';
-  const to = document.getElementById('searchTo').value || '';
-  const periodKey = currentPeriodKey();
-  const namedEmployees = employees.filter(e=>e.name && e.name.trim() !== '');
-  const rows = [];
-  namedEmployees.forEach((emp, idx)=>{
-    computeTotals(emp);
-    const row = [periodKey, from, to, place, work, fano, idx+1, emp.name, emp.designation || ''];
-    for(let d=0; d<GITHUB_CSV_DAY_COLS; d++){
-      const day = emp.days[d] || {status:'', ot:0};
-      row.push(day.status || '');
-      row.push(day.ot || 0);
-    }
-    row.push(emp.totalDays);
-    row.push(emp.totalOT);
-    rows.push(row);
-  });
-  return rows;
+
+  document.getElementById('printHeaderInfo').textContent =
+    'मिति ' + from + ' देखि ' + to + ' सम्मको हाजिरी र OT';
+
+  document.getElementById('printMetaInfo').innerHTML =
+`
+<div style="
+display:flex;
+justify-content:center;
+align-items:flex-start;
+gap:180px;
+font-size:15px;
+font-weight:700;
+width:100%;
+line-height:1.4;
+">
+
+<span style="white-space:nowrap;">कार्यलयको नाम :- ${place}</span>
+
+<span style="white-space:nowrap;">कामको विवरण :- ${work}</span>
+
+<span style="
+white-space:normal;
+overflow-wrap:anywhere;
+word-break:break-word;
+max-width:350px;
+text-align:center;
+">
+कार्यरत फाँट :- ${fano}
+</span>
+
+</div>
+`;
 }
 
-function parseGithubCSV(text){
-  const lines = text.replace(/^\uFEFF/, '').split(/\r\n|\n/).filter(l=>l.length > 0);
-  if (lines.length === 0) return {header: null, rows: []};
-  const header = parseCSVLine(lines[0]);
-  const rows = [];
-  for(let i=1; i<lines.length; i++){
-    rows.push(parseCSVLine(lines[i]));
-  }
-  return {header, rows};
+function autoFitTableForPrint(){
+  const wrap = document.querySelector('.table-wrap');
+  if(!wrap) return;
+  wrap.style.zoom = '1';
+  wrap.style.width = '';
+  const naturalWidth = wrap.scrollWidth;
+  const PRINTABLE_WIDTH_PX = 1060; 
+  let scale = PRINTABLE_WIDTH_PX / naturalWidth;
+  if (scale > 1) scale = 1;
+  if (scale < 0.25) scale = 0.25;
+  wrap.style.zoom = scale;
 }
 
-function rowsToCSVText(header, rows){
-  const all = [header, ...rows];
-  return all.map(r=>r.map(csvEscape).join(',')).join('\r\n');
+function resetTableZoomAfterPrint(){
+  const wrap = document.querySelector('.table-wrap');
+  if(wrap) wrap.style.zoom = '1';
 }
+window.addEventListener('afterprint', resetTableZoomAfterPrint);
 
-async function saveToGithub(){
-  const settings = getGithubSettings();
-  if (!settings || !settings.repo || !settings.token){
-    alert('पहिले "⚙️ GitHub सेटिङ" बाट Repository र Token राख्नुहोस्।');
-    return;
-  }
+function handlePrintClick(){
+  const place = document.getElementById('metaPlace').value.trim();
+  const work = document.getElementById('metaWork').value.trim();
+  const fano = document.getElementById('metaFaNo').value.trim();
   const from = document.getElementById('searchFrom').value.trim();
   const to = document.getElementById('searchTo').value.trim();
-  if (!from || !to){
-    alert('कृपया "हाजिरि देखि मिति" र "हाजिरि सम्म मिति" भर्नुहोस्।');
+
+  const missing = [];
+  if(!place) missing.push('कार्यालयको नाम');
+  if(!work) missing.push('कामको विवरण');
+  if(!fano) missing.push('कार्यरत फाँट');
+  if(!from) missing.push('हाजिरि देखि मिति');
+  if(!to) missing.push('महाजिरि सम्म मिति');
+
+  if(missing.length > 0){
+    alert('कृपया Print गर्नुअघि यी फिल्डहरू भर्नुहोस्:\n\n' + missing.join('\n'));
     return;
   }
+
+  syncPrintTextForPrint();
+  updatePrintHeader();
+  autoFitTableForPrint();
+  document.getElementById('dynamicPageStyle').textContent = '@page{size:landscape;margin:8mm;}';
+  window.print();
+}
+
+window.addEventListener('beforeprint', ()=>{ 
+  syncPrintTextForPrint();
+  updatePrintHeader(); 
+  autoFitTableForPrint(); 
+});
+
+document.getElementById('searchFrom').addEventListener('input', ()=>{ updatePrintHeader(); saveDraftToLocalStorage(); });
+document.getElementById('searchTo').addEventListener('input', ()=>{ updatePrintHeader(); saveDraftToLocalStorage(); });
+
+function setStatus(msg, isError){
+  const el = document.getElementById('statusMsg');
+  if(!el) return;
+  el.textContent = msg;
+  el.className = isError ? 'error' : '';
+}
+
+let currentMemoType = 'approval-admin';
+
+function escapeHtml(s){
+  return (s||'').toString()
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+
+function buildMemoHTML(type){
+  const office = escapeHtml(document.getElementById('metaPlace').value || '');
+  const fano = escapeHtml(document.getElementById('metaFaNo').value || '');
+  const work = escapeHtml(document.getElementById('metaWork').value || 'दै.ज्या.');
+  const dateFrom = escapeHtml(document.getElementById('searchFrom').value || '?');
+  const dateTo = escapeHtml(document.getElementById('searchTo').value || '?');
+  const approvalDate = escapeHtml(document.getElementById('approvalMemoDate').value || dateFrom);
   const namedEmployees = employees.filter(e=>e.name && e.name.trim() !== '');
-  if (namedEmployees.length === 0){
-    alert('कम्तिमा एक कर्मचारीको नाम भर्नुहोस्।');
+
+  const header = `
+    <div style="text-align:center;font-weight:700;">
+      <div style="font-size:16px;">नेपाल विद्युत प्राधिकरण</div>
+      <div style="font-size:14px;">${office}</div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-top:16px;">
+      <tr>
+        <td style="border:1px solid #000;width:50%;padding:8px;vertical-align:top;">
+          <u>लाई:</u><br>
+          श्रीमान केन्द्र प्रमुख ज्यू,<br>
+          नेपाल विद्युत प्राधिकरण, ${office}
+        </td>
+        <td style="border:1px solid #000;width:50%;padding:8px;vertical-align:top;">
+          <u>बाट:</u><br>
+          ${fano}, ${office}
+        </td>
+      </tr>
+    </table>
+  `;
+
+  const nameListHTML = namedEmployees.map((e,i)=>`<div>${i+1}. ${escapeHtml(e.name)}</div>`).join('');
+
+  if (type === 'approval-admin' || type === 'approval-technical'){
+    const workArea = (type === 'approval-admin')
+      ? 'सवारी चालक, हेल्पडेस्क, सरसफाइ, काउन्टर'
+      : 'मर्मत, शिफ्ट डिउटी, फ्युज सेवा';
+
+    return header + `
+      <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">पूर्व स्वीकृत मेमो</div>
+      <p style="text-align:justify;text-indent:28px;">
+        यस वितरण केन्द्र अन्तर्गतको ${workArea} साथै कार्यालयको काममा
+        परिआउने कार्य गर्नका लागि हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले
+        मिति ${dateFrom} देखि मिति ${dateTo} सम्मका लागि तपशिलमा उल्लेखित ${work} कर्मचारीहरुलाई अतिरिक्त
+        बढी समय काममा खटाउनु पर्ने भएकोले पूर्व स्वीकृतिको लागि अनुरोध छ।
+      </p>
+      <div style="font-weight:700;text-decoration:underline;margin-top:8px;">तपशिल:</div>
+      <div style="margin-top:8px;">${nameListHTML}</div>
+      <div style="display:flex;justify-content:space-between;margin-top:44px;">
+        <div>काममा लगाउने:</div>
+        <div>स्वीकृत गर्ने :</div>
+      </div>
+      <div style="margin-top:18px;">मिति: ${approvalDate}</div>
+    `;
+  }
+
+  const workArea = (type === 'payment-admin')
+    ? 'सवारी चालक, हेल्पडेक्स, सरसफाई, विद्युत महसुल संकलन काउन्टर'
+    : 'मर्मत, शिफ्ट डिउटी, फ्युज सेवा';
+
+  
+  const districtRateVal = document.getElementById('districtRateSelect') ? document.getElementById('districtRateSelect').value.replace(/,/g, '') : '';
+  const driverRateVal = document.getElementById('driverRateSelect') ? document.getElementById('driverRateSelect').value.replace(/,/g, '') : '';
+
+  let rateSentence = '';
+  if (type === 'payment-technical' && districtRateVal) {
+    rateSentence = 'सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट रु.' + toDevanagariDigits(districtRateVal) + ' काे दरले हाजिरी दिन अनुसारकाे पारिश्रमिक समेत उपलब्ध गराईदिनुहुन अनुरोध छ।';
+  }
+
+  if (type === 'payment-admin') {
+    const dRateStr = districtRateVal ? 'रु.' + toDevanagariDigits(districtRateVal) : 'स्वीकृत दर';
+    const drvRateStr = driverRateVal ? 'रु.' + toDevanagariDigits(driverRateVal) : 'स्वीकृत दर';
+    rateSentence = `सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट अनुसार सवारी चालकको लागि दैनिक ${drvRateStr} र अन्य विभिन्न फाटमा रहि कार्य गर्ने दै‍.ज्या कर्मचारीको हकमा दैनिक ${dRateStr} का दरले हाजिरी दिन अनुसारको पारिश्रमिक समेत उपलब्ध गराईदिनुहुन सिफारिसका साथ अनुरोध छ।`;
+  }
+
+  return header + `
+    <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">भुक्तानी स्वीकृत मेमो</div>
+    <p style="text-align:justify;">
+      यस वितरण केन्द्र अन्तर्गतको ${workArea} साथै कार्यालयको काममा परिआउने कार्य गर्नका लागि
+      हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्म
+      अतिरिक्त बढी समय काममा लगाए बापतको संलग्न विवरण अनुसारको पूर्व स्वीकृति मेमो बमोजिम ${work} कर्मचारीहरुलाई
+      बढी समय भत्ता उपलब्ध गराईदिनुहुन साथै ${rateSentence}
+    </p>
+    <div style="display:flex;justify-content:space-between;margin-top:44px;">
+      <div>काममा लगाउने:</div>
+      <div>सिफारिस गर्ने:</div>
+      <div>स्वीकृत गर्ने :</div>
+    </div>
+    <div style="margin-top:18px;">मिति: ${dateTo}</div>
+  `;
+}
+
+function showMemoTab(type){
+  currentMemoType = type;
+  document.getElementById('memoContent').innerHTML = buildMemoHTML(type);
+  document.getElementById('tabApprovalAdminBtn').classList.toggle('active', type === 'approval-admin');
+  document.getElementById('tabPaymentAdminBtn').classList.toggle('active', type === 'payment-admin');
+  document.getElementById('tabApprovalTechBtn').classList.toggle('active', type === 'approval-technical');
+  document.getElementById('tabPaymentTechBtn').classList.toggle('active', type === 'payment-technical');
+}
+
+function openMemoModal(){
+  showMemoTab('approval-admin');
+  document.getElementById('memoModal').classList.remove('hidden');
+}
+
+function closeMemoModal(){
+  document.getElementById('memoModal').classList.add('hidden');
+}
+
+function printMemo(){
+  const isApprovalType = (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical');
+  const approvalDateVal = document.getElementById('approvalMemoDate').value.trim();
+  if (isApprovalType && !approvalDateVal){
+    alert('कृपया home page मा रहेको "पूर्व स्वीकृती मेमो मिति" भर्नुहोस् — यो नभरी पूर्व स्वीकृती मेमो Print हुँदैन।');
     return;
   }
+  document.getElementById('dynamicPageStyle').textContent = '@page{size:portrait;margin:15mm;}';
+  document.body.classList.add('printing-memo');
+  window.print();
+}
+window.addEventListener('afterprint', ()=>{
+  document.body.classList.remove('printing-memo');
+});
 
-  setStatus('☁️ GitHub मा Save गर्दैछ...', false);
-  try{
-    const file = await githubGetFile(settings);
-    let header = buildGithubCSVHeader();
-    let existingRows = [];
-    if (file.exists && file.content.trim()){
-      const parsed = parseGithubCSV(file.content);
-      if (parsed.header && parsed.header.length) header = parsed.header;
-      existingRows = parsed.rows;
-    }
-    const periodKey = currentPeriodKey();
-    const filteredRows = existingRows.filter(r => r[0] !== periodKey);
-    const newRows = buildGithubRowsForCurrentPeriod();
-    const finalRows = filteredRows.concat(newRows);
-    const csvText = rowsToCSVText(header, finalRows);
-    await githubPutFile(settings, csvText, file.sha, 'हाजिरी अपडेट: ' + from + ' - ' + to);
-    setStatus('✔ GitHub को "' + settings.path + '" मा सुरक्षित भयो (' + namedEmployees.length + ' कर्मचारी)। मिति ' + from + ' देखि ' + to + ' राखेर पछि खोज्न सकिन्छ।', false);
-  }catch(err){
-    setStatus('GitHub Save असफल: ' + err.message, true);
-    alert('GitHub मा Save गर्दा त्रुटि आयो:\n' + err.message);
+document.getElementById('approvalMemoDate').addEventListener('input', ()=>{
+  if (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical'){
+    showMemoTab(currentMemoType);
   }
+});
+
+document.getElementById('districtRateSelect').addEventListener('change', ()=>{
+  showMemoTab(currentMemoType);
+});
+
+document.getElementById('driverRateSelect').addEventListener('change', ()=>{
+  if (currentMemoType === 'payment-admin'){
+    showMemoTab(currentMemoType);
+  }
+});
+
+function buildDayHeaders(){
+  const headRow = document.getElementById('headRow');
+  document.querySelectorAll('.day-head').forEach(el=>el.remove());
+  const totalCells = headRow.querySelectorAll('.col-total');
+  for(let d=1; d<=TOTAL_DAY_COLS; d++){
+    const th = document.createElement('th');
+    th.className = 'col-day day-head';
+    th.textContent = d;
+    headRow.insertBefore(th, totalCells[0]);
+  }
+  document.getElementById('maxDayLabel1').textContent = TOTAL_DAY_COLS;
+  document.getElementById('maxDayLabel2').textContent = TOTAL_DAY_COLS;
+  document.getElementById('otDayFrom').max = TOTAL_DAY_COLS;
+  document.getElementById('otDayTo').max = TOTAL_DAY_COLS;
 }
 
-async function githubSearchHistory(){
-  const settings = getGithubSettings();
-  if (!settings || !settings.repo || !settings.token){
-    setSearchMsg('पहिले "⚙️ GitHub सेटिङ" बाट Repository र Token राख्नुहोस्।', true);
-    return;
-  }
-  const from = document.getElementById('searchFrom').value.trim();
-  const to = document.getElementById('searchTo').value.trim();
-  setSearchMsg('GitHub बाट खोज्दैछ...', false);
-  try{
-    const file = await githubGetFile(settings);
-    if (!file.exists || !file.content.trim()){
-      setSearchMsg('अझै GitHub मा कुनै हाजिरी Save भएको छैन।', false);
-      document.getElementById('searchResults').innerHTML = '';
-      return;
-    }
-    const parsed = parseGithubCSV(file.content);
-    const periodsMap = new Map();
-    parsed.rows.forEach(r=>{
-      const periodKey = r[0], dateFrom = r[1], dateTo = r[2], place = r[3];
-      if (!periodKey) return;
-      if (from && dateFrom !== from) return;
-      if (to && dateTo !== to) return;
-      if (!periodsMap.has(periodKey)) periodsMap.set(periodKey, {periodKey, dateFrom, dateTo, place});
-    });
-    renderGithubSearchResults(Array.from(periodsMap.values()));
-  }catch(err){
-    setSearchMsg('त्रुटि: ' + err.message, true);
-  }
-}
 
-function githubShowAllHistory(){
-  document.getElementById('searchFrom').value = '';
-  document.getElementById('searchTo').value = '';
-  githubSearchHistory();
-}
-
-function renderGithubSearchResults(results){
-  const box = document.getElementById('searchResults');
-  box.innerHTML = '';
-  if (results.length === 0){
-    setSearchMsg('कुनै मिलेको अवधि भेटिएन।', false);
-    return;
-  }
-  setSearchMsg(results.length + ' अवधि भेटियो:', false);
-  results.forEach(r=>{
-    const row = document.createElement('div');
-    row.className = 'search-result-row';
-    row.innerHTML = '<span><b>' + (r.dateFrom||'?') + '</b> देखि <b>' + (r.dateTo||'?') + '</b> सम्म'
-      + (r.place ? ' — ' + r.place : '') + '</span>';
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-primary btn-small';
-    btn.textContent = 'लोड गर्नुहोस्';
-    btn.onclick = ()=>loadGithubPeriod(r.periodKey);
-    row.appendChild(btn);
-    box.appendChild(row);
-  });
-}
-
-async function loadGithubPeriod(periodKey){
-  const settings = getGithubSettings();
-  if (!settings){ setSearchMsg('GitHub सेटिङ भेटिएन।', true); return; }
-  setSearchMsg('लोड गर्दैछ...', false);
-  try{
-    const file = await githubGetFile(settings);
-    const parsed = parseGithubCSV(file.content);
-    const rows = parsed.rows.filter(r=>r[0] === periodKey);
-    if (rows.length === 0){ setSearchMsg('यो अवधिको डाटा भेटिएन।', true); return; }
-    const first = rows[0];
-    const dateFrom = first[1], dateTo = first[2], place = first[3], work = first[4], fano = first[5];
-    const newEmployees = rows.map(r=>{
-      const name = r[7], designation = r[8];
-      const days = [];
-      for(let d=0; d<GITHUB_CSV_DAY_COLS; d++){
-        const status = r[9 + d*2] || '';
-        const ot = Number(r[9 + d*2 + 1]) || 0;
-        days.push({status, ot});
-      }
-      return {name, designation, days};
-    });
-    TOTAL_DAY_COLS = GITHUB_CSV_DAY_COLS;
-    buildDayHeaders();
-    employees = newEmployees;
-    document.getElementById('metaPlace').value = place || '';
-    document.getElementById('metaWork').value = work || '';
-    document.getElementById('metaFaNo').value = fano || '';
-    document.getElementById('searchFrom').value = dateFrom || '';
-    document.getElementById('searchTo').value = dateTo || '';
-    renderRows();
-    updatePrintHeader();
-    saveDraftToLocalStorage();
-    setSearchMsg('✔ मिति ' + dateFrom + ' देखि ' + dateTo + ' सम्मको हाजिरी  लोड भयो। अब "Save" थिच्दा यसैमा अपडेट हुन्छ।', false);
-  }catch(err){
-    setSearchMsg('त्रुटि: ' + err.message, true);
-  }
-}
-
-function init(){
-  buildDayHeaders();
-  masterNames = FALLBACK_NAMES.map(n => ({name:n, designation:"दै.जा."}));
-
-  const draft = loadDraftFromLocalStorage();
-  if (draft && draft.employees && draft.employees.length){
-    draftRestored = true;
-    employees = draft.employees;
-    employees.forEach(e=>{
-      if(!e.days) e.days = [];
-      while(e.days.length < TOTAL_DAY_COLS) e.days.push({status:"", ot:0});
-    });
-    renderRows();
-    if (draft.meta){
-      document.getElementById('metaPlace').value = draft.meta.place || '';
-      document.getElementById('metaWork').value = draft.meta.work || '';
-      document.getElementById('metaFaNo').value = draft.meta.faNo || '';
-      document.getElementById('searchFrom').value = draft.meta.dateFrom || '';
-      document.getElementById('searchTo').value = draft.meta.dateTo || '';
-    }
-    updatePrintHeader();
-    const banner = document.getElementById('errorBanner');
-    banner.classList.remove('hidden');
-    banner.classList.add('info');
-    document.getElementById('errorBannerText').textContent =
-      '💾';
-  } else {
-    employees = buildDefaultEmployees();
-    renderRows();
-  }
-
-  google.script.run.withSuccessHandler(onDataLoaded).withFailureHandler(onLoadError).getData();
-}
-
-// -------------------- नेपाली (बि.स.) क्यालेन्डर पिकर --------------------
 const NEPALI_MONTHS = ["बैशाख","जेठ","असार","श्रावण","भदौ","असोज","कार्तिक","मंसिर","पुष","माघ","फागुन","चैत्र"];
 let calTargetInputId = null;
 
@@ -1180,13 +1356,12 @@ function confirmNepaliCalendar(){
 
 document.addEventListener('click', (e)=>{
   const popup = document.getElementById('nepaliCalPopup');
-  if (popup.classList.contains('show') && !popup.contains(e.target) && !e.target.classList.contains('cal-btn')){
+  if (popup && popup.classList.contains('show') && !popup.contains(e.target) && !e.target.classList.contains('cal-btn')){
     closeNepaliCalendar();
   }
 });
 
 function createComboInput(opts){
-
   const wrap = document.createElement('div');
   wrap.className='combo-wrap';
 
@@ -1199,97 +1374,68 @@ function createComboInput(opts){
 
   const list=document.createElement('div');
   list.className='combo-list hidden';
-
   document.body.appendChild(list);
-
   wrap.appendChild(input);
 
   function showList(){
+    renderList(input.value);
+    if(list.classList.contains("hidden")) return;
 
-      const r=input.getBoundingClientRect();
+    const r = input.getBoundingClientRect();
+    list.style.position = "absolute";
+    list.style.zIndex = "999999";
+    list.style.left = r.left + window.scrollX + "px";
+    list.style.width = r.width + "px";
 
-      list.style.left=r.left+window.scrollX+"px";
-      list.style.top=r.bottom+window.scrollY+"px";
-      list.style.width=r.width+"px";
-      list.style.position="absolute";
-      list.style.zIndex="999999";
-
-      renderList(input.value);
-
+    const listHeight = list.offsetHeight || 170;
+    list.style.top = (r.top + window.scrollY - listHeight - 2) + "px";
   }
 
   function renderList(txt){
+    const all = opts.getOptions() || [];
+    const f = (txt || '').toLowerCase();
+    const arr = f ? all.filter(x => x.toLowerCase().includes(f)) : all;
+    list.innerHTML = '';
 
-      const all=opts.getOptions()||[];
+    if(arr.length === 0){
+      list.classList.add("hidden");
+      return;
+    }
 
-      const f=(txt||'').toLowerCase();
-
-      const arr=f?all.filter(x=>x.toLowerCase().includes(f)):all;
-
-      list.innerHTML='';
-
-      if(arr.length==0){
-          list.classList.add("hidden");
-          return;
-      }
-
-      arr.forEach(name=>{
-
-          const d=document.createElement("div");
-          d.textContent=name;
-
-          d.onmousedown=function(e){
-
-              e.preventDefault();
-
-              input.value=name;
-
-              if(opts.onChange) opts.onChange(name);
-
-              list.classList.add("hidden");
-
-          };
-
-          list.appendChild(d);
-
-      });
-
-      list.classList.remove("hidden");
-
+    arr.forEach(name => {
+      const d = document.createElement("div");
+      d.textContent = name;
+      d.onmousedown = function(e){
+        e.preventDefault();
+        input.value = name;
+        if(opts.onChange) opts.onChange(name);
+        list.classList.add("hidden");
+      };
+      list.appendChild(d);
+    });
+    list.classList.remove("hidden");
   }
 
-  input.onfocus=showList;
-
-  input.oninput=function(){
-
-      if(opts.onChange) opts.onChange(input.value);
-
+  input.onfocus = function(){
+    if(opts.onFocus) opts.onFocus();
+    showList();
+  };
+  input.oninput = function(){
+    if(opts.onChange) opts.onChange(input.value);
+    showList();
+  };
+  input.onblur = function(){
+    setTimeout(function(){
+      list.classList.add("hidden");
+    }, 200);
+  };
+  window.addEventListener("scroll", function(){
+    if(!list.classList.contains("hidden")){
       showList();
-
-  };
-
-  input.onblur=function(){
-
-      setTimeout(function(){
-
-          list.classList.add("hidden");
-
-      },200);
-
-  };
-
-  window.addEventListener("scroll",function(){
-
-      if(!list.classList.contains("hidden")){
-
-          showList();
-
-      }
-
+    }
   });
 
   return wrap;
-
 }
 
 function getNameOptions(){
@@ -1321,47 +1467,39 @@ setupMetaCombos();
 
 function populateDistrictRateOptions(){
   const sel = document.getElementById('districtRateSelect');
-  if(!sel || sel.options.length) return;
-  const first = document.createElement('option');
-  first.value = '';
-  first.textContent = 'रकम छान्नुहोस्';
-  sel.appendChild(first);
-  for(let amt = 800; amt <= 1600; amt += 1){
-    const opt = document.createElement('option');
-    opt.value = amt;
-    opt.textContent = toDevanagariDigits(amt);
-    sel.appendChild(opt);
+  const drvSel = document.getElementById('driverRateSelect');
+
+  if(sel && !sel.options.length){
+    const first = document.createElement('option');
+    first.value = '';
+    first.textContent = 'रकम छान्नुहोस्';
+    sel.appendChild(first);
+    for(let amt = 800; amt <= 1600; amt += 1){
+      const opt = document.createElement('option');
+      opt.value = amt;
+      opt.textContent = toDevanagariDigits(amt);
+      sel.appendChild(opt);
+    }
+    sel.appendChild(new Option('५००० र का‍.स. रु.९६५', '५००० र का‍.स. रु.965'));
+  }
+
+  if(drvSel && !drvSel.options.length){
+    const firstDrv = document.createElement('option');
+    firstDrv.value = '';
+    firstDrv.textContent = 'चालक दर छान्नुहोस्';
+    drvSel.appendChild(firstDrv);
+    for(let amt = 800; amt <= 1600; amt += 1){
+      const opt = document.createElement('option');
+      opt.value = amt;
+      opt.textContent = toDevanagariDigits(amt);
+      drvSel.appendChild(opt);
+    }
   }
 }
 populateDistrictRateOptions();
 
-function setConnStatus(msg, ok){
-  const el = document.getElementById('connStatus');
-  if(!el) return;
-  el.textContent = '🔌 जडान स्थिति: ' + msg;
-  el.style.color = ok === true ? '#2e7d4f' : (ok === false ? '#a5322a' : '#333');
-}
-
-function runTestConnection(){
-  setConnStatus('जाँच्दैछ...', null);
-  google.script.run
-    .withSuccessHandler(res=>{
-      if (res && res.success){
-        setConnStatus('✔ जोडियो — "' + res.spreadsheetName + '" (Tabs: ' + res.sheets.join(', ') + ') — Write: ' + (res.writeOk?'OK':'FAIL'), true);
-      } else {
-        setConnStatus('✘ असफल — ' + (res ? res.error : 'unknown'), false);
-        alert('जडान असफल भयो:\n' + (res ? res.error : 'unknown error') + '\n\nसमाधान: Apps Script editor मा testConnection function छानेर Run गर्नुहोस्, Authorize गर्नुहोस्, अनि यहाँ फेरि थिच्नुहोस्।');
-      }
-    })
-    .withFailureHandler(err=>{
-      setConnStatus('✘ Server त्रुटि — ' + (err.message||err), false);
-      alert('जडान जाँच्दा त्रुटि आयो:\n' + (err.message||err));
-    })
-    .testConnection();
-}
-
 const FALLBACK_NAMES = [
-"श्री यमन राई ", "श्री प्रमोद ओझा", "श्री उत्तम राई", "श्री केशव मल्ल",
+  "श्री यमन राई ", "श्री प्रमोद ओझा", "श्री उत्तम राई", "श्री केशव मल्ल",
   "श्री हेमन्त राई", "श्री अम्बिका थापा", "श्री राजन श्रेष्ठ", "श्री विशाल राई","श्री सरोज नेपाल"
   ,"श्री सुनिल मिरक डुम","श्री रिता मरिक","श्री उर्मिला राई","श्री सरोज नेपाल","श्री शम्भु बि‍‍.क."
   ,"श्री बिमन भुजेल","श्री मन्दिरा पाैडेल","श्री समिर कार्कि",
@@ -1370,673 +1508,32 @@ const FALLBACK_NAMES = [
   "श्री दावा तामाङ्ग","श्री राजेश यादव","श्री अमित वि‍‍.क.","श्री प्रमोद मरिक "
 ];
 
-function buildDefaultEmployees(){
-  return [
-    emptyEmployee(),
-    emptyEmployee()
-  ];
-}
+function init(){
+  buildDayHeaders();
+  masterNames = FALLBACK_NAMES.map(n => ({name:n, designation:"दै.जा."}));
 
-function buildDayHeaders(){
-  const headRow = document.getElementById('headRow');
-  document.querySelectorAll('.day-head').forEach(el=>el.remove());
-  const totalCells = headRow.querySelectorAll('.col-total');
-  for(let d=1; d<=TOTAL_DAY_COLS; d++){
-    const th = document.createElement('th');
-    th.className = 'col-day day-head';
-    th.textContent = d;
-    headRow.insertBefore(th, totalCells[0]);
-  }
-  document.getElementById('maxDayLabel1').textContent = TOTAL_DAY_COLS;
-  document.getElementById('maxDayLabel2').textContent = TOTAL_DAY_COLS;
-  document.getElementById('otDayFrom').max = TOTAL_DAY_COLS;
-  document.getElementById('otDayTo').max = TOTAL_DAY_COLS;
-}
-
-function onLoadError(err){
-  if (draftRestored) {
-    setConnStatus('✘ Sheet बाट लोड हुन सकेन — स्थानीय Draft नै देखाइँदैछ', false);
-    return;
-  }
-  const banner = document.getElementById('errorBanner');
-  banner.classList.remove('hidden');
-  document.getElementById('errorBannerText').textContent = '⚠️ ' + (err.message || err) + ' — तल देखिएको डाटा Sample हो, Sheet बाट लोड भएको होइन।';
-  setConnStatus('✘ Sheet बाट लोड हुन सकेन — तल Sample डाटा देखाइँदैछ', false);
-}
-
-function applyRecord(data){
-  TOTAL_DAY_COLS = data.totalDayCols || 32;
-  const meta = data.meta || {};
-  document.getElementById('metaPlace').value = meta.place || '';
-  document.getElementById('metaWork').value = meta.work || '';
-  document.getElementById('metaFaNo').value = meta.faNo || '';
-  document.getElementById('searchFrom').value = meta.dateFrom || '';
-  document.getElementById('searchTo').value = meta.dateTo || '';
-
-  const serverNames = data.masterNames || [];
-  const merged = [...serverNames];
-  const seen = new Set(merged.map(m=>m.name));
-  FALLBACK_NAMES.forEach(n=>{ if(!seen.has(n)){ merged.push({name:n, designation:"दै.जा."}); seen.add(n); } });
-  masterNames = merged;
-
-  employees = data.employees && data.employees.length ? data.employees : buildDefaultEmployees();
-  employees.forEach(e=>{
-    while(e.days.length < TOTAL_DAY_COLS) e.days.push({status:"", ot:0});
-  });
-  renderRows();
-  updatePrintHeader();
-}
-
-function onDataLoaded(data){
-  if (data && data.success === false) {
-    onLoadError({message: data.error});
-    return;
-  }
-
-  if (draftRestored){
-    const serverNames = data.masterNames || [];
-    const merged = [...serverNames];
-    const seen = new Set(merged.map(m=>m.name));
-    FALLBACK_NAMES.forEach(n=>{ if(!seen.has(n)){ merged.push({name:n, designation:"दै.जा."}); seen.add(n); } });
-    masterNames = merged;
+  const draft = loadDraftFromLocalStorage();
+  if (draft && draft.employees && draft.employees.length){
+    draftRestored = true;
+    employees = draft.employees;
+    employees.forEach(e=>{
+      if(!e.days) e.days = [];
+      while(e.days.length < TOTAL_DAY_COLS) e.days.push({status:"हा", ot:2});
+    });
     renderRows();
-    setConnStatus('✔ Sheet जोडियो (स्थानीय Draft देखाइँदैछ — अझै Sheet मा Save गर्नुभएको छैन)', true);
-    return;
-  }
-
-  document.getElementById('errorBanner').classList.add('hidden');
-  applyRecord(data);
-  if (data.employees && data.employees.length > 0){
-    setConnStatus('✔ Sheet बाट वास्तविक डाटा लोड भयो', true);
+    if (draft.meta){
+      document.getElementById('metaPlace').value = draft.meta.place || '';
+      document.getElementById('metaWork').value = draft.meta.work || '';
+      document.getElementById('metaFaNo').value = draft.meta.faNo || '';
+      document.getElementById('searchFrom').value = draft.meta.dateFrom || '';
+      document.getElementById('searchTo').value = draft.meta.dateTo || '';
+    }
+    updatePrintHeader();
   } else {
-    setConnStatus('✔ Sheet जोडियो (अझै कुनै Save भएको डाटा छैन — तल Sample नाम देखाइँदैछ)', true);
+    employees = buildDefaultEmployees();
+    renderRows();
   }
 }
-
-function emptyEmployee(name){
-  const days = [];
-  for(let d=0; d<TOTAL_DAY_COLS; d++) days.push({status:"", ot:0});
- return {
-  name: name || "",
-  designation:"",
-  days: days
-};
-}
-
-function addEmployee(){
-  employees.push(emptyEmployee());
-  renderRows();
-  saveDraftToLocalStorage();
-}
-
-function deleteEmployee(idx){
-  if(!confirm('यो कर्मचारीको लाइन हटाउने हो?')) return;
-  employees.splice(idx,1);
-  renderRows();
-  saveDraftToLocalStorage();
-}
-
-function computeTotals(emp){
-  let totalDays = 0, totalOT = 0;
-  emp.days.forEach(d=>{
-    if (d.status === 'हा' || d.status === 'काज') {
-    totalDays += 1;
-}
-    totalOT += Number(d.ot) || 0;
-  });
-  emp.totalDays = totalDays;
-  emp.totalOT = totalOT;
-  return emp;
-}
-
-function refreshOtEmployeeSelect(){
-  const sel = document.getElementById('otEmpSelect');
-  const prevVal = sel.value;
-  sel.innerHTML = '';
-  const first = document.createElement('option');
-first.value = "";
-first.textContent = "कर्मचारीकाे नाम चयन गर्नुहोस्";
-first.disabled = true;
-first.selected = true;
-sel.appendChild(first);
-  employees.forEach((e, idx)=>{
-    const opt = document.createElement('option');
-    opt.value = idx;
-    opt.textContent = e.name && e.name.trim() ? e.name : ('(खाली लाइन ' + (idx+1) + ')');
-    sel.appendChild(opt);
-  });
-  if(prevVal !== '' && sel.querySelector('option[value="'+prevVal+'"]')){
-    sel.value = prevVal;
-  }
-}
-
-function assignBulkOT(){
-  const idx = Number(document.getElementById('otEmpSelect').value);
-  const from = Number(document.getElementById('otDayFrom').value);
-  const to = Number(document.getElementById('otDayTo').value);
-  const otVal = Number(document.getElementById('otHoursValue').value);
-  const msgEl = document.getElementById('otPanelMsg');
-
-  if (isNaN(idx) || !employees[idx]) { msgEl.className='error'; msgEl.textContent='कर्मचारी छान्नुहोस्।'; return; }
-  if (!from || !to || from < 1 || to > TOTAL_DAY_COLS || from > to) { msgEl.className='error'; msgEl.textContent='दिन देखि/सम्म मिलेन।'; return; }
-  if (isNaN(otVal) || otVal < 0) { msgEl.className='error'; msgEl.textContent='OT घण्टा राख्नुहोस्।'; return; }
-
-  const emp = employees[idx];
-  for(let d = from-1; d <= to-1; d++){
-    emp.days[d].ot = otVal;
-  }
-  renderRows();
-  saveDraftToLocalStorage();
-  msgEl.className='';
-  msgEl.textContent = '✔ ' + (emp.name||'यो कर्मचारी') + ' लाई गते ' + from + ' देखि ' + to + ' गते सम्म ' + otVal + ' घण्टा OT थपियो।';
-}
-
-function renderRows(){
-  refreshOtEmployeeSelect();
-  const body = document.getElementById('bodyRows');
-  body.innerHTML = '';
-
-  employees.forEach((emp, idx)=>{
-    computeTotals(emp);
-
-    const trA = document.createElement('tr');
-    trA.className = 'row-hajiri';
-
-    const snTd = document.createElement('td');
-    snTd.className = 'col-sn sticky-1';
-    snTd.rowSpan = 2;
-    snTd.textContent = idx+1;
-    trA.appendChild(snTd);
-
-    const nameTd = document.createElement('td');
-    nameTd.className = 'col-name sticky-2';
-    nameTd.rowSpan = 2;
-    const nameCombo = createComboInput({
-      className: 'name-input',
-      value: emp.name,
-      placeholder: 'श्री.(type/select)',
-      getOptions: ()=>getNameOptions(),
-      onChange: (val)=>{ emp.name = val; refreshOtEmployeeSelect(); saveDraftToLocalStorage(); }
-    });
-    nameTd.appendChild(nameCombo);
-    const namePrintText = document.createElement('div');
-    namePrintText.className = 'print-text-only';
-    namePrintText.textContent = emp.name;
-    nameTd.appendChild(namePrintText);
-    trA.appendChild(nameTd);
-
-    const desigTd = document.createElement('td');
-    desigTd.className = 'col-desig';
-    desigTd.rowSpan = 2;
-    const desigCombo = createComboInput({
-      className: 'desig-input',
-      value: emp.designation || '',
-      placeholder: 'कर्मचारीको प्रकार',
-      getOptions: ()=>DESIG_OPTIONS,
-      onChange: (val)=>{ emp.designation = val; saveDraftToLocalStorage(); }
-    });
-    desigTd.appendChild(desigCombo);
-    const desigPrintText = document.createElement('div');
-    desigPrintText.className = 'print-text-only';
-    desigPrintText.textContent = emp.designation || '';
-    desigTd.appendChild(desigPrintText);
-    trA.appendChild(desigTd);
-
-    const typeTdA = document.createElement('td');
-    typeTdA.className = 'col-type sticky-3';
-    typeTdA.textContent = 'हाजिरी';
-    trA.appendChild(typeTdA);
-
-    for(let d=0; d<TOTAL_DAY_COLS; d++){
-      const dayTd = document.createElement('td');
-      dayTd.className = 'col-day';
-      const statusBtn = document.createElement('button');
-      statusBtn.className = 'status-btn ' + STATUS_CLASS[emp.days[d].status || ""];
-      statusBtn.textContent = emp.days[d].status || '-';
-      statusBtn.onclick = ()=>{
-        const cur = STATUS_CYCLE.indexOf(emp.days[d].status || "");
-        const next = STATUS_CYCLE[(cur+1) % STATUS_CYCLE.length];
-        emp.days[d].status = next;
-        statusBtn.textContent = next || '-';
-        statusBtn.className = 'status-btn ' + STATUS_CLASS[next];
-        updateTotalsCells(idx);
-        saveDraftToLocalStorage();
-      };
-      dayTd.appendChild(statusBtn);
-      trA.appendChild(dayTd);
-    }
-
-    trA.appendChild(makeRowspanTotalTd('td-days-'+idx, emp.totalDays));
-    trA.appendChild(makeRowspanTotalTd('td-ot-'+idx, emp.totalOT));
-
-    const delTd = document.createElement('td');
-    delTd.className = 'col-del';
-    delTd.rowSpan = 2;
-    const delBtn = document.createElement('button');
-    delBtn.className = 'btn-danger-mini';
-    delBtn.textContent = '✕';
-    delBtn.title = 'यो कर्मचारी हटाउनुहोस्';
-    delBtn.onclick = ()=>deleteEmployee(idx);
-    delTd.appendChild(delBtn);
-    trA.appendChild(delTd);
-
-    body.appendChild(trA);
-
-    const trB = document.createElement('tr');
-    trB.className = 'row-ot';
-
-    const typeTdB = document.createElement('td');
-    typeTdB.className = 'col-type sticky-3';
-    typeTdB.textContent = 'OT';
-    trB.appendChild(typeTdB);
-
-    for(let d=0; d<TOTAL_DAY_COLS; d++){
-      const otTd = document.createElement('td');
-      otTd.className = 'col-day';
-      const otInput = document.createElement('input');
-      otInput.className = 'ot-input';
-      otInput.type = 'number';
-      otInput.min = '0';
-      otInput.step = '1';
-      otInput.placeholder = '0';
-      otInput.value = emp.days[d].ot ? emp.days[d].ot : '';
-      otInput.id = 'ot-'+idx+'-'+d;
-      otInput.oninput = (e)=>{
-        emp.days[d].ot = Number(e.target.value) || 0;
-        updateTotalsCells(idx);
-        saveDraftToLocalStorage();
-      };
-      otTd.appendChild(otInput);
-      trB.appendChild(otTd);
-    }
-
-    body.appendChild(trB);
-  });
-}
-
-function makeRowspanTotalTd(id, val){
-  const td = document.createElement('td');
-  td.className = 'col-total total-val';
-  td.rowSpan = 2;
-  td.id = id;
-  td.textContent = val;
-  return td;
-}
-
-function updateTotalsCells(idx){
-  const emp = employees[idx];
-  computeTotals(emp);
-  document.getElementById('td-days-'+idx).textContent = emp.totalDays;
-  document.getElementById('td-ot-'+idx).textContent = emp.totalOT;
-  for(let d=0; d<TOTAL_DAY_COLS; d++){
-    const el = document.getElementById('ot-'+idx+'-'+d);
-    if(el) el.value = emp.days[d].ot ? emp.days[d].ot : '';
-  }
-}
-
-function updatePrintHeader(){
-  const from = document.getElementById('searchFrom').value || '?';
-  const to = document.getElementById('searchTo').value || '?';
-  const place = document.getElementById('metaPlace').value || '';
-  const work = document.getElementById('metaWork').value || '';
-  const fano = document.getElementById('metaFaNo').value || '';
-
-  document.getElementById('printHeaderInfo').textContent =
-    'मिति ' + from + ' देखि ' + to + ' सम्मको हाजिरी र OT';
-
-  document.getElementById('printMetaInfo').innerHTML =
-`
-<div style="
-display:flex;
-justify-content:center;
-align-items:flex-start;
-gap:180px;
-font-size:15px;
-font-weight:700;
-width:100%;
-line-height:1.4;
-">
-
-<span style="white-space:nowrap;">कार्यलयको नाम :- ${place}</span>
-
-<span style="white-space:nowrap;">कामको विवरण :- ${work}</span>
-
-<span style="
-white-space:normal;
-overflow-wrap:anywhere;
-word-break:break-word;
-max-width:350px;
-text-align:center;
-">
-कार्यरत फाँट :- ${fano}
-</span>
-
-</div>
-`;
-}
-
-
-function autoFitTableForPrint(){
-  const wrap = document.querySelector('.table-wrap');
-  if(!wrap) return;
-  wrap.style.zoom = '1';
-  wrap.style.width = '';
-  const naturalWidth = wrap.scrollWidth;
-  const PRINTABLE_WIDTH_PX = 1060; // A4 landscape, 8mm margin, 96 CSS px/inch अनुसार अनुमानित उपलब्ध चौडाइ
-  let scale = PRINTABLE_WIDTH_PX / naturalWidth;
-  if (scale > 1) scale = 1;
-  if (scale < 0.25) scale = 0.25;
-  wrap.style.zoom = scale;
-}
-
-function resetTableZoomAfterPrint(){
-  const wrap = document.querySelector('.table-wrap');
-  if(wrap) wrap.style.zoom = '1';
-}
-window.addEventListener('afterprint', resetTableZoomAfterPrint);
-
-
-function handlePrintClick(){
-  const place = document.getElementById('metaPlace').value.trim();
-  const work = document.getElementById('metaWork').value.trim();
-  const fano = document.getElementById('metaFaNo').value.trim();
-  const from = document.getElementById('searchFrom').value.trim();
-  const to = document.getElementById('searchTo').value.trim();
-
-  const missing = [];
-  if(!place) missing.push('कार्यालयको नाम');
-  if(!work) missing.push('कामको विवरण');
-  if(!fano) missing.push('कार्यरत फाँट');
-  if(!from) missing.push('हाजिरि देखि मिति');
-  if(!to) missing.push('महाजिरि सम्म मिति');
-
-  if(missing.length > 0){
-    alert('कृपया Print गर्नुअघि यी फिल्डहरू भर्नुहोस्:\n\n' + missing.join('\n'));
-    return;
-  }
-
-  updatePrintHeader();
-  autoFitTableForPrint();
-  document.getElementById('dynamicPageStyle').textContent = '@page{size:landscape;margin:8mm;}';
-  window.print();
-}
-
-window.addEventListener('beforeprint', ()=>{ updatePrintHeader(); autoFitTableForPrint(); });
-document.getElementById('searchFrom').addEventListener('input', ()=>{ updatePrintHeader(); saveDraftToLocalStorage(); });
-document.getElementById('searchTo').addEventListener('input', ()=>{ updatePrintHeader(); saveDraftToLocalStorage(); });
-
-function loadData(){
-  init();
-}
-
-function saveData(){
-  setStatus('सुरक्षित गर्दै...', false);
-  const payload = {
-    meta: {
-      place: document.getElementById('metaPlace').value,
-      work: document.getElementById('metaWork').value,
-      faNo: document.getElementById('metaFaNo').value,
-      dateFrom: document.getElementById('searchFrom').value,
-      dateTo: document.getElementById('searchTo').value
-    },
-    employees: employees.filter(e=>e.name && e.name.trim() !== '')
-  };
-
-  let responded = false;
-  const saveTimeoutId = setTimeout(function(){
-    if (!responded){
-      setStatus('⚠️ Sheet बाट १५ सेकेन्डसम्म जवाफ आएन।', true);
-      alert('Save ले जवाफ पाएन। सम्भावित कारण:\n1) Apps Script Editor मा testConnection function पहिलो पटक Run गरेर Authorize गर्नु भएको छैन।\n2) Code.gs बदलेपछि Deploy > Manage deployments > New version गरिएको छैन।\n\nयी दुई गरेपछि फेरि Save थिच्नुहोस्। तपाईंको डाटा यही Browser मा auto-save भइरहेको छ, त्यसैले हराउनेछैन।');
-    }
-  }, 15000);
-
-  google.script.run
-    .withSuccessHandler(res=>{
-      responded = true;
-      clearTimeout(saveTimeoutId);
-      if (res && res.success === false) {
-        setStatus('त्रुटि: ' + res.error, true);
-        alert('Save असफल भयो:\n' + res.error);
-        return;
-      }
-      setStatus('✔ सुरक्षित भयो (' + res.savedCount + ' कर्मचारी) — Google Sheet को "History" ट्याबमा हेर्नुहोस् (ट्याब पहिले नै खुलेको भए त्यो पेज Refresh गर्नुहोस्)।', false);
-      setConnStatus('✔ भर्खरै सुरक्षित भयो', true);
-      draftRestored = false;
-      clearDraftFromLocalStorage();
-    })
-    .withFailureHandler(err=>{
-      responded = true;
-      clearTimeout(saveTimeoutId);
-      setStatus('त्रुटि: ' + (err.message||err), true);
-      alert('Save असफल भयो (server त्रुटि):\n' + (err.message||err));
-    })
-    .saveData(payload);
-}
-
-function setStatus(msg, isError){
-  const el = document.getElementById('statusMsg');
-  el.textContent = msg;
-  el.className = isError ? 'error' : '';
-}
-
-function doSearch(){
-  const from = document.getElementById('searchFrom').value;
-  const to = document.getElementById('searchTo').value;
-  setSearchMsg('खोज्दैछ...', false);
-  google.script.run
-    .withSuccessHandler(res=>renderSearchResults(res))
-    .withFailureHandler(err=>setSearchMsg('त्रुटि: '+(err.message||err), true))
-    .searchHistory(from, to);
-}
-
-function showAllHistory(){
-  document.getElementById('searchFrom').value = '';
-  document.getElementById('searchTo').value = '';
-  doSearch();
-}
-
-function renderSearchResults(res){
-  const box = document.getElementById('searchResults');
-  box.innerHTML = '';
-  if (!res || res.success === false){
-    setSearchMsg('त्रुटि: ' + (res ? res.error : 'unknown'), true);
-    return;
-  }
-  if (res.results.length === 0){
-    setSearchMsg('कुनै मिलेको अवधि भेटिएन।', false);
-    return;
-  }
-  setSearchMsg(res.results.length + ' अवधि भेटियो:', false);
-  res.results.forEach(r=>{
-    const row = document.createElement('div');
-    row.className = 'search-result-row';
-    row.innerHTML = '<span><b>' + (r.dateFrom||'?') + '</b> देखि <b>' + (r.dateTo||'?') + '</b> सम्म'
-      + (r.place ? ' — ' + r.place : '') + '</span>';
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-primary btn-small';
-    btn.textContent = 'लोड गर्नुहोस्';
-    btn.onclick = ()=>loadPeriod(r.periodKey);
-    row.appendChild(btn);
-    box.appendChild(row);
-  });
-}
-
-function loadPeriod(periodKey){
-  setSearchMsg('लोड गर्दैछ...', false);
-  google.script.run
-    .withSuccessHandler(data=>{
-      if (data && data.success === false){ setSearchMsg('त्रुटि: '+data.error, true); return; }
-      draftRestored = false;
-      applyRecord(data);
-      saveDraftToLocalStorage();
-      setSearchMsg('✔ यो अवधि लोड भयो। अब "Save" थिच्दा यसैमा अपडेट हुन्छ।', false);
-    })
-    .withFailureHandler(err=>setSearchMsg('त्रुटि: '+(err.message||err), true))
-    .loadHistoryRecord(periodKey);
-}
-function assignBulkStatus(){
-
-const idx=Number(document.getElementById("otEmpSelect").value);
-
-const from=Number(document.getElementById("otDayFrom").value);
-
-const to=Number(document.getElementById("otDayTo").value);
-
-const status=document.getElementById("bulkStatus").value;
-
-if(isNaN(idx)||!employees[idx]) return;
-
-for(let d=from-1;d<=to-1;d++){
-
-employees[idx].days[d].status=status;
-
-}
-
-renderRows();
-saveDraftToLocalStorage();
-
-}
-
-function setSearchMsg(msg, isError){
-  const el = document.getElementById('searchMsg');
-  el.textContent = msg;
-  el.className = isError ? 'error' : '';
-}
-
-
-let currentMemoType = 'approval-admin';
-
-function escapeHtml(s){
-  return (s||'').toString()
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function buildMemoHTML(type){
-  const office = escapeHtml(document.getElementById('metaPlace').value || '');
-  const fano = escapeHtml(document.getElementById('metaFaNo').value || '');
-  const work = escapeHtml(document.getElementById('metaWork').value || 'दै.ज्या.');
-  const dateFrom = escapeHtml(document.getElementById('searchFrom').value || '?');
-  const dateTo = escapeHtml(document.getElementById('searchTo').value || '?');
-  const approvalDate = escapeHtml(document.getElementById('approvalMemoDate').value || dateFrom);
-  const namedEmployees = employees.filter(e=>e.name && e.name.trim() !== '');
-
-  const header = `
-    <div style="text-align:center;font-weight:700;">
-      <div style="font-size:16px;">नेपाल विद्युत प्राधिकरण</div>
-      <div style="font-size:14px;">${office}</div>
-    </div>
-    <table style="width:100%;border-collapse:collapse;margin-top:16px;">
-      <tr>
-        <td style="border:1px solid #000;width:50%;padding:8px;vertical-align:top;">
-          <u>लाई:</u><br>
-          श्रीमान केन्द्र प्रमुख ज्यू,<br>
-          नेपाल विद्युत प्राधिकरण, ${office}
-        </td>
-        <td style="border:1px solid #000;width:50%;padding:8px;vertical-align:top;">
-          <u>बाट:</u><br>
-          ${fano}, ${office}
-        </td>
-      </tr>
-    </table>
-  `;
-
-  const nameListHTML = namedEmployees.map((e,i)=>`<div>${i+1}. ${escapeHtml(e.name)}</div>`).join('');
-
-  
-  if (type === 'approval-admin' || type === 'approval-technical'){
-    const workArea = (type === 'approval-admin')
-      ? 'सवारी चालक, हेल्पडेस्क, सरसफाइ, काउन्टर'
-      : 'मर्मत, शिफ्ट डिउटी, फ्युज सेवा';
-
-    return header + `
-      <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">पूर्व स्वीकृत मेमो</div>
-      <p style="text-align:justify;text-indent:28px;">
-        यस वितरण केन्द्र अन्तर्गतको ${workArea} साथै कार्यालयको काममा
-        परिआउने कार्य गर्नका लागि हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले
-        मिति ${dateFrom} देखि मिति ${dateTo} सम्मका लागि तपशिलमा उल्लेखित ${work} कर्मचारीहरुलाई अतिरिक्त
-        बढी समय काममा खटाउनु पर्ने भएकोले पूर्व स्वीकृतिको लागि अनुरोध छ।
-      </p>
-      <div style="font-weight:700;text-decoration:underline;margin-top:8px;">तपशिल:</div>
-      <div style="margin-top:8px;">${nameListHTML}</div>
-      <div style="display:flex;justify-content:space-between;margin-top:44px;">
-        <div>काममा लगाउने:</div>
-        <div>स्वीकृत गर्ने :</div>
-      </div>
-      <div style="margin-top:18px;">मिति: ${approvalDate}</div>
-    `;
-  }
-
-  
-  const workArea = (type === 'payment-admin')
-    ? 'सवारी चालक, हेल्पडेक्स, सरसफाई, विद्युत महसुल संकलन काउन्टर'
-    : 'मर्मत, शिफ्ट डिउटी, फ्युज सेवा';
-
-  const districtRateVal = document.getElementById('districtRateSelect') ? document.getElementById('districtRateSelect').value : '';
-  const districtRateSentence = (type === 'payment-technical' && districtRateVal)
-    ? 'सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट रु.' + toDevanagariDigits(districtRateVal) + ' काे दरले पारिश्रमिक उपलब्ध गराईदिनुहुन अनुरोध छ।'
-    : '';
-
-  return header + `
-    <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">भुक्तानी स्वीकृत मेमो</div>
-    <p style="text-align:justify;">
-      यस वितरण केन्द्र अन्तर्गतको ${workArea} साथै कार्यालयको काममा परिआउने कार्य गर्नका लागि
-      हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्म
-      अतिरिक्त बढी समय काममा लगाए बापतको संलग्न विवरण अनुसारको पूर्व स्वीकृति मेमो बमोजिम ${work} कर्मचारीहरुलाई
-      बढी समय भत्ता उपलब्ध गराईदिनुहुन  साथै सुनसरी जिल्लाको स्वीकृत जिल्ला दररेटमा हाजिरी दिन अनुसारको पारिश्रमिक समेत उपलब्ध गराईदिनुहुन सिफारिसका साथ अनुरोध छ।${districtRateSentence}
-    </p>
-    <div style="display:flex;justify-content:space-between;margin-top:44px;">
-      <div>काममा लगाउने:</div>
-      <div>सिफारिस गर्ने:</div>
-      <div>स्वीकृत गर्ने :</div>
-    </div>
-    <div style="margin-top:18px;">मिति: ${dateTo}</div>
-  `;
-}
-
-function showMemoTab(type){
-  currentMemoType = type;
-  document.getElementById('memoContent').innerHTML = buildMemoHTML(type);
-  document.getElementById('tabApprovalAdminBtn').classList.toggle('active', type === 'approval-admin');
-  document.getElementById('tabPaymentAdminBtn').classList.toggle('active', type === 'payment-admin');
-  document.getElementById('tabApprovalTechBtn').classList.toggle('active', type === 'approval-technical');
-  document.getElementById('tabPaymentTechBtn').classList.toggle('active', type === 'payment-technical');
-}
-
-function openMemoModal(){
-  showMemoTab('approval-admin');
-  document.getElementById('memoModal').classList.remove('hidden');
-}
-
-function closeMemoModal(){
-  document.getElementById('memoModal').classList.add('hidden');
-}
-
-function printMemo(){
-  const isApprovalType = (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical');
-  const approvalDateVal = document.getElementById('approvalMemoDate').value.trim();
-  if (isApprovalType && !approvalDateVal){
-    alert('कृपया home page मा रहेको "पूर्व स्वीकृती मेमो मिति" भर्नुहोस् — यो नभरी पूर्व स्वीकृती मेमो Print हुँदैन।');
-    return;
-  }
-  document.getElementById('dynamicPageStyle').textContent = '@page{size:portrait;margin:15mm;}';
-  document.body.classList.add('printing-memo');
-  window.print();
-}
-window.addEventListener('afterprint', ()=>{
-  document.body.classList.remove('printing-memo');
-});
-
-document.getElementById('approvalMemoDate').addEventListener('input', ()=>{
-  if (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical'){
-    showMemoTab(currentMemoType);
-  }
-});
-
-document.getElementById('districtRateSelect').addEventListener('change', ()=>{
-  if (currentMemoType === 'payment-technical'){
-    showMemoTab(currentMemoType);
-  }
-});
 
 init();
 </script>
