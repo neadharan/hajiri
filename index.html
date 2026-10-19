@@ -99,7 +99,7 @@
   #searchMsg.error{color:var(--danger);}
 
   .toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;flex-wrap:wrap;}
-  .legend{display:flex;gap:8px;flex-wrap:wrap;font-size:11.5px;}
+  .legend{display:flex;gap:8px;flex-wrap:wrap;font-size:11.5px;align-items:center;}
   .legend span{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-weight:600;}
   .dot-present{background:var(--present-bg);color:var(--present);}
   .dot-kaaj{background:var(--kaaj-bg);color:var(--kaaj);}
@@ -118,6 +118,14 @@
   .btn-danger-mini{background:none;border:none;color:var(--danger);font-size:15px;cursor:pointer;font-weight:700;}
   .btn-group{display:flex;gap:8px;flex-wrap:wrap;}
   .btn-small{padding:5px 10px;font-size:12px;}
+
+  /* [COMMIT: Rule 4 - Employee Add Button Custom Green Color] */
+  .btn-green-custom { background: #0b9c2a !important; color: #fff !important; }
+  .btn-green-custom:hover { background: #087a21 !important; }
+
+  /* [COMMIT: Rule 3 - Close / Cancel Button Custom Red Color] */
+  .btn-red-custom { background: #a5322a !important; color: #fff !important; border: 1px solid #a5322a !important; }
+  .btn-red-custom:hover { background: #7c2620 !important; }
 
   .ot-panel{
     margin:0 16px 14px;padding:12px 14px;background:#fff;border:1px dashed #b9c9d4;border-radius:10px;
@@ -206,7 +214,7 @@
 
   .total-val{padding:8px 4px;font-weight:700;color:#2a2a28;background:#fff;}
 
-  /* 🔒 Auto-Lock Styles */
+  
   .row-locked .status-btn{
     pointer-events: none;
     opacity: 0.85;
@@ -447,7 +455,7 @@
     <label>जिल्ला दररेट रकम (रु.)</label>
     <select id="districtRateSelect"></select>
   </div>
-  <!-- [COMMIT: Driver Rate Dropdown Added] सवारी चालकको लागि छुट्टै दररेट -->
+  
   <div class="ot-field" id="driverRateFieldWrap">
     <label>सवारी चालक दररेट रकम (रु.)</label>
     <select id="driverRateSelect"></select>
@@ -456,17 +464,35 @@
 <div id="searchMsg"></div>
 
 <div class="toolbar">
-  <div class="legend">
+  <div class="legend" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
     <span class="dot-present">हा = हाजिर</span>
     <span class="dot-kaaj">काज</span>
     <span class="dot-bida">बिदा</span>
     <span class="dot-empty">- = खाली</span>
+    
+    <span style="background:#fff;border:1px solid var(--line);padding:4px 10px;border-radius:12px;display:inline-flex;gap:12px;align-items:center;font-size:12px;">
+      <label style="cursor:pointer;"><input type="checkbox" id="filterAdmin" onchange="renderLegendCounts()"> प्रशासन (<span id="cntAdmin" onclick="showCategoryList('प्रशासन', event)" style="color:var(--navy);font-weight:bold;text-decoration:underline;cursor:pointer;">0</span>)</label>
+      <label style="cursor:pointer;"><input type="checkbox" id="filterTech" onchange="renderLegendCounts()"> प्राविधिक (<span id="cntTech" onclick="showCategoryList('प्राविधिक', event)" style="color:var(--navy);font-weight:bold;text-decoration:underline;cursor:pointer;">0</span>)</label>
+      <label style="cursor:pointer;"><input type="checkbox" id="filterContract" onchange="renderLegendCounts()"> करार (<span id="cntContract" onclick="showCategoryList('करार', event)" style="color:var(--navy);font-weight:bold;text-decoration:underline;cursor:pointer;">0</span>)</label>
+    </span>
   </div>
   <div class="btn-group">
-    <button class="btn btn-ghost" onclick="addEmployee()">+ कर्मचारी थप्नुहोस्</button>
+    
+    <button class="btn btn-green-custom" onclick="addEmployee()">+ कर्मचारी थप्नुहोस्</button>
     <button class="btn btn-danger" onclick="clearTable()">🗑️ Clear</button>
     <button class="btn btn-accent" onclick="openMemoModal()">📄 मेमो</button>
     <button class="btn btn-accent" onclick="handlePrintClick()">🖨️ हाजिर Print गर्नुहोस्</button>
+  </div>
+</div>
+
+
+<div id="catPopupModal" class="modal-overlay hidden" style="z-index:99999;">
+  <div class="modal-box" style="max-width:350px;">
+    <div class="modal-header">
+      <h3 id="catPopupTitle" style="margin:0;font-size:14px;color:var(--navy);">कर्मचारीको सूची</h3>
+      <button class="btn btn-ghost btn-small" onclick="document.getElementById('catPopupModal').classList.add('hidden')">✕</button>
+    </div>
+    <div id="catPopupContent" style="padding:16px;max-height:200px;overflow-y:auto;font-size:13px;"></div>
   </div>
 </div>
 
@@ -474,6 +500,7 @@
   <h3>OT घण्टा एकैचोटि थप्नुहोस् (कुनै कर्मचारीलाई निश्चित दिनहरूमा एउटै OT घण्टा राख्न)</h3>
   <div class="ot-field">
     <label>कर्मचारी</label>
+    
     <select id="otEmpSelect"></select>
   </div>
   <div class="ot-field">
@@ -504,6 +531,8 @@
   <span id="otPanelMsg"></span>
 </div>
 
+
+
 <div class="print-only" id="printHeaderInfo" style="padding:0 16px 4px;font-size:14px;font-weight:700;text-align:center;"></div>
 <div class="print-only" id="printMetaInfo" style="padding:0 16px 10px;font-size:12.5px;font-weight:600;text-align:center;"></div>
 
@@ -515,7 +544,7 @@
         <th class="col-name sticky-2">कर्मचारीको नाम थर</th>
         <th class="col-desig">कर्मचारीको प्रकार</th>
         <th class="col-type sticky-3">दिन र Ot</th>
-        <!-- day headers injected by JS -->
+        
         <th class="col-total">जम्मा दिन</th>
         <th class="col-total">जम्मा OT</th>
         <th class="col-del"></th>
@@ -557,8 +586,12 @@
         <button class="btn btn-ghost btn-small memo-tab" id="tabPaymentAdminBtn" onclick="showMemoTab('payment-admin')">भुक्तानी स्वीकृती प्रशासन</button>
         <button class="btn btn-ghost btn-small memo-tab" id="tabApprovalTechBtn" onclick="showMemoTab('approval-technical')">पूर्व स्वीकृती प्राबिधिक</button>
         <button class="btn btn-ghost btn-small memo-tab" id="tabPaymentTechBtn" onclick="showMemoTab('payment-technical')">भुक्तानी स्वीकृती प्राबिधिक</button>
+        
+        <button class="btn btn-ghost btn-small memo-tab" id="tabOtherApprovalBtn" onclick="showMemoTab('other-approval')">अन्य कर्मचारी पूर्व स्वीकृति</button>
+        <button class="btn btn-ghost btn-small memo-tab" id="tabOtherPaymentBtn" onclick="showMemoTab('other-payment')">अन्य कर्मचारी भुक्तानी</button>
       </div>
-      <button class="btn btn-ghost btn-small" onclick="closeMemoModal()">✕ बन्द</button>
+      
+      <button class="btn btn-red-custom btn-small" onclick="closeMemoModal()">✕ बन्द</button>
     </div>
     <div id="memoContent" class="memo-paper"></div>
     <div class="modal-footer">
@@ -571,17 +604,60 @@
 const STATUS_CYCLE = ["", "हा", "काज", "बिदा"];
 const STATUS_CLASS = {"":"", "हा":"st-present", "काज":"st-kaaj", "बिदा":"st-bida"};
 const PLACE_OPTIONS = ["धरान वितरण केन्द्र", ".........", ".........."];
-const WORK_OPTIONS = ["ज्यालादारी", "करार", "बिशेष करार", "सेवा करार", "दैनिक ज्यालादारी","दैनिक ज्यालादारी+सेवा करार","स्थायी"];
-// [COMMIT: Added 'दै.ज्या.अन्य' and 'सेवा करार' in employee designation list]
-const DESIG_OPTIONS = ["दै.ज्या.","दै.ज्या.स.चा.","दै.ज्या.का.स.", "दै.ज्या.अन्य", "करार", "विशेष करार", "सेवा करार","स्थायी"];
+const WORK_OPTIONS = ["ज्यालादारी", "करार", "बिशेष करार", "दै.ज्या.अन्य", "सेवा करार", "दैनिक ज्यालादारी","दैनिक ज्यालादारी+सेवा करार","स्थायी"];
+const DESIG_OPTIONS = ["दै.ज्या.","दै.ज्या.स.चा.","दै.ज्या.का.स.", "दै.ज्या.अन्य", "करार", "विशेष करार", " सेवा करार","स्थायी"];
 let TOTAL_DAY_COLS = 32;
 let employees = [];
 let masterNames = [];
-let activeEditIndex = 0;
+let activeEditIndex = 0; 
 
 const DRAFT_KEY = 'hajiri_draft_v1';
 let draftRestored = false;
 let autoSaveTimer = null;
+
+
+const CATEGORY_POOLS = {
+  'प्रशासन': [
+    "श्री रिता मरिक", "श्री सरोज नेपाल", "श्री अम्बिका थापा", "श्री उर्मिला राई",
+    "श्री शम्भु बि‍‍.क.", "श्री उत्तम राई", "श्री राजन श्रेष्ठ", "श्री विशाल राई",
+    "श्री सुनिल मिरक डुम", "श्री प्रमोद मरिक ", "श्री राजेश यादव", "श्री मन्दिरा पाैडेल"
+  ],
+  'प्राविधिक': [
+    "श्री यमन राई ", "श्री पदम राई", "श्री हेमन्त राई", "श्री प्रशुराम खवाश",
+    "श्री बिमन भुजेल", "श्री समिर कार्कि", "श्री सुर्य बा.पाैडेल", "श्री सिवन राई",
+    "श्री केशव मल्ल", "श्री प्रमोद ओझा"
+  ],
+  'करार': [
+    "श्री निर कु.राई", "श्री निलहरि अधिकारी", "श्री कमलेश कु.मन्डल",
+    "श्री दावा तामाङ्ग", "श्री निशान खनाल", "श्री मिना अधिकारी", "श्री अमित वि‍‍.क."
+  ]
+};
+
+function renderLegendCounts(){
+  const assignedNames = new Set(employees.map(e => (e.name||'').trim()).filter(Boolean));
+  let adminList = CATEGORY_POOLS['प्रशासन'].filter(n => !assignedNames.has(n));
+  let techList = CATEGORY_POOLS['प्राविधिक'].filter(n => !assignedNames.has(n));
+  let contractList = CATEGORY_POOLS['करार'].filter(n => !assignedNames.has(n));
+
+  document.getElementById('cntAdmin').textContent = adminList.length;
+  document.getElementById('cntTech').textContent = techList.length;
+  document.getElementById('cntContract').textContent = contractList.length;
+}
+
+function showCategoryList(catName, e){
+  e.stopPropagation();
+  const assignedNames = new Set(employees.map(e => (e.name||'').trim()).filter(Boolean));
+  const remaining = CATEGORY_POOLS[catName].filter(n => !assignedNames.has(n));
+
+  document.getElementById('catPopupTitle').textContent = catName + ' फाट बाट हाजिरि बनाउने कर्मचारीहरूको नाम (बाँकी: ' + remaining.length + ' जना)';
+  const contentEl = document.getElementById('catPopupContent');
+  if(remaining.length === 0){
+    contentEl.innerHTML = '<div style="color:#888;">सबै कर्मचारीहरू टेबलमा राखिसकिएका छन्।</div>';
+  } else {
+    contentEl.innerHTML = remaining.map((n, i) => `<div>${i+1}. ${n}</div>`).join('');
+  }
+  document.getElementById('catPopupModal').classList.remove('hidden');
+}
 
 function saveDraftToLocalStorage(){
   clearTimeout(autoSaveTimer);
@@ -645,7 +721,7 @@ function buildDefaultEmployees(){
 
 function addEmployee(){
   employees.push(emptyEmployee("", "हा", 2));
-  activeEditIndex = employees.length - 1;
+  activeEditIndex = employees.length - 1; 
   renderRows();
   saveDraftToLocalStorage();
 }
@@ -658,7 +734,7 @@ function deleteEmployee(idx){
   saveDraftToLocalStorage();
 }
 
-// [COMMIT: Row Activation / Auto-Lock Logic]
+
 function activateRow(idx){
   if(activeEditIndex !== idx){
     activeEditIndex = idx;
@@ -677,6 +753,9 @@ function activateRow(idx){
         otRows[i].classList.toggle('row-locked', !isCur);
       }
     });
+    
+    const otSel = document.getElementById('otEmpSelect');
+    if(otSel) otSel.value = idx;
   }
 }
 
@@ -706,10 +785,14 @@ function refreshOtEmployeeSelect(){
   employees.forEach((e, idx)=>{
     const opt = document.createElement('option');
     opt.value = idx;
+    
     opt.textContent = e.name && e.name.trim() ? e.name : ('(खाली लाइन ' + (idx+1) + ')');
     sel.appendChild(opt);
   });
-  if(prevVal !== '' && sel.querySelector('option[value="'+prevVal+'"]')){
+  
+  if(employees[activeEditIndex]){
+    sel.value = activeEditIndex;
+  } else if(prevVal !== '' && sel.querySelector('option[value="'+prevVal+'"]')){
     sel.value = prevVal;
   }
 }
@@ -757,7 +840,7 @@ function assignBulkStatus(){
   msgEl.textContent = '✔ ' + (employees[idx].name||'यो कर्मचारी') + ' लाई गते ' + from + ' देखि ' + to + ' सम्म ' + (status || 'खाली') + ' हाजिरी थपियो।';
 }
 
-// [COMMIT: Keyboard Navigation (Arrow Keys for OT Day & Value adjustment)]
+
 function handleOtKeyNavigation(e, empIdx, dayIdx){
   if (activeEditIndex !== empIdx) return;
 
@@ -782,6 +865,7 @@ function handleOtKeyNavigation(e, empIdx, dayIdx){
       }
     }
   } else if (e.key === 'ArrowUp') {
+    
     e.preventDefault();
     let cur = Number(employees[empIdx].days[dayIdx].ot) || 0;
     cur += 1;
@@ -791,6 +875,7 @@ function handleOtKeyNavigation(e, empIdx, dayIdx){
     updateTotalsCells(empIdx);
     saveDraftToLocalStorage();
   } else if (e.key === 'ArrowDown') {
+    
     e.preventDefault();
     let cur = Number(employees[empIdx].days[dayIdx].ot) || 0;
     cur = Math.max(0, cur - 1);
@@ -824,6 +909,7 @@ function syncPrintTextForPrint(){
 
 function renderRows(){
   refreshOtEmployeeSelect();
+  renderLegendCounts();
   const body = document.getElementById('bodyRows');
   body.innerHTML = '';
 
@@ -850,6 +936,7 @@ function renderRows(){
     namePrintText.className = 'print-text-only';
     namePrintText.textContent = emp.name || '';
 
+    
     const nameCombo = createComboInput({
       className: 'name-input',
       value: emp.name,
@@ -860,6 +947,7 @@ function renderRows(){
         emp.name = val;
         namePrintText.textContent = val;
         refreshOtEmployeeSelect();
+        renderLegendCounts();
         saveDraftToLocalStorage();
       }
     });
@@ -906,7 +994,7 @@ function renderRows(){
       statusBtn.textContent = emp.days[d].status || '-';
       statusBtn.onclick = (e)=>{
         e.stopPropagation();
-        if (activeEditIndex !== idx) return;
+        if (activeEditIndex !== idx) return; 
         const cur = STATUS_CYCLE.indexOf(emp.days[d].status || "");
         const next = STATUS_CYCLE[(cur+1) % STATUS_CYCLE.length];
         emp.days[d].status = next;
@@ -957,6 +1045,7 @@ function renderRows(){
       otInput.value = curOt > 0 ? curOt : '-';
       otInput.id = 'ot-'+idx+'-'+d;
 
+      
       otInput.onkeydown = (e)=>handleOtKeyNavigation(e, idx, d);
 
       otInput.onfocus = (e)=>{
@@ -1027,7 +1116,7 @@ function updatePrintHeader(){
   document.getElementById('printHeaderInfo').textContent =
     'मिति ' + from + ' देखि ' + to + ' सम्मको हाजिरी र OT';
 
-  // [COMMIT: Meta info format for print header with exact FaNo isolation]
+  
   document.getElementById('printMetaInfo').innerHTML =
 `
 <div style="
@@ -1127,6 +1216,7 @@ function escapeHtml(s){
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+
 function buildMemoHTML(type){
   const office = escapeHtml(document.getElementById('metaPlace').value || '');
   const fano = escapeHtml(document.getElementById('metaFaNo').value || '');
@@ -1135,9 +1225,6 @@ function buildMemoHTML(type){
   const dateTo = escapeHtml(document.getElementById('searchTo').value || '?');
   const approvalDate = escapeHtml(document.getElementById('approvalMemoDate').value || dateFrom);
   const namedEmployees = employees.filter(e=>e.name && e.name.trim() !== '');
-
-  // [COMMIT: Memo 'From' field strictly shows selected working Fa-No without office name]
-  const fromSiteText = escapeHtml(fano);
 
   const header = `
     <div style="text-align:center;font-weight:700;">
@@ -1153,7 +1240,7 @@ function buildMemoHTML(type){
         </td>
         <td style="border:1px solid #000;width:50%;padding:8px;vertical-align:top;">
           <u>बाट:</u><br>
-          ${fromSiteText}
+          ${fano}, ${office}
         </td>
       </tr>
     </table>
@@ -1161,68 +1248,36 @@ function buildMemoHTML(type){
 
   const nameListHTML = namedEmployees.map((e,i)=>`<div>${i+1}. ${escapeHtml(e.name)}</div>`).join('');
 
-  const hasOtherType = employees.some(e => e.designation === 'दै.ज्या.अन्य');
-  const hasServiceContractType = employees.some(e => e.designation === 'सेवा करार');
-  const hasDriverType = employees.some(e => e.designation === 'दै.ज्या.स.चा.');
   
-  // [COMMIT: Conditional time / service text for approval memos]
-  let timeText = 'अतिरिक्त बढी समय';
-  if (hasOtherType) {
-    timeText = 'कार्यलय सरसफाई';
-  } else if (hasServiceContractType) {
-    timeText = 'कार्यलायले लाय खटाय अनुसारको प्राबिधिक';
-  }
-
-  const districtRateVal = document.getElementById('districtRateSelect') ? document.getElementById('districtRateSelect').value.replace(/,/g, '') : '';
-  const driverRateVal = document.getElementById('driverRateSelect') ? document.getElementById('driverRateSelect').value.replace(/,/g, '') : '';
-  const dRateStr = districtRateVal ? 'रु.' + toDevanagariDigits(districtRateVal) : 'स्वीकृत दर';
-  const drvRateStr = driverRateVal ? 'रु.' + toDevanagariDigits(driverRateVal) : 'स्वीकृत दर';
-
-  if (type === 'approval-admin' || type === 'approval-technical'){
-    const workArea = (type === 'approval-admin')
-      ? 'सवारी चालक, हेल्पडेस्क, कार्यालय सरसफाई, विद्युत महसुल संकलन काउन्टर'
-      : 'मर्मत, सवारी चालक, शिफ्ट डिउटी, फ्युज सेवा';
-
+  if (type === 'other-approval') {
     return header + `
       <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">पूर्व स्वीकृत मेमो</div>
       <p style="text-align:justify;text-indent:28px;">
-        यस वितरण केन्द्र अन्तर्गतको विविध कार्यहरू ${workArea} साथै कार्यालयको काममा
-        परिआउने कार्य गर्नका लागि हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले
-        मिति ${dateFrom} देखि मिति ${dateTo} सम्मका लागि तपशिलमा उल्लेखित ${work} कर्मचारीहरुलाई ${timeText} काममा खटाउनु पर्ने भएकोले पूर्व स्वीकृतिको लागि अनुरोध छ।
+        यस वितरण केन्द्र अन्तर्गत विभिन्न फाँटमा कार्यालयको काममा परिआउने कार्य गर्नका लागि हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्मका लागि तपशिलमा उल्लेखित ${work} कर्मचारीहरुलाई दैनिक ज्यालादारीमा काम लगाउनु पर्ने भएकोले पूर्व स्वीकृतिको लागि अनुरोध छ।
       </p>
       <div style="font-weight:700;text-decoration:underline;margin-top:8px;">तपशिल:</div>
       <div style="margin-top:8px;">${nameListHTML}</div>
       <div style="display:flex;justify-content:space-between;margin-top:44px;">
         <div>काममा लगाउने:</div>
+<div>सिफारिस गर्ने:</div>
         <div>स्वीकृत गर्ने :</div>
       </div>
       <div style="margin-top:18px;">मिति: ${approvalDate}</div>
     `;
   }
 
-  // [COMMIT: Payment-Technical Feature with Service Contract check to omit district rate sentence]
-  if (type === 'payment-technical') {
-    let techRateSentence = '';
-    
-    if (hasServiceContractType) {
-      // सेवा करार हुँदा उक्त लामो जिल्ला दररेटसम्बन्धी वाक्य नदेखाउने
-      techRateSentence = 'हाजिरी दिन अनुसार अतिरिक्त बढी समय भत्ता उपलब्ध गराईदिनुहुन अनुरोध छ।';
-    } else {
-      let driverSpecificText = '';
-      if (hasDriverType) {
-        driverSpecificText = `सवारी चालकको लागि स्वीकृत जिल्ला दररेट ${drvRateStr} र `;
-      }
-      techRateSentence = `सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट अनुसार ${driverSpecificText}अन्य विभिन्न फाटमा रहि कार्य गर्ने दै‍.ज्या कर्मचारीको हकमा सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट ${dRateStr} का दरले हाजिरी दिन अनुसारको पारिश्रमिक समेत उपलब्ध गराईदिनुहुन सिफारिसका साथ अनुरोध छ।`;
-    }
-
+  
+  if (type === 'other-payment') {
+    const districtRateVal = document.getElementById('districtRateSelect') ? document.getElementById('districtRateSelect').value.replace(/,/g, '') : '';
+    const dRateStr = districtRateVal ? 'रु.' + toDevanagariDigits(districtRateVal) : 'स्वीकृत दर';
     return header + `
-      <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">भुक्तानी स्वीकृत मेमो</div>
+      <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">अन्य कर्मचारी भुक्तानी स्वीकृत मेमो</div>
       <p style="text-align:justify;">
-        यस वितरण केन्द्र अन्तर्गतको विविध कार्यहरू मर्मत, शिफ्ट डिउटी, फ्युज सेवा,सवारी चालक साथै कार्यालयको काममा परिआउने कार्य गर्नका लागि
-        हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्म
-        अतिरिक्त बढी समय काममा लगाए बापतको संलग्न विवरण अनुसारको पूर्व स्वीकृति मेमो बमोजिम ${work} कर्मचारीहरुलाई
-        ${techRateSentence}
+        यस वितरण केन्द्र अन्तर्गत विभिन्न फाँट साथै  शिफ्ट डिउटी , कार्यालयको काममा परिआउने कार्य गर्नका लागि मिति ${dateFrom} देखि मिति ${dateTo} सम्म
+        संलग्न विवरण अनुसार ${work} कर्मचारीहरुलाई सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट ${dRateStr} का दरले हाजिरी दिन अनुसारको पारिश्रमिक उपलब्ध गराईदिनुहुन सिफारिसका साथ अनुरोध छ।
       </p>
+      <div style="font-weight:700;text-decoration:underline;margin-top:8px;">तपशिल:</div>
+      <div style="margin-top:8px;">${nameListHTML}</div>
       <div style="display:flex;justify-content:space-between;margin-top:44px;">
         <div>काममा लगाउने:</div>
         <div>सिफारिस गर्ने:</div>
@@ -1232,40 +1287,65 @@ function buildMemoHTML(type){
     `;
   }
 
-  // [COMMIT: Payment-Admin Conditional Sentences for 'दै.ज्या.अन्य' and 'दै.ज्या.स.चा.']
-  const workArea = 'सवारी चालक, हेल्पडेस्क, कार्यालय सरसफाई, विद्युत महसुल संकलन काउन्टर';
-  let rateSentence = '';
+  if (type === 'approval-admin' || type === 'approval-technical'){
+    const workArea = (type === 'approval-admin')
+      ? 'सवारी चालक, हेल्पडेस्क, सरसफाइ, विद्युत महशुल संकलन काउन्टर'
+      : 'मर्मत सम्भार, सवारी चालक, शिफ्ट डिउटी, फ्युज सेवा';
 
-  if (hasOtherType) {
     return header + `
-      <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">भुक्तानी स्वीकृत मेमो</div>
-      <p style="text-align:justify;">
-        यस वितरण केन्द्र अन्तर्गतको विविध कार्यहरू ${workArea} साथै कार्यालयको काममा परिआउने कार्य गर्नका लागि
-        हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्मको
-        संलग्न विवरण अनुसारको पूर्व स्वीकृति मेमो बमोजिम ${work} कर्मचारीहरुलाई हाजिरी दिन अनुसारको सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट ${dRateStr} का दरले पारिश्रमिक उपलब्ध गराईदिनुहुन अनुरोध छ।
+      <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">पूर्व स्वीकृत मेमो</div>
+      <p style="text-align:justify;text-indent:28px;">
+        यस वितरण केन्द्र अन्तर्गतको ${workArea} साथै कार्यालयको काममा
+        परिआउने कार्य गर्नका लागि हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले
+        मिति ${dateFrom} देखि मिति ${dateTo} सम्मका लागि तपशिलमा उल्लेखित ${work} कर्मचारीहरुलाई अतिरिक्त
+        बढी समय काममा खटाउनु पर्ने भएकोले पूर्व स्वीकृतिको लागि अनुरोध छ।
       </p>
+      <div style="font-weight:700;text-decoration:underline;margin-top:8px;">तपशिल:</div>
+      <div style="margin-top:8px;">${nameListHTML}</div>
       <div style="display:flex;justify-content:space-between;margin-top:44px;">
         <div>काममा लगाउने:</div>
-        <div>सिफारिस गर्ने:</div>
+<div>सिफारिस गर्ने:</div>
         <div>स्वीकृत गर्ने :</div>
       </div>
-      <div style="margin-top:18px;">मिति: ${dateTo}</div>
+      <div style="margin-top:18px;">मिति: ${approvalDate}</div>
     `;
-  } else {
-    let driverSpecificText = '';
-    if (hasDriverType) {
-      driverSpecificText = `सवारी चालकको लागि स्वीकृत जिल्ला दररेट ${drvRateStr} र `;
+  }
+
+  const workArea = (type === 'payment-admin')
+    ? 'सवारी चालक, हेल्पडेक्स, सरसफाई, विद्युत महसुल संकलन काउन्टर'
+    : 'मर्मत, शिफ्ट डिउटी, फ्युज सेवा';
+
+  
+  const districtRateVal = document.getElementById('districtRateSelect') ? document.getElementById('districtRateSelect').value.replace(/,/g, '') : '';
+  const driverRateVal = document.getElementById('driverRateSelect') ? document.getElementById('driverRateSelect').value.replace(/,/g, '') : '';
+  const hasDriverType = employees.some(e => e.designation === 'दै.ज्या.स.चा.');
+
+  let rateSentence = '';
+
+  
+  if (type === 'payment-technical') {
+    if (hasDriverType && driverRateVal) {
+      const drvRateStr = 'रु.' + toDevanagariDigits(driverRateVal);
+      const dRateStr = districtRateVal ? 'रु.' + toDevanagariDigits(districtRateVal) : 'स्वीकृत दर';
+      rateSentence = `साथै सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट अनुसार सवारी चालकको लागि दैनिक ${drvRateStr} र अन्यको हकमा दैनिक ${dRateStr} का दरले हाजिरी दिन अनुसारको पारिश्रमिक समेत उपलब्ध गराईदिनुहुन अनुरोध छ।`;
+    } else if (districtRateVal) {
+      rateSentence = 'साथै सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट रु.' + toDevanagariDigits(districtRateVal) + ' काे दरले हाजिरी दिन अनुसारकाे पारिश्रमिक समेत उपलब्ध गराईदिनुहुन अनुरोध छ।';
     }
-    rateSentence = `सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट अनुसार ${driverSpecificText}अन्य विभिन्न फाटमा रहि कार्य गर्ने दै‍.ज्या कर्मचारीको हकमा सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट ${dRateStr} का दरले हाजिरी दिन अनुसारको पारिश्रमिक समेत उपलब्ध गराईदिनुहुन सिफारिसका साथ अनुरोध छ।`;
+  }
+
+  if (type === 'payment-admin') {
+    const dRateStr = districtRateVal ? 'रु.' + toDevanagariDigits(districtRateVal) : 'स्वीकृत दर';
+    const drvRateStr = driverRateVal ? 'रु.' + toDevanagariDigits(driverRateVal) : 'स्वीकृत दर';
+    rateSentence = `साथै सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट अनुसार सवारी चालकको लागि दैनिक ${drvRateStr} र अन्य विभिन्न फाटमा रहि कार्य गर्ने दै‍.ज्या कर्मचारीको हकमा दैनिक ${dRateStr} का दरले हाजिरी दिन अनुसारको पारिश्रमिक समेत उपलब्ध गराईदिनुहुन  अनुरोध छ।`;
   }
 
   return header + `
     <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">भुक्तानी स्वीकृत मेमो</div>
     <p style="text-align:justify;">
-      यस वितरण केन्द्र अन्तर्गतको विविध कार्यहरू ${workArea} साथै कार्यालयको काममा परिआउने कार्य गर्नका लागि
+      यस वितरण केन्द्र अन्तर्गतको ${workArea} साथै कार्यालयको काममा परिआउने कार्य गर्नका लागि
       हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्म
-      अतिरिक्त बढी समय काममा लगाए बापतको संलग्न विवरण अनुसारको पूर्व स्वीकृति मेमो बमोजिम ${work} कर्मचारीहरुलाई
-      अतिरिक्त बढी समय भत्ता उपलब्ध गराईदिनुहुन साथै ${rateSentence}
+      अतिरिक्त बढी समय काममा लगाए बापतको संलग्न विवरण अनुसारको पूर्व स्वीकृति मेमो बमोजिम ${work} कर्मचारीहरुलाई अतिरिक्त
+      बढी समय भत्ता उपलब्ध गराईदिनुहुन सिफारिसका साथ अनुराेध छ। ${rateSentence}
     </p>
     <div style="display:flex;justify-content:space-between;margin-top:44px;">
       <div>काममा लगाउने:</div>
@@ -1283,6 +1363,10 @@ function showMemoTab(type){
   document.getElementById('tabPaymentAdminBtn').classList.toggle('active', type === 'payment-admin');
   document.getElementById('tabApprovalTechBtn').classList.toggle('active', type === 'approval-technical');
   document.getElementById('tabPaymentTechBtn').classList.toggle('active', type === 'payment-technical');
+  const otherApprovalTab = document.getElementById('tabOtherApprovalBtn');
+  if(otherApprovalTab) otherApprovalTab.classList.toggle('active', type === 'other-approval');
+  const otherPaymentTab = document.getElementById('tabOtherPaymentBtn');
+  if(otherPaymentTab) otherPaymentTab.classList.toggle('active', type === 'other-payment');
 }
 
 function openMemoModal(){
@@ -1294,9 +1378,8 @@ function closeMemoModal(){
   document.getElementById('memoModal').classList.add('hidden');
 }
 
-// [COMMIT: Approval Memo Date Validation Popup Feature Restored]
 function printMemo(){
-  const isApprovalType = (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical');
+  const isApprovalType = (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical' || currentMemoType === 'other-approval');
   const approvalDateVal = document.getElementById('approvalMemoDate').value.trim();
   if (isApprovalType && !approvalDateVal){
     alert('कृपया home page मा रहेको "पूर्व स्वीकृती मेमो मिति" भर्नुहोस् — यो नभरी पूर्व स्वीकृती मेमो Print हुँदैन।');
@@ -1306,13 +1389,12 @@ function printMemo(){
   document.body.classList.add('printing-memo');
   window.print();
 }
-
 window.addEventListener('afterprint', ()=>{
   document.body.classList.remove('printing-memo');
 });
 
 document.getElementById('approvalMemoDate').addEventListener('input', ()=>{
-  if (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical'){
+  if (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical' || currentMemoType === 'other-approval'){
     showMemoTab(currentMemoType);
   }
 });
@@ -1342,6 +1424,7 @@ function buildDayHeaders(){
   document.getElementById('otDayFrom').max = TOTAL_DAY_COLS;
   document.getElementById('otDayTo').max = TOTAL_DAY_COLS;
 }
+
 
 const NEPALI_MONTHS = ["बैशाख","जेठ","असार","श्रावण","भदौ","असोज","कार्तिक","मंसिर","पुष","माघ","फागुन","चैत्र"];
 let calTargetInputId = null;
@@ -1558,11 +1641,11 @@ populateDistrictRateOptions();
 const FALLBACK_NAMES = [
   "श्री यमन राई ", "श्री प्रमोद ओझा", "श्री उत्तम राई", "श्री केशव मल्ल",
   "श्री हेमन्त राई", "श्री अम्बिका थापा", "श्री राजन श्रेष्ठ", "श्री विशाल राई","श्री सरोज नेपाल"
-  ,"श्री सुनिल मिरक डुम","श्री रिता मरिक","श्री उर्मिला राई","श्री सरोज नेपाल","श्री शम्भु बि‍‍.क."
+  ,"श्री सुनिल मिरक डुम","श्री रिता मरिक","श्री उर्मिला राई","श्री निसान खनाल ","श्री शम्भु बि‍‍.क."
   ,"श्री बिमन भुजेल","श्री मन्दिरा पाैडेल","श्री समिर कार्कि",
   "श्री पदम राई","श्री प्रशुराम खवाश","श्री सुर्य बा.पाैडेल","श्री सिवन राई",
   "श्री निर कु.राई","श्री निलहरि अधिकारी","श्री कमलेश कु.मन्डल",
-  "श्री दावा तामाङ्ग","श्री राजेश यादव","श्री अमित वि‍‍.क.","श्री प्रमोद मरिक "
+  "श्री दावा तामाङ्ग","श्री राजेश यादव","श्री अमित वि‍‍.क.","श्री प्रमोद मरिक ","श्री मिना अधिकारी "
 ];
 
 function init(){
