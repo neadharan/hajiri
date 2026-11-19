@@ -629,7 +629,7 @@ const CATEGORY_POOLS = {
   ],
   'करार': [
     "श्री निर कु.राई", "श्री निलहरि अधिकारी", "श्री कमलेश कु.मन्डल",
-    "श्री दावा तामाङ्ग", "श्री अमित वि‍‍.क.","श्री फुलमाया तामाङ्ग"
+    "श्री दावा तामाङ्ग", "श्री अमित वि‍‍.क.","श्री फुलमाया तामाङ्ग","श्री मिना अधिकारी"
   ],
   'मिटर रिडिङ्ग': [
     "श्री राजन श्रेष्ठ", "श्री मन्दिरा पाैडेल", "श्री सरोज नेपाल", "श्री राजेश यादव"
@@ -760,7 +760,6 @@ function activateRow(idx){
         otRows[i].classList.toggle('row-locked', !isCur);
       }
     });
-    // [COMMIT: Feature 1 - Auto-select clicked employee in OT dropdown panel]
     const otSel = document.getElementById('otEmpSelect');
     if(otSel) otSel.value = idx;
   }
@@ -1282,8 +1281,7 @@ function buildMemoHTML(type){
       <p style="text-align:justify;text-indent:28px;">
         यस वितरण केन्द्र अन्तर्गतको विभिन्र एरियाकाे मिटर रिडिङ्ग कार्य आवश्यकता अनुसार लेखा,प्रसासन,मिटर रिडिङ्ग फा‌ंटमा रहि सहयाेगिका रूपमा कार्य गराउनकाे लागि हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्मका लागि संलग्न विवरण अनुसार पूर्व स्वीकृति मेमो बमोजिम ${work} कर्मचारीहरुलाई सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट ${dRateStr} का दरले हाजिरी दिन अनुसारको पारिश्रमिक साथै अतिरिक्त बढि समय भत्ता समेत भुक्तानीका लागि सिफारिसका साथ अनुरोध छ।
       </p>
-      <div style="font-weight:700;text-decoration:underline;margin-top:8px;">तपशिल:</div>
-      <div style="margin-top:8px;">${nameListHTML}</div>
+      
       <div style="display:flex;justify-content:space-between;margin-top:44px;">
         <div>काममा लगाउने:</div>
         <div>सिफारिस गर्ने:</div>
@@ -1316,13 +1314,12 @@ function buildMemoHTML(type){
     const districtRateVal = document.getElementById('districtRateSelect') ? document.getElementById('districtRateSelect').value.replace(/,/g, '') : '';
     const dRateStr = districtRateVal ? 'रु.' + toDevanagariDigits(districtRateVal) : 'स्वीकृत दर';
     return header + `
-      <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">अन्य कर्मचारी भुक्तानी स्वीकृत मेमो</div>
+      <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">भुक्तानी स्वीकृत मेमो</div>
       <p style="text-align:justify;">
         यस वितरण केन्द्र अन्तर्गत विभिन्न फाँट साथै शिफ्ट डिउटी , कार्यालयको काममा परिआउने कार्य गर्नका लागि मिति ${dateFrom} देखि मिति ${dateTo} सम्म
         संलग्न विवरण अनुसार ${work} कर्मचारीहरुलाई सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट ${dRateStr} का दरले हाजिरी दिन अनुसारको पारिश्रमिक उपलब्ध गराईदिनुहुन सिफारिसका साथ अनुरोध छ।
       </p>
-      <div style="font-weight:700;text-decoration:underline;margin-top:8px;">तपशिल:</div>
-      <div style="margin-top:8px;">${nameListHTML}</div>
+      
       <div style="display:flex;justify-content:space-between;margin-top:44px;">
         <div>काममा लगाउने:</div>
         <div>सिफारिस गर्ने:</div>
@@ -1689,7 +1686,7 @@ const FALLBACK_NAMES = [
   "श्री हेमन्त राई", "श्री अम्बिका थापा", "श्री राजन श्रेष्ठ", "श्री विशाल राई","श्री सरोज नेपाल"
   ,"श्री सुनिल मिरक डुम","श्री रिता मरिक","श्री उर्मिला राई","श्री निसान खनाल ","श्री शम्भु बि‍‍.क."
   ,"श्री बिमन भुजेल","श्री मन्दिरा पाैडेल","श्री समिर कार्कि",
-  "श्री पदम राई","श्री प्रशुराम खवाश","श्री सुर्य बा.पाैडेल","श्री सिवन राई",
+  "श्री पदम राई","श्री प्रशुराम खवाश","श्री सुर्य ब.पाैडेल","श्री सिवन राई",
   "श्री निर कु.राई","श्री निलहरि अधिकारी","श्री कमलेश कु.मन्डल",
   "श्री दावा तामाङ्ग","श्री राजेश यादव","श्री अमित वि‍‍.क.","श्री प्रमोद मरिक ","श्री मिना अधिकारी ","श्री फुलमाया तमाङ्ग"
 ];
