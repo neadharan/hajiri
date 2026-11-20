@@ -119,13 +119,86 @@
   .btn-group{display:flex;gap:8px;flex-wrap:wrap;}
   .btn-small{padding:5px 10px;font-size:12px;}
 
-  /* [COMMIT: Rule 4 - Employee Add Button Custom Green Color] */
+  
   .btn-green-custom { background: #0b9c2a !important; color: #fff !important; }
   .btn-green-custom:hover { background: #087a21 !important; }
 
-  /* [COMMIT: Rule 3 - Close / Cancel Button Custom Red Color] */
+  
   .btn-red-custom { background: #a5322a !important; color: #fff !important; border: 1px solid #a5322a !important; }
   .btn-red-custom:hover { background: #7c2620 !important; }
+
+  
+  .work-tabs-bar {
+    display: flex;
+    gap: 10px;
+    padding: 10px 16px 4px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .work-tab-btn {
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.18s ease;
+    border: 2px solid transparent;
+    opacity: 0.78;
+  }
+  .work-tab-btn:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+  #workTab-daily {
+    background: #1d4ed8;
+    color: #fff;
+    border-color: #1e3a8a;
+  }
+  #workTab-contract {
+    background: #197a06;
+    color: #e9e2e2d8;
+    border-color: rgb(59, 48, 124)9);
+  }
+  #workTab-other {
+    background: #d97706;
+    color: #fff;
+    border-color: #78350f;
+  }
+  .work-tab-btn.active {
+    opacity: 1;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.28);
+    outline: 3px solid #111827;
+    transform: scale(1.03);
+  }
+
+  /* [COMMIT: Update 2 - Memo Department Selection Box] */
+  .memo-dept-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #eef4f8;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+  .memo-dept-selector label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    background: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+  }
+  .memo-dept-selector label:has(input:checked) {
+    border-color: var(--navy);
+    background: #e6ebff;
+    color: var(--navy);
+  }
 
   .ot-panel{
     margin:0 16px 14px;padding:12px 14px;background:#fff;border:1px dashed #b9c9d4;border-radius:10px;
@@ -258,7 +331,7 @@
   .print-text-only{display:none;}
 
   @media print{
-    .toolbar, .ot-panel, .hint, #errorBanner, .bottom-bar, .search-bar, .meta-bar{display:none !important;}
+    .toolbar, .ot-panel, .hint, #errorBanner, .bottom-bar, .search-bar, .meta-bar, .work-tabs-bar{display:none !important;}
     .col-del{display:none;}
     .print-only{display:block !important;}
     .signature-block{display:flex !important;}
@@ -387,7 +460,7 @@
       box-shadow:none !important;max-width:none !important;max-height:none !important;
       width:100% !important;border-radius:0 !important;
     }
-    body.printing-memo .modal-header, body.printing-memo .modal-footer, body.printing-memo .approval-date-field{display:none !important;}
+    body.printing-memo .modal-header, body.printing-memo .modal-footer, body.printing-memo .approval-date-field, body.printing-memo .memo-dept-selector{display:none !important;}
     body.printing-memo .memo-paper{overflow:visible !important;padding:6mm 10mm !important;}
   }
 </style>
@@ -461,6 +534,14 @@
   </div>
 </div>
 <div id="searchMsg"></div>
+
+
+<div class="work-tabs-bar">
+  <span style="font-size:12.5px;font-weight:700;color:var(--navy);">हाजिरी समूह छान्नुहोस्:</span>
+  <button type="button" class="work-tab-btn active" id="workTab-daily" onclick="switchWorkSheet('daily')">दैनिक ज्यालादारी</button>
+  <button type="button" class="work-tab-btn" id="workTab-contract" onclick="switchWorkSheet('contract')">सेवा करार</button>
+  <button type="button" class="work-tab-btn" id="workTab-other" onclick="switchWorkSheet('other')">दै.ज्या.अन्य</button>
+</div>
 
 <div class="toolbar">
   <div class="legend" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
@@ -578,22 +659,34 @@
 
 <div id="memoModal" class="modal-overlay hidden">
   <div class="modal-box">
+    
+    <div class="memo-dept-selector">
+      <span>मेमो फाँट छान्नुहोस्:</span>
+      <label><input type="checkbox" name="memoDeptChk" value="admin" onchange="selectMemoDept('admin', this)"> प्रशासन फाँट</label>
+      <label><input type="checkbox" name="memoDeptChk" value="tech" onchange="selectMemoDept('tech', this)"> प्राविधिक फाँट_करार </label>
+      <label><input type="checkbox" name="memoDeptChk" value="other" onchange="selectMemoDept('other', this)"> दै.ज्या.अन्य</label>
+      <label><input type="checkbox" name="memoDeptChk" value="meter" onchange="selectMemoDept('meter', this)"> मिटर रिडिङ्ग फाँट</label>
+    </div>
+
     <div class="modal-header">
-      <div class="btn-group">
-        <button class="btn btn-ghost btn-small memo-tab" id="tabApprovalAdminBtn" onclick="showMemoTab('approval-admin')">प्रशासन फाँट पूर्व स्वीकृती</button>
-        <button class="btn btn-ghost btn-small memo-tab" id="tabPaymentAdminBtn" onclick="showMemoTab('payment-admin')">प्रशासन फाँट भुक्तानी मेमाे </button>
-        <button class="btn btn-ghost btn-small memo-tab" id="tabApprovalTechBtn" onclick="showMemoTab('approval-technical')">प्राबिधिक फाँट_करार पूर्व स्वीकृती </button>
-        <button class="btn btn-ghost btn-small memo-tab" id="tabPaymentTechBtn" onclick="showMemoTab('payment-technical')">प्राबिधिक फाँट_करार भुक्तानी मेमाे</button>
-        <button class="btn btn-ghost btn-small memo-tab" id="tabOtherApprovalBtn" onclick="showMemoTab('other-approval')">अन्य कर्मचारी पूर्व स्वीकृति</button>
-        <button class="btn btn-ghost btn-small memo-tab" id="tabOtherPaymentBtn" onclick="showMemoTab('other-payment')">अन्य कर्मचारी भुक्तानी</button>
-        
-        <button class="btn btn-ghost btn-small memo-tab" id="tabMeterReaderBtn" onclick="showMemoTab('meter-reader')">मिटर रिडर फाँट पूर्व स्वीकृति</button>
-        <button class="btn btn-ghost btn-small memo-tab" id="tabMeterPaymentBtn" onclick="showMemoTab('meter-payment')"> मिटर रिडर फाँट भुक्तानी</button>
+      <div class="btn-group" id="memoTabButtonsWrap">
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="admin" id="tabApprovalAdminBtn" onclick="showMemoTab('approval-admin')">प्रशासन फाँट पूर्व स्वीकृती</button>
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="admin" id="tabPaymentAdminBtn" onclick="showMemoTab('payment-admin')">प्रशासन फाँट भुक्तानी मेमाे </button>
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="tech" id="tabApprovalTechBtn" onclick="showMemoTab('approval-technical')">प्राबिधिक फाँट_करार पूर्व स्वीकृती </button>
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="tech" id="tabPaymentTechBtn" onclick="showMemoTab('payment-technical')">प्राबिधिक फाँट_करार भुक्तानी मेमाे</button>
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="other" id="tabOtherApprovalBtn" onclick="showMemoTab('other-approval')">अन्य कर्मचारी पूर्व स्वीकृति</button>
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="other" id="tabOtherPaymentBtn" onclick="showMemoTab('other-payment')">अन्य कर्मचारी भुक्तानी</button>
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="meter" id="tabMeterReaderBtn" onclick="showMemoTab('meter-reader')">मिटर रिडर फाँट पूर्व स्वीकृति</button>
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="meter" id="tabMeterPaymentBtn" onclick="showMemoTab('meter-payment')"> मिटर रिडर फाँट भुक्तानी</button>
       </div>
       
       <button class="btn btn-red-custom btn-small" onclick="closeMemoModal()">✕ बन्द</button>
     </div>
-    <div id="memoContent" class="memo-paper"></div>
+    <div id="memoContent" class="memo-paper">
+      <div style="text-align:center;color:#dd0a0a;padding:40px 10px;font-weight:600;">
+        कृपया माथि रहेको फाँटको चेक बक्समा टिक (✓) लगाउनुहोस्, त्यसपछि सम्बन्धित फाँटको मेमो देखिनेछ।
+      </div>
+    </div>
     <div class="modal-footer">
       <button class="btn btn-primary" onclick="printMemo()">🖨️मेमो Print गर्नुहोस्</button>
     </div>
@@ -605,25 +698,29 @@ const STATUS_CYCLE = ["", "हा", "काज", "बिदा"];
 const STATUS_CLASS = {"":"", "हा":"st-present", "काज":"st-kaaj", "बिदा":"st-bida"};
 const PLACE_OPTIONS = ["धरान वितरण केन्द्र", ".........", ".........."];
 const WORK_OPTIONS = ["ज्यालादारी", "करार", "बिशेष करार", "दै.ज्या.अन्य", "सेवा करार", "दैनिक ज्यालादारी","दैनिक ज्यालादारी+सेवा करार","स्थायी"];
-const DESIG_OPTIONS = ["दै.ज्या.","दै.ज्या.स.चा.","दै.ज्या.का.स.", "दै.ज्या.अन्य", "करार", "विशेष करार", " सेवा करार","स्थायी"];
+const DESIG_OPTIONS = ["दै.ज्या.","दै.ज्या.स.चा.","दै.ज्या.का.स.", "दै.ज्या.अन्य", "करार", "विशेष करार", "सेवा करार","स्थायी"];
 let TOTAL_DAY_COLS = 32;
 let employees = [];
 let masterNames = [];
 let activeEditIndex = 0;
 
-const DRAFT_KEY = 'hajiri_draft_v1';
+let currentWorkSheet = 'daily';
+const WORK_SHEET_KEYS = {
+  'daily': 'hajiri_draft_v1',
+  'contract': 'hajiri_draft_contract_v1',
+  'other': 'hajiri_draft_other_v1'
+};
 let draftRestored = false;
 let autoSaveTimer = null;
-
 
 const CATEGORY_POOLS = {
   'प्रशासन': [
     "श्री रिता मरिक", "श्री अम्बिका थापा", "श्री उर्मिला राई",
     "श्री शम्भु बि‍‍.क.", "श्री उत्तम राई","श्री विशाल राई",
-    "श्री सुनिल मिरक डुम", "श्री प्रमोद मरिक "
+    "श्री सुनिल मिरक डुम", "श्री प्रमोद मरिक"
   ],
   'प्राविधिक': [
-    "श्री यमन राई ", "श्री पदम राई", "श्री हेमन्त राई", "श्री प्रशुराम खवाश",
+    "श्री पदम राई", "श्री यमन राई", "श्री हेमन्त राई", "श्री प्रशुराम खवाश",
     "श्री बिमन भुजेल", "श्री समिर कार्कि", "श्री सुर्य ब.पाैडेल", "श्री सिवन राई",
     "श्री केशव मल्ल", "श्री प्रमोद ओझा"
   ],
@@ -638,10 +735,10 @@ const CATEGORY_POOLS = {
 
 function renderLegendCounts(){
   const assignedNames = new Set(employees.map(e => (e.name||'').trim()).filter(Boolean));
-  let adminList = CATEGORY_POOLS['प्रशासन'].filter(n => !assignedNames.has(n));
-  let techList = CATEGORY_POOLS['प्राविधिक'].filter(n => !assignedNames.has(n));
-  let contractList = CATEGORY_POOLS['करार'].filter(n => !assignedNames.has(n));
-  let meterList = CATEGORY_POOLS['मिटर रिडिङ्ग'].filter(n => !assignedNames.has(n));
+  let adminList = CATEGORY_POOLS['प्रशासन'].filter(n => !assignedNames.has(n.trim()));
+  let techList = CATEGORY_POOLS['प्राविधिक'].filter(n => !assignedNames.has(n.trim()));
+  let contractList = CATEGORY_POOLS['करार'].filter(n => !assignedNames.has(n.trim()));
+  let meterList = CATEGORY_POOLS['मिटर रिडिङ्ग'].filter(n => !assignedNames.has(n.trim()));
 
   document.getElementById('cntAdmin').textContent = adminList.length;
   document.getElementById('cntTech').textContent = techList.length;
@@ -654,16 +751,20 @@ function renderLegendCounts(){
 function showCategoryList(catName, e){
   e.stopPropagation();
   const assignedNames = new Set(employees.map(e => (e.name||'').trim()).filter(Boolean));
-  const remaining = CATEGORY_POOLS[catName].filter(n => !assignedNames.has(n));
+  const remaining = CATEGORY_POOLS[catName].filter(n => !assignedNames.has(n.trim()));
 
   document.getElementById('catPopupTitle').textContent = catName + ' फाट बाट हाजिरि बनाउने कर्मचारीहरूको नाम (बाँकी: ' + remaining.length + ' जना)';
   const contentEl = document.getElementById('catPopupContent');
   if(remaining.length === 0){
     contentEl.innerHTML = '<div style="color:#888;">सबै कर्मचारीहरू टेबलमा राखिसकिएका छन्।</div>';
   } else {
-    contentEl.innerHTML = remaining.map((n, i) => `<div>${i+1}. ${n}</div>`).join('');
+    contentEl.innerHTML = remaining.map((n, i) => `<div>${i+1}. ${n.trim()}</div>`).join('');
   }
   document.getElementById('catPopupModal').classList.remove('hidden');
+}
+
+function getActiveDraftKey(){
+  return WORK_SHEET_KEYS[currentWorkSheet] || 'hajiri_draft_v1';
 }
 
 function saveDraftToLocalStorage(){
@@ -681,21 +782,91 @@ function saveDraftToLocalStorage(){
         },
         savedAt: new Date().toISOString()
       };
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      localStorage.setItem(getActiveDraftKey(), JSON.stringify(draft));
     }catch(e){ /* ignore */ }
-  }, 300);
+  }, 150);
+}
+
+function saveDraftImmediate(){
+  clearTimeout(autoSaveTimer);
+  try{
+    const draft = {
+      employees: employees,
+      meta: {
+        place: document.getElementById('metaPlace') ? document.getElementById('metaPlace').value : '',
+        work: document.getElementById('metaWork') ? document.getElementById('metaWork').value : '',
+        faNo: document.getElementById('metaFaNo') ? document.getElementById('metaFaNo').value : '',
+        dateFrom: document.getElementById('searchFrom') ? document.getElementById('searchFrom').value : '',
+        dateTo: document.getElementById('searchTo') ? document.getElementById('searchTo').value : ''
+      },
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem(getActiveDraftKey(), JSON.stringify(draft));
+  }catch(e){}
 }
 
 function loadDraftFromLocalStorage(){
   try{
-    const raw = localStorage.getItem(DRAFT_KEY);
+    const raw = localStorage.getItem(getActiveDraftKey());
     if(!raw) return null;
     return JSON.parse(raw);
   }catch(e){ return null; }
 }
 
 function clearDraftFromLocalStorage(){
-  try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
+  try{ localStorage.removeItem(getActiveDraftKey()); }catch(e){}
+}
+
+
+function switchWorkSheet(sheetKey){
+  if (currentWorkSheet === sheetKey) return;
+  saveDraftImmediate();
+  currentWorkSheet = sheetKey;
+
+  document.querySelectorAll('.work-tab-btn').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById('workTab-' + sheetKey);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  const draft = loadDraftFromLocalStorage();
+  if (draft && draft.employees && draft.employees.length){
+    employees = draft.employees;
+    employees.forEach(e=>{
+      if(!e.days) e.days = [];
+      while(e.days.length < TOTAL_DAY_COLS) e.days.push({status:"हा", ot:2});
+    });
+    if (draft.meta){
+      document.getElementById('metaPlace').value = draft.meta.place || '';
+      document.getElementById('metaWork').value = draft.meta.work || '';
+      document.getElementById('metaFaNo').value = draft.meta.faNo || '';
+      document.getElementById('searchFrom').value = draft.meta.dateFrom || '';
+      document.getElementById('searchTo').value = draft.meta.dateTo || '';
+    }
+  } else {
+    employees = buildDefaultEmployees();
+    if (sheetKey === 'contract') {
+      employees.forEach(e => e.designation = 'सेवा करार');
+      document.getElementById('metaWork').value = 'सेवा करार';
+    } else if (sheetKey === 'other') {
+      employees.forEach(e => e.designation = 'दै.ज्या.अन्य');
+      document.getElementById('metaWork').value = 'दै.ज्या.अन्य';
+    } else {
+      employees.forEach(e => e.designation = 'दै.ज्या.');
+      document.getElementById('metaWork').value = 'दैनिक ज्यालादारी';
+    }
+  }
+
+  // Ensure metaWork strictly matches selected tab if empty or mismatched
+  if (sheetKey === 'daily' && document.getElementById('metaWork').value === 'सेवा करार') {
+    document.getElementById('metaWork').value = 'दैनिक ज्यालादारी';
+  } else if (sheetKey === 'contract' && document.getElementById('metaWork').value !== 'सेवा करार') {
+    document.getElementById('metaWork').value = 'सेवा करार';
+  }
+
+  activeEditIndex = 0;
+  renderRows();
+  updatePrintHeader();
+  const labelMap = { 'daily': 'दैनिक ज्यालादारी', 'contract': 'सेवा करार', 'other': 'दै.ज्या.अन्य' };
+  setStatus('✔ ' + labelMap[sheetKey] + ' हाजिरी पाना खोलियो ।', false);
 }
 
 function clearTable(){
@@ -727,7 +898,10 @@ function buildDefaultEmployees(){
 }
 
 function addEmployee(){
-  employees.push(emptyEmployee("", "हा", 2));
+  const newEmp = emptyEmployee("", "हा", 2);
+  if (currentWorkSheet === 'contract') newEmp.designation = 'सेवा करार';
+  else if (currentWorkSheet === 'other') newEmp.designation = 'दै.ज्या.अन्य';
+  employees.push(newEmp);
   activeEditIndex = employees.length - 1;
   renderRows();
   saveDraftToLocalStorage();
@@ -1215,7 +1389,7 @@ function setStatus(msg, isError){
   el.className = isError ? 'error' : '';
 }
 
-let currentMemoType = 'approval-admin';
+let currentMemoType = '';
 
 function escapeHtml(s){
   return (s||'').toString()
@@ -1224,6 +1398,12 @@ function escapeHtml(s){
 
 
 function buildMemoHTML(type){
+  if (!type) {
+    return `<div style="text-align:center;color:#777;padding:40px 10px;font-weight:600;">
+      कृपया माथि रहेको फाँटको चेक बक्समा टिक (✓) लगाउनुहोस्, त्यसपछि सम्बन्धित फाँटको मेमो देखिनेछ।
+    </div>`;
+  }
+
   const office = escapeHtml(document.getElementById('metaPlace').value || '');
   const fano = escapeHtml(document.getElementById('metaFaNo').value || '');
   const work = escapeHtml(document.getElementById('metaWork').value || 'दै.ज्या.');
@@ -1396,7 +1576,52 @@ function buildMemoHTML(type){
   `;
 }
 
+
+function checkDistrictRateRequired(type){
+  const isServiceContract = employees.some(e => (e.designation || '').trim() === 'सेवा करार') || (document.getElementById('metaWork') && document.getElementById('metaWork').value.trim() === 'सेवा करार');
+  const dRateVal = document.getElementById('districtRateSelect') ? document.getElementById('districtRateSelect').value.trim() : '';
+  if (!isServiceContract && !dRateVal) {
+    alert('कृपया "जिल्ला दररेट रकम (रु.)" मा रकम छान्नुहोस्!');
+  }
+}
+
+function selectMemoDept(dept, checkboxEl){
+  const allChks = document.querySelectorAll('input[name="memoDeptChk"]');
+  allChks.forEach(c => {
+    if (c !== checkboxEl) c.checked = false;
+  });
+
+  const tabs = document.querySelectorAll('.memo-tab');
+  if (!checkboxEl.checked) {
+    tabs.forEach(t => t.classList.add('hidden'));
+    currentMemoType = '';
+    document.getElementById('memoContent').innerHTML = buildMemoHTML('');
+    return;
+  }
+
+  let firstMatchingTab = null;
+  tabs.forEach(t => {
+    if (t.getAttribute('data-dept') === dept) {
+      t.classList.remove('hidden');
+      if (!firstMatchingTab) firstMatchingTab = t;
+    } else {
+      t.classList.add('hidden');
+    }
+  });
+
+  const defaultTabMap = {
+    'admin': 'approval-admin',
+    'tech': 'approval-technical',
+    'other': 'other-approval',
+    'meter': 'meter-reader'
+  };
+  if (defaultTabMap[dept]) {
+    showMemoTab(defaultTabMap[dept]);
+  }
+}
+
 function showMemoTab(type){
+  if (type) checkDistrictRateRequired(type);
   currentMemoType = type;
   document.getElementById('memoContent').innerHTML = buildMemoHTML(type);
   document.getElementById('tabApprovalAdminBtn').classList.toggle('active', type === 'approval-admin');
@@ -1414,7 +1639,10 @@ function showMemoTab(type){
 }
 
 function openMemoModal(){
-  showMemoTab('approval-admin');
+  document.querySelectorAll('input[name="memoDeptChk"]').forEach(c => c.checked = false);
+  document.querySelectorAll('.memo-tab').forEach(t => t.classList.add('hidden'));
+  currentMemoType = '';
+  document.getElementById('memoContent').innerHTML = buildMemoHTML('');
   document.getElementById('memoModal').classList.remove('hidden');
 }
 
@@ -1423,6 +1651,16 @@ function closeMemoModal(){
 }
 
 function printMemo(){
+  if (!currentMemoType) {
+    alert('कृपया पहिले कुन फाँटको मेमो हो भनी चेक बक्समा टिक (✓) लगाउनुहोस्।');
+    return;
+  }
+  const isServiceContract = employees.some(e => (e.designation || '').trim() === 'सेवा करार') || (document.getElementById('metaWork') && document.getElementById('metaWork').value.trim() === 'सेवा करार');
+  const dRateVal = document.getElementById('districtRateSelect') ? document.getElementById('districtRateSelect').value.trim() : '';
+  if (!isServiceContract && !dRateVal) {
+    alert('कृपया home page मा रहेको "जिल्ला दररेट रकम (रु.)" मा रकम छान्नुहोस् — यो नछानी मेमो Print हुँदैन।');
+    return;
+  }
   const isApprovalType = (currentMemoType === 'approval-admin' || currentMemoType === 'approval-technical' || currentMemoType === 'other-approval' || currentMemoType === 'meter-reader');
   const approvalDateVal = document.getElementById('approvalMemoDate').value.trim();
   if (isApprovalType && !approvalDateVal){
@@ -1444,7 +1682,7 @@ document.getElementById('approvalMemoDate').addEventListener('input', ()=>{
 });
 
 document.getElementById('districtRateSelect').addEventListener('change', ()=>{
-  showMemoTab(currentMemoType);
+  if (currentMemoType) showMemoTab(currentMemoType);
 });
 
 document.getElementById('driverRateSelect').addEventListener('change', ()=>{
@@ -1682,13 +1920,13 @@ function populateDistrictRateOptions(){
 populateDistrictRateOptions();
 
 const FALLBACK_NAMES = [
-  "श्री यमन राई ", "श्री प्रमोद ओझा", "श्री उत्तम राई", "श्री केशव मल्ल",
+  "श्री यमन राई", "श्री प्रमोद ओझा", "श्री उत्तम राई", "श्री केशव मल्ल",
   "श्री हेमन्त राई", "श्री अम्बिका थापा", "श्री राजन श्रेष्ठ", "श्री विशाल राई","श्री सरोज नेपाल"
-  ,"श्री सुनिल मिरक डुम","श्री रिता मरिक","श्री उर्मिला राई","श्री निसान खनाल ","श्री शम्भु बि‍‍.क."
+  ,"श्री सुनिल मिरक डुम","श्री रिता मरिक","श्री उर्मिला राई","श्री निसान खनाल","श्री शम्भु बि‍‍.क."
   ,"श्री बिमन भुजेल","श्री मन्दिरा पाैडेल","श्री समिर कार्कि",
   "श्री पदम राई","श्री प्रशुराम खवाश","श्री सुर्य ब.पाैडेल","श्री सिवन राई",
   "श्री निर कु.राई","श्री निलहरि अधिकारी","श्री कमलेश कु.मन्डल",
-  "श्री दावा तामाङ्ग","श्री राजेश यादव","श्री अमित वि‍‍.क.","श्री प्रमोद मरिक ","श्री मिना अधिकारी ","श्री फुलमाया तमाङ्ग"
+  "श्री दावा तामाङ्ग","श्री राजेश यादव","श्री अमित वि‍‍.क.","श्री प्रमोद मरिक","श्री मिना अधिकारी","श्री फुलमाया तमाङ्ग"
 ];
 
 function init(){
