@@ -48,7 +48,85 @@
     display:flex;justify-content:space-between;align-items:center;gap:10px;
   }
   #errorBanner.info{background:#e2f3e8;border-bottom-color:var(--present);color:#1c5c37;}
-  .hidden{display:none;}
+  .hidden{display:none !important;}
+
+  /* [COMMIT: Update 3 - Center Start Switch Gate Overlay] */
+  #startSwitchOverlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(18,10,129,0.96), rgba(40,31,156,0.94));
+    z-index: 9999999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+  }
+  .switch-card {
+    background: #fff;
+    color: #1f2937;
+    padding: 34px 40px;
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    max-width: 440px;
+    width: 100%;
+    border-top: 6px solid var(--gold);
+  }
+  .switch-card h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    color: var(--navy);
+  }
+  .switch-card p {
+    margin: 0 0 24px;
+    font-size: 13.5px;
+    color: #4b5563;
+    font-weight: 600;
+  }
+  .power-switch-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #0b9c2a, #067a1e);
+    color: #fff;
+    border: none;
+    padding: 14px 30px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 6px 20px rgba(11,156,42,0.4);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .power-switch-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(11,156,42,0.55);
+  }
+  .switch-toggle-track {
+    width: 44px;
+    height: 24px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 20px;
+    position: relative;
+    display: inline-block;
+  }
+  .switch-toggle-thumb {
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 4px;
+    transition: left 0.2s ease;
+  }
+  .power-switch-btn:hover .switch-toggle-thumb {
+    left: 22px;
+  }
 
   .combo-wrap{position:relative;width:100%;}
   .combo-list{
@@ -158,7 +236,7 @@
   #workTab-contract {
     background: #197a06;
     color: #e9e2e2d8;
-    border-color: rgb(59, 48, 124)9);
+    border-color: rgb(59, 48, 124);
   }
   #workTab-other {
     background: #d97706;
@@ -331,7 +409,7 @@
   .print-text-only{display:none;}
 
   @media print{
-    .toolbar, .ot-panel, .hint, #errorBanner, .bottom-bar, .search-bar, .meta-bar, .work-tabs-bar{display:none !important;}
+    #startSwitchOverlay, .toolbar, .ot-panel, .hint, #errorBanner, .bottom-bar, .search-bar, .meta-bar, .work-tabs-bar{display:none !important;}
     .col-del{display:none;}
     .print-only{display:block !important;}
     .signature-block{display:flex !important;}
@@ -469,6 +547,21 @@
 </style>
 </head>
 <body>
+
+
+<div id="startSwitchOverlay">
+  <div class="switch-card">
+    <div class="logo-circle" style="margin:0 auto 14px;border:3px solid var(--gold);width:84px;height:84px;">
+      <img src="hajiri.png" alt="Hajiri Logo" class="logo-img" onerror="this.style.display='none'">
+    </div>
+    <h2>नेपाल विद्युत प्राधिकरण</h2>
+    <p>धरान वितरण केन्द्र — हाजिरी तथा OT प्रणाली</p>
+    <button type="button" class="power-switch-btn" onclick="unlockHajiriApp()">
+      <span class="switch-toggle-track"><span class="switch-toggle-thumb"></span></span>
+      <span>Switch On</span>
+    </button>
+  </div>
+</div>
 
 <div id="errorBanner" class="hidden">
   <span id="errorBannerText"></span>
@@ -683,8 +776,13 @@
       <button class="btn btn-red-custom btn-small" onclick="closeMemoModal()">✕ बन्द</button>
     </div>
     <div id="memoContent" class="memo-paper">
-      <div style="text-align:center;color:#dd0a0a;padding:40px 10px;font-weight:600;">
+      <div style="text-align:center;color:#000000;padding:30px 16px;font-weight:700;font-size:14.5px;">
         कृपया माथि रहेको फाँटको चेक बक्समा टिक (✓) लगाउनुहोस्, त्यसपछि सम्बन्धित फाँटको मेमो देखिनेछ।
+        <div style="margin-top:18px;text-align:left;color:#c91c1c;font-weight:700;font-size:13.5px;line-height:1.9;background:#fff5f5;padding:14px 18px;border-radius:8px;border:1px solid #fecaca;">
+          <div>- प्रशासन फाँट मा click गरेर मेमाे print गर्दै हुनुन्छ भने (हाजिरी दिन र OT) सहित पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
+          <div>- प्राविधिक फाँट_करार मा click गरेर मेमाे print गर्दै हुनुन्छ भने दैनिक ज्यालादारीकाे हकमा (हाजिरी दिन र OT) सहित लेखिएको र सेवा करारकाे मेमो print गर्दै हुनुन्छ भने OT पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
+          <div>- दै.ज्या.अन्य मेमो मा click गरेर मेमाे print गर्दै हुनुन्छ भने हाजिरी दिन अनुसारकाे पारिश्रमिक  पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -694,6 +792,12 @@
 </div>
 
 <script>
+
+function unlockHajiriApp(){
+  const overlay = document.getElementById('startSwitchOverlay');
+  if (overlay) overlay.classList.add('hidden');
+}
+
 const STATUS_CYCLE = ["", "हा", "काज", "बिदा"];
 const STATUS_CLASS = {"":"", "हा":"st-present", "काज":"st-kaaj", "बिदा":"st-bida"};
 const PLACE_OPTIONS = ["धरान वितरण केन्द्र", ".........", ".........."];
@@ -855,7 +959,7 @@ function switchWorkSheet(sheetKey){
     }
   }
 
-  // Ensure metaWork strictly matches selected tab if empty or mismatched
+  
   if (sheetKey === 'daily' && document.getElementById('metaWork').value === 'सेवा करार') {
     document.getElementById('metaWork').value = 'दैनिक ज्यालादारी';
   } else if (sheetKey === 'contract' && document.getElementById('metaWork').value !== 'सेवा करार') {
@@ -1399,8 +1503,13 @@ function escapeHtml(s){
 
 function buildMemoHTML(type){
   if (!type) {
-    return `<div style="text-align:center;color:#777;padding:40px 10px;font-weight:600;">
+    return `<div style="text-align:center;color:#000000;padding:30px 16px;font-weight:700;font-size:14.5px;">
       कृपया माथि रहेको फाँटको चेक बक्समा टिक (✓) लगाउनुहोस्, त्यसपछि सम्बन्धित फाँटको मेमो देखिनेछ।
+      <div style="margin-top:18px;text-align:left;color:#c91c1c;font-weight:700;font-size:13.5px;line-height:1.9;background:#fff5f5;padding:14px 18px;border-radius:8px;border:1px solid #fecaca;">
+        <div>- प्रशासन फाँट मा click गरेर मेमाे print गर्दै हुनुन्छ भने (हाजिरी दिन र OT) सहित पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
+        <div>- प्राविधिक फाँट_करार मा click गरेर मेमाे print गर्दै हुनुन्छ भने दैनिक ज्यालादारीकाे हकमा (हाजिरी दिन र OT) सहित लेखिएको र सेवा करारकाे मेमो print गर्दै हुनुन्छ भने OT पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
+        <div>- दै.ज्या.अन्य मेमो मा click गरेर मेमाे print गर्दै हुनुन्छ भने हाजिरी दिन अनुसारकाे पारिश्रमिक  पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
+      </div>
     </div>`;
   }
 
