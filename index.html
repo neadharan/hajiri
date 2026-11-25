@@ -250,7 +250,7 @@
     transform: scale(1.03);
   }
 
-  /* [COMMIT: Update 2 - Memo Department Selection Box] */
+  
   .memo-dept-selector {
     display: flex;
     flex-wrap: wrap;
@@ -768,7 +768,7 @@
         <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="tech" id="tabApprovalTechBtn" onclick="showMemoTab('approval-technical')">प्राबिधिक फाँट_करार पूर्व स्वीकृती </button>
         <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="tech" id="tabPaymentTechBtn" onclick="showMemoTab('payment-technical')">प्राबिधिक फाँट_करार भुक्तानी मेमाे</button>
         <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="other" id="tabOtherApprovalBtn" onclick="showMemoTab('other-approval')">सिजनल दै.ज्या पूर्व स्वीकृति</button>
-        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="other" id="tabOtherPaymentBtn" onclick="showMemoTab('other-payment')">सिजनल दै.ज्या. कर्मचारी भुक्तानी</button>
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="other" id="tabOtherPaymentBtn" onclick="showMemoTab('other-payment')">सिजनल दै.ज्या.भुक्तानी</button>
         <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="meter" id="tabMeterReaderBtn" onclick="showMemoTab('meter-reader')">मिटर रिडर फाँट पूर्व स्वीकृति</button>
         <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="meter" id="tabMeterPaymentBtn" onclick="showMemoTab('meter-payment')"> मिटर रिडर फाँट भुक्तानी</button>
       </div>
@@ -802,7 +802,7 @@ const STATUS_CYCLE = ["", "हा", "काज", "बिदा"];
 const STATUS_CLASS = {"":"", "हा":"st-present", "काज":"st-kaaj", "बिदा":"st-bida"};
 const PLACE_OPTIONS = ["धरान वितरण केन्द्र", ".........", ".........."];
 const WORK_OPTIONS = ["ज्यालादारी", "करार", "बिशेष करार", "सिजनल दै.ज्या.", "सेवा करार", "दैनिक ज्यालादारी","दैनिक ज्यालादारी+सेवा करार","स्थायी"];
-const DESIG_OPTIONS = ["दै.ज्या.","दै.ज्या.स.चा.","दै.ज्या.का.स.", "दै.ज्या.अन्य", "करार", "विशेष करार", "सेवा करार","स्थायी"];
+const DESIG_OPTIONS = ["दै.ज्या.","दै.ज्या.स.चा.","दै.ज्या.का.स.", "सिजनल दै.ज्या.", "करार", "विशेष करार", "सेवा करार","स्थायी"];
 let TOTAL_DAY_COLS = 32;
 let employees = [];
 let masterNames = [];
@@ -969,7 +969,7 @@ function switchWorkSheet(sheetKey){
   activeEditIndex = 0;
   renderRows();
   updatePrintHeader();
-  const labelMap = { 'daily': 'दैनिक ज्यालादारी', 'contract': 'सेवा करार', 'other': 'दै.ज्या.अन्य' };
+  const labelMap = { 'daily': 'दैनिक ज्यालादारी', 'contract': 'सेवा करार', 'other': 'सिजनल दै.ज्या.' };
   setStatus('✔ ' + labelMap[sheetKey] + ' हाजिरी पाना खोलियो ।', false);
 }
 
@@ -1585,7 +1585,7 @@ function buildMemoHTML(type){
     return header + `
       <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">पूर्व स्वीकृत मेमो</div>
       <p style="text-align:justify;text-indent:28px;">
-        यस वितरण केन्द्र अन्तर्गत विभिन्न फाँटमा कार्यालयको काममा परिआउने कार्य गर्नका लागि हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्मका लागि तपशिलमा उल्लेखित ${work} कर्मचारीहरुलाई दैनिक ज्यालादारीमा काम लगाउनु पर्ने भएकोले पूर्व स्वीकृतिको लागि अनुरोध छ।
+        यस वितरण केन्द्र अन्तर्गत विभिन्न फाँट रहि कार्य गर्न साथै कार्यालयमा परिआउने कार्य गर्नका लागि हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्मका लागि तपशिलमा उल्लेखित ${work} कर्मचारीहरुलाई दैनिक ज्यालादारीमा काम लगाउनु पर्ने भएकोले पूर्व स्वीकृतिको लागि अनुरोध छ।
       </p>
       <div style="font-weight:700;text-decoration:underline;margin-top:8px;">तपशिल:</div>
       <div style="margin-top:8px;">${nameListHTML}</div>
@@ -1605,7 +1605,7 @@ function buildMemoHTML(type){
     return header + `
       <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">भुक्तानी स्वीकृत मेमो</div>
       <p style="text-align:justify;">
-        यस वितरण केन्द्र अन्तर्गत विभिन्न फाँट साथै शिफ्ट डिउटी , कार्यालयको काममा परिआउने कार्य गर्नका लागि मिति ${dateFrom} देखि मिति ${dateTo} सम्म
+        यस वितरण केन्द्र अन्तर्गत विभिन्न फाँटमा रहि शिफ्ट डिउटी,लाईन मर्मत,कार्यालय परिसर सरसफाई साथै कार्यालयमा परिआउने कार्य गर्नका लागि मिति ${dateFrom} देखि मिति ${dateTo} सम्म
         संलग्न विवरण अनुसार ${work} कर्मचारीहरुलाई सुनसरी जिल्लाको स्वीकृत जिल्ला दररेट ${dRateStr} का दरले हाजिरी दिन अनुसारको पारिश्रमिक उपलब्ध गराईदिनुहुन सिफारिसका साथ अनुरोध छ।
       </p>
       
@@ -1977,7 +1977,7 @@ function getNameOptions(){
 }
 
 const FANO_OPTIONS = ["मिटर रिडिङ्ग फाँट", "मर्मत,प्राबिधिक फाँट", "प्रशासन  फाँट", "आय,प्रशासन,मिटर रिडिङ्ग,सवारी चालक"
-, "लेखा  फाँट", "नो-लाईट फाँट", "सब-स्टेशन ", "नो-लाईट,फ्युज सेवा,मर्मत,प्राबिधिक,सब-स्टेशन,ग्राहक सेवा फाँट","ग्राहक सेवा फाँट","ग्राहक सेवा ,मर्मत,मिटर रिडिङ्ग,प्रशासन फाँट", "नो-लाईट,मर्मत,फ्युज सेवा फाँट", "आय,प्रशासन,मिटर रिडिङ्ग,प्राबिधिक,मर्मत,सवारी चालक फाँट","फ्युज सेवा"];
+, "लेखा  फाँट", "नो-लाईट फाँट", "नो-लाईट+सब-स्टेशन+फ्युज सेवा ", "नो-लाईट,फ्युज सेवा,मर्मत,प्राबिधिक,सब-स्टेशन,ग्राहक सेवा फाँट","ग्राहक सेवा फाँट","ग्राहक सेवा ,मर्मत,मिटर रिडिङ्ग,प्रशासन फाँट", "नो-लाईट,मर्मत,फ्युज सेवा फाँट", "आय,प्रशासन,मिटर रिडिङ्ग,प्राबिधिक,मर्मत,सवारी चालक फाँट","फ्युज सेवा"];
 
 function setupMetaCombos(){
   document.getElementById('metaPlaceWrap').appendChild(createComboInput({
