@@ -633,7 +633,7 @@
   <span style="font-size:12.5px;font-weight:700;color:var(--navy);">हाजिरी समूह छान्नुहोस्:</span>
   <button type="button" class="work-tab-btn active" id="workTab-daily" onclick="switchWorkSheet('daily')">दैनिक ज्यालादारी</button>
   <button type="button" class="work-tab-btn" id="workTab-contract" onclick="switchWorkSheet('contract')">सेवा करार</button>
-  <button type="button" class="work-tab-btn" id="workTab-other" onclick="switchWorkSheet('other')">दै.ज्या.अन्य</button>
+  <button type="button" class="work-tab-btn" id="workTab-other" onclick="switchWorkSheet('other')">सिजनल दै.ज्या.</button>
 </div>
 
 <div class="toolbar">
@@ -757,7 +757,7 @@
       <span>मेमो फाँट छान्नुहोस्:</span>
       <label><input type="checkbox" name="memoDeptChk" value="admin" onchange="selectMemoDept('admin', this)"> प्रशासन फाँट</label>
       <label><input type="checkbox" name="memoDeptChk" value="tech" onchange="selectMemoDept('tech', this)"> प्राविधिक फाँट_करार </label>
-      <label><input type="checkbox" name="memoDeptChk" value="other" onchange="selectMemoDept('other', this)"> दै.ज्या.अन्य</label>
+      <label><input type="checkbox" name="memoDeptChk" value="other" onchange="selectMemoDept('other', this)">सिजनल दै.ज्या.</label>
       <label><input type="checkbox" name="memoDeptChk" value="meter" onchange="selectMemoDept('meter', this)"> मिटर रिडिङ्ग फाँट</label>
     </div>
 
@@ -767,8 +767,8 @@
         <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="admin" id="tabPaymentAdminBtn" onclick="showMemoTab('payment-admin')">प्रशासन फाँट भुक्तानी मेमाे </button>
         <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="tech" id="tabApprovalTechBtn" onclick="showMemoTab('approval-technical')">प्राबिधिक फाँट_करार पूर्व स्वीकृती </button>
         <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="tech" id="tabPaymentTechBtn" onclick="showMemoTab('payment-technical')">प्राबिधिक फाँट_करार भुक्तानी मेमाे</button>
-        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="other" id="tabOtherApprovalBtn" onclick="showMemoTab('other-approval')">अन्य कर्मचारी पूर्व स्वीकृति</button>
-        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="other" id="tabOtherPaymentBtn" onclick="showMemoTab('other-payment')">अन्य कर्मचारी भुक्तानी</button>
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="other" id="tabOtherApprovalBtn" onclick="showMemoTab('other-approval')">सिजनल दै.ज्या पूर्व स्वीकृति</button>
+        <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="other" id="tabOtherPaymentBtn" onclick="showMemoTab('other-payment')">सिजनल दै.ज्या. कर्मचारी भुक्तानी</button>
         <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="meter" id="tabMeterReaderBtn" onclick="showMemoTab('meter-reader')">मिटर रिडर फाँट पूर्व स्वीकृति</button>
         <button class="btn btn-ghost btn-small memo-tab hidden" data-dept="meter" id="tabMeterPaymentBtn" onclick="showMemoTab('meter-payment')"> मिटर रिडर फाँट भुक्तानी</button>
       </div>
@@ -801,7 +801,7 @@ function unlockHajiriApp(){
 const STATUS_CYCLE = ["", "हा", "काज", "बिदा"];
 const STATUS_CLASS = {"":"", "हा":"st-present", "काज":"st-kaaj", "बिदा":"st-bida"};
 const PLACE_OPTIONS = ["धरान वितरण केन्द्र", ".........", ".........."];
-const WORK_OPTIONS = ["ज्यालादारी", "करार", "बिशेष करार", "दै.ज्या.अन्य", "सेवा करार", "दैनिक ज्यालादारी","दैनिक ज्यालादारी+सेवा करार","स्थायी"];
+const WORK_OPTIONS = ["ज्यालादारी", "करार", "बिशेष करार", "सिजनल दै.ज्या.", "सेवा करार", "दैनिक ज्यालादारी","दैनिक ज्यालादारी+सेवा करार","स्थायी"];
 const DESIG_OPTIONS = ["दै.ज्या.","दै.ज्या.स.चा.","दै.ज्या.का.स.", "दै.ज्या.अन्य", "करार", "विशेष करार", "सेवा करार","स्थायी"];
 let TOTAL_DAY_COLS = 32;
 let employees = [];
@@ -951,8 +951,8 @@ function switchWorkSheet(sheetKey){
       employees.forEach(e => e.designation = 'सेवा करार');
       document.getElementById('metaWork').value = 'सेवा करार';
     } else if (sheetKey === 'other') {
-      employees.forEach(e => e.designation = 'दै.ज्या.अन्य');
-      document.getElementById('metaWork').value = 'दै.ज्या.अन्य';
+      employees.forEach(e => e.designation = 'सिजनल दै.ज्या.');
+      document.getElementById('metaWork').value = 'सिजनल दै.ज्या.';
     } else {
       employees.forEach(e => e.designation = 'दै.ज्या.');
       document.getElementById('metaWork').value = 'दैनिक ज्यालादारी';
@@ -1004,7 +1004,7 @@ function buildDefaultEmployees(){
 function addEmployee(){
   const newEmp = emptyEmployee("", "हा", 2);
   if (currentWorkSheet === 'contract') newEmp.designation = 'सेवा करार';
-  else if (currentWorkSheet === 'other') newEmp.designation = 'दै.ज्या.अन्य';
+  else if (currentWorkSheet === 'other') newEmp.designation = 'सिजनल दै.ज्या.';
   employees.push(newEmp);
   activeEditIndex = employees.length - 1;
   renderRows();
