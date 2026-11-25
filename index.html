@@ -50,7 +50,7 @@
   #errorBanner.info{background:#e2f3e8;border-bottom-color:var(--present);color:#1c5c37;}
   .hidden{display:none !important;}
 
-  /* [COMMIT: Update 3 - Center Start Switch Gate Overlay] */
+  
   #startSwitchOverlay {
     position: fixed;
     inset: 0;
@@ -781,7 +781,7 @@
         <div style="margin-top:18px;text-align:left;color:#c91c1c;font-weight:700;font-size:13.5px;line-height:1.9;background:#fff5f5;padding:14px 18px;border-radius:8px;border:1px solid #fecaca;">
           <div>- प्रशासन फाँट मा click गरेर मेमाे print गर्दै हुनुन्छ भने (हाजिरी दिन र OT) सहित पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
           <div>- प्राविधिक फाँट_करार मा click गरेर मेमाे print गर्दै हुनुन्छ भने दैनिक ज्यालादारीकाे हकमा (हाजिरी दिन र OT) सहित लेखिएको र सेवा करारकाे मेमो print गर्दै हुनुन्छ भने OT पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
-          <div>- दै.ज्या.अन्य मेमो मा click गरेर मेमाे print गर्दै हुनुन्छ भने हाजिरी दिन अनुसारकाे पारिश्रमिक  पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
+          <div>- सिजनल दै.ज्या. मेमो मा click गरेर मेमाे print गर्दै हुनुन्छ भने हाजिरी दिन अनुसारकाे पारिश्रमिक  पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
         </div>
       </div>
     </div>
@@ -1508,7 +1508,7 @@ function buildMemoHTML(type){
       <div style="margin-top:18px;text-align:left;color:#c91c1c;font-weight:700;font-size:13.5px;line-height:1.9;background:#fff5f5;padding:14px 18px;border-radius:8px;border:1px solid #fecaca;">
         <div>- प्रशासन फाँट मा click गरेर मेमाे print गर्दै हुनुन्छ भने (हाजिरी दिन र OT) सहित पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
         <div>- प्राविधिक फाँट_करार मा click गरेर मेमाे print गर्दै हुनुन्छ भने दैनिक ज्यालादारीकाे हकमा (हाजिरी दिन र OT) सहित लेखिएको र सेवा करारकाे मेमो print गर्दै हुनुन्छ भने OT पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
-        <div>- दै.ज्या.अन्य मेमो मा click गरेर मेमाे print गर्दै हुनुन्छ भने हाजिरी दिन अनुसारकाे पारिश्रमिक  पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
+        <div>- सिजनल दै.ज्या. मेमो मा click गरेर मेमाे print गर्दै हुनुन्छ भने हाजिरी दिन अनुसारकाे पारिश्रमिक  पाउने लेखिएको मेमो पाउनु हुनेछ।</div>
       </div>
     </div>`;
   }
@@ -1626,7 +1626,7 @@ function buildMemoHTML(type){
     return header + `
       <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">पूर्व स्वीकृत मेमो</div>
       <p style="text-align:justify;text-indent:28px;">
-        यस वितरण केन्द्र अन्तर्गतको ${workArea} साथै कार्यालयको काममा
+        यस वितरण केन्द्र अन्तर्गतको विभिन्न कार्य ${workArea} साथै कार्यालयको काममा
         परिआउने कार्य गर्नका लागि हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले
         मिति ${dateFrom} देखि मिति ${dateTo} सम्मका लागि तपशिलमा उल्लेखित ${work} कर्मचारीहरुलाई अतिरिक्त
         बढी समय काममा खटाउनु पर्ने भएकोले पूर्व स्वीकृतिको लागि अनुरोध छ।
@@ -1671,7 +1671,7 @@ function buildMemoHTML(type){
   return header + `
     <div style="text-align:center;font-weight:700;text-decoration:underline;font-size:15px;margin:18px 0 12px;">भुक्तानी स्वीकृत मेमो</div>
     <p style="text-align:justify;">
-      यस वितरण केन्द्र अन्तर्गतको ${workArea} साथै कार्यालयको काममा परिआउने कार्य गर्नका लागि
+      यस वितरण केन्द्र अन्तर्गतको विभिन्न कार्य ${workArea} साथै कार्यालयको काममा परिआउने कार्य गर्नका लागि
       हाल भईरहेको स्थायी कर्मचारीहरुबाट मात्र कार्य सम्पन्न गर्न नसकिने भएकोले मिति ${dateFrom} देखि मिति ${dateTo} सम्म
       अतिरिक्त बढी समय काममा लगाए बापतको संलग्न विवरण अनुसारको पूर्व स्वीकृति मेमो बमोजिम ${work} कर्मचारीहरुलाई अतिरिक्त
       बढी समय भत्ता उपलब्ध गराईदिनुहुन सिफारिसका साथ अनुरोध छ। ${rateSentence}
